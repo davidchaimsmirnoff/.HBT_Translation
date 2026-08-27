@@ -107,6 +107,17 @@
   .jobcard.sel{border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent)}
   .jobcard .t{font-size:13px; font-weight:600; line-height:1.3; overflow:hidden;
     display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical}
+  /* Holding a card renames it, so the press must not be taken first by the
+     WebView's own text-selection menu. The title takes selection back for as
+     long as it is the thing being edited, and drops the two-line clamp so a
+     long name can be read while you fix it. */
+  .jobcard{-webkit-user-select:none; user-select:none; -webkit-touch-callout:none}
+  .jobcard.renaming{border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent)}
+  .jobcard .t[contenteditable="true"]{
+    -webkit-user-select:text; user-select:text; -webkit-touch-callout:default;
+    display:block; -webkit-line-clamp:none; overflow:visible; outline:none;
+    background:var(--soft); border-radius:5px; padding:3px 6px; margin:-3px -6px;
+  }
   .jobcard .m{font-size:11px; color:var(--muted); margin-top:3px; display:flex; gap:6px; flex-wrap:wrap}
   .bar{height:5px; border-radius:3px; background:var(--soft); margin-top:6px; overflow:hidden}
   .bar > i{display:block; height:100%; background:var(--accent); transition:width .3s}
@@ -1144,8 +1155,101 @@ function renderJobList(){
       (j.done_text||0) + "/" + (j.total_text||0) + " · " + (j.percent||0).toFixed(1) + "%";
     el.querySelector(".md").textContent = j.mode === "interlinear" ? "interlinear" : "";
     if (!NET.online) markOffline(el, j.id);
-    el.addEventListener("click", () => selectJob(j.id));
+    el.addEventListener("click", () => {
+      // A hold renames the document; only a plain tap opens it.
+      if (el.classList.contains("renaming")) return;
+      if (el._held){ el._held = false; return; }
+      selectJob(j.id);
+    });
+    wireRename(el, j);
     box.appendChild(el);
+  }
+}
+
+/* ---- hold a document to rename it ---------------------------------------
+
+   The library list is the one place every document is visible at once, so it
+   is where a name gets fixed. Holding turns the title itself into the field -
+   selecting its text is what raises the phone's keyboard - and the new name
+   goes straight to the computer, which is the only copy that matters.
+
+   Renaming touches nothing on disk: the output file is named after the source
+   file, so the title is only what the lists and the job bar call it. */
+
+function wireRename(el, j){
+  let holdT = null, x0 = 0, y0 = 0;
+  const cancel = () => clearTimeout(holdT);
+
+  el.addEventListener("pointerdown", e => {
+    if (el.classList.contains("renaming")) return;
+    x0 = e.clientX; y0 = e.clientY;
+    el._held = false;
+    cancel();
+    holdT = setTimeout(() => {
+      el._held = true;                       // so the release does not open it
+      try { if (navigator.vibrate) navigator.vibrate(15); } catch(err){}
+      startRename(el, j);
+    }, 500);
+  });
+  // Any real movement is a scroll, not a hold.
+  el.addEventListener("pointermove", e => {
+    if (Math.abs(e.clientX - x0) > 8 || Math.abs(e.clientY - y0) > 8) cancel();
+  });
+  for (const ev of ["pointerup", "pointercancel", "pointerleave"])
+    el.addEventListener(ev, cancel);
+}
+
+function startRename(el, j){
+  const t = el.querySelector(".t");
+  if (t.isContentEditable) return;
+  el.classList.add("renaming");
+  el._orig = j.title || j.id;
+  t.textContent = el._orig;
+  t.contentEditable = "true";
+  t.spellcheck = false;
+  t.focus();
+
+  // Select the whole name: the keyboard comes up with the old name visible but
+  // ready to be replaced, rather than with a caret parked somewhere in it.
+  try {
+    const r = document.createRange();
+    r.selectNodeContents(t);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(r);
+  } catch(err){}
+
+  t.addEventListener("keydown", ev => {
+    if (ev.key === "Enter"){ ev.preventDefault(); t.blur(); }
+    else if (ev.key === "Escape"){ ev.preventDefault(); t.textContent = el._orig; t.blur(); }
+  });
+  t.addEventListener("blur", () => finishRename(el, j), {once: true});
+  toast("rename, then press Enter");
+}
+
+async function finishRename(el, j){
+  const t = el.querySelector(".t");
+  el.classList.remove("renaming");
+  t.contentEditable = "false";
+  el._held = false;
+
+  const name = t.textContent.replace(/\s+/g, " ").trim();
+  if (!name || name === el._orig){ t.textContent = el._orig; return; }
+
+  t.textContent = name;
+  try {
+    await api("/api/job/rename", {id: j.id, title: name});
+    j.title = name;
+    if (D.jid === j.id && D.job){ D.job.title = name; paintJobBar(); }
+    if (R.id === j.id){ R.title = name; $("#readTitle").textContent = name; }
+    toast("renamed on the computer");
+    await loadJobs();
+  } catch(e){
+    // Put the old name back rather than leaving the list disagreeing with the
+    // computer about what this document is called.
+    t.textContent = el._orig;
+    netFail(e);
+    toast(e.message, true);
   }
 }
 

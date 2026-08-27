@@ -2,10 +2,10 @@
  "id": "MagenAvraham-inte-261298ef",
  "title": "BH",
  "status": "running",
- "status_line": "IN PROGRESS - 690 of 3604 translatable chunks (19.1%)",
- "percent": 19.15,
- "bookmark": 694,
- "done_text": 690,
+ "status_line": "IN PROGRESS - 697 of 3604 translatable chunks (19.3%)",
+ "percent": 19.34,
+ "bookmark": 701,
+ "done_text": 697,
  "total_text": 3604,
  "total_chunks": 3612,
  "chars_total": 203019,
@@ -25,11 +25,11 @@
  "temperature": 0.2,
  "think": false,
  "created": "2026-08-27 00:37:53",
- "updated": "2026-08-27 11:59:27",
+ "updated": "2026-08-27 12:04:17",
  "started": "2026-08-27 00:38:20",
  "finished": "",
- "elapsed_sec": 27656.5,
- "tokens_out": 351017,
+ "elapsed_sec": 27946.1,
+ "tokens_out": 353119,
  "skipped": 74,
  "error": "",
  "cut_marks": [
@@ -6985,19 +6985,19 @@
    "kind": "text",
    "src": ". ודוקא כשהקרע למעלה מקשר גודל וכמ\"ש ס\"ו:",
    "start": 44798,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": ". וְדוּקָא כְּשֶׁהַקֶּרַע לְמַעְלָה מִקֶּשֶׁר גֹּדֶל וּכְמוֹ שֶׁכָּתַב ס\"ו:",
+   "out": "Specifically when the tear is above the knot of the cord, and as written in S\"V.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 695,
    "kind": "text",
    "src": "לא יתפור",
    "start": 44842,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "לֹא יִתְפֹּר",
+   "out": "It will not be sewn.",
+   "done": true,
    "warn": ""
   },
   {
@@ -7005,9 +7005,9 @@
    "kind": "text",
    "src": ". פי' שנקרע כולה:",
    "start": 44851,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": ". פֵּי' שֶׁנִּקְרַע כֻּלָּהּ:",
+   "out": ". Its interpretation is that it is completely torn.",
+   "done": true,
    "warn": ""
   },
   {
@@ -7015,9 +7015,9 @@
    "kind": "text",
    "src": "נקרע'",
    "start": 44871,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "נִקְרַע'",
+   "out": "torn",
+   "done": true,
    "warn": ""
   },
   {
@@ -7025,19 +7025,19 @@
    "kind": "text",
    "src": ". משום דלרע\"מ כמאן דפסיק חשיב ולא נשאר קשר גודל ומ\"ש ב\"י לכולהו פירושים היינו לנ\"י",
    "start": 44877,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": ". מִשּׁוּם דִּלְרַע\"מ כְּמַאן דְּפָסִיק חָשִׁיב וְלֹא נִשְׁאַר קֶשֶׁר גֹּדֶל וּמַה שֶּׁכָּתַב בַּ\"י לְכֻלְּהוּ פֵּרוּשִׁים הַיְנוּ לַנִּ\"י",
+   "out": "Because according to R. Eliezer of Metz, it is considered as if it is cut off, and no bond of greatness remains, and what the B.Y. wrote for all the interpretations means for N.Y.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 699,
    "kind": "text",
    "src": "והרא\"ש אבל לרש\"י תפירה הוי חבור:",
    "start": 44960,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "וְהָרָא\"שׁ אֲבָל לְרַשִׁ\"י תְּפִירָה הֲוֵי חִבּוּר:",
+   "out": "And the Ra\"sh, but for Rashi, sewing is a connection.",
+   "done": true,
    "warn": ""
   },
   {
@@ -7045,9 +7045,9 @@
    "kind": "text",
    "src": "לספוקי",
    "start": 44995,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "לְסַפּוֹקִי",
+   "out": "for my satisfaction / to satisfy me",
+   "done": true,
    "warn": ""
   },
   {

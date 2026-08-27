@@ -973,8 +973,6 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 self._job_edit()
             elif path == "/api/job/export":
                 self._job_export()
-            elif path == "/api/job/rename":
-                self._job_rename()
             elif path == "/api/job/settings":
                 self._job_settings()
             elif path == "/api/sync/push":
@@ -1194,34 +1192,6 @@ class Handler(http.server.BaseHTTPRequestHandler):
             dest = os.path.join(dest, os.path.basename(job["output_file"]))
         atomic_write(dest, req.get("text") or build_output(job))
         self._json({"ok": True, "path": os.path.abspath(dest)})
-
-    def _job_rename(self):
-        """Rename a document.
-
-        Nothing on disk moves. The output path follows the source file's name,
-        so the title is only what the lists, the job bar and an exported
-        folder call this document -- which is exactly what makes renaming safe
-        to do from a phone.
-        """
-        req = self._read_json()
-        job = load_job(req.get("id"))
-        if not job:
-            self._json({"ok": False, "error": "no such job"}, 404)
-            return
-        # A running translation holds its own copy of this dict and writes it
-        # back after every chunk, so a title saved here would be reverted
-        # within seconds and the rename would look like it simply did not take.
-        # The settings endpoint refuses for the same reason.
-        if job["id"] in RUNNING:
-            self._json({"ok": False, "error": "pause it first, then rename"}, 409)
-            return
-        title = " ".join(str(req.get("title") or "").split())[:120]
-        if not title:
-            self._json({"ok": False, "error": "a document needs a name"}, 400)
-            return
-        job["title"] = title
-        save_job(job)
-        self._json({"ok": True, "id": job["id"], "title": title})
 
     def _job_settings(self):
         """Change output location / model / options without losing progress."""

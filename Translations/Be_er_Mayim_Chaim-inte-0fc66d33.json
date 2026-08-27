@@ -2,10 +2,10 @@
  "id": "Be_er_Mayim_Chaim-inte-0fc66d33",
  "title": "Be'er Mayim Chaim on Chafetz Chaim",
  "status": "running",
- "status_line": "IN PROGRESS - 46 of 5066 translatable chunks (0.9%)",
- "percent": 0.91,
- "bookmark": 65,
- "done_text": 46,
+ "status_line": "IN PROGRESS - 54 of 5066 translatable chunks (1.1%)",
+ "percent": 1.07,
+ "bookmark": 76,
+ "done_text": 54,
  "total_text": 5066,
  "total_chunks": 5957,
  "chars_total": 381665,
@@ -25,12 +25,12 @@
  "temperature": 0.2,
  "think": false,
  "created": "2026-08-27 11:16:29",
- "updated": "2026-08-27 11:59:25",
+ "updated": "2026-08-27 12:04:39",
  "started": "2026-08-27 11:17:00",
  "finished": "",
- "elapsed_sec": 2544.2,
- "tokens_out": 28183,
- "skipped": 1,
+ "elapsed_sec": 2858.5,
+ "tokens_out": 30983,
+ "skipped": 3,
  "error": "",
  "cut_marks": [],
  "chunks": [
@@ -689,19 +689,19 @@
    "kind": "text",
    "src": "ללשה\"ר וכנ\"ל. אך על המקבל צ\"ע אם הוא שותק ואינו מסייע לו בשום דיבור רק שהוא",
    "start": 4440,
-   "heb": "",
+   "heb": "ללשה\"ר וכנ\"ל. אך על המקבל צ\"ע אם הוא שותק ואינו מסייע לו בשום דיבור רק שהוא",
    "out": "",
-   "done": false,
-   "warn": ""
+   "done": true,
+   "warn": "skipped - looped for 6002 characters without answering"
   },
   {
    "i": 66,
    "kind": "text",
    "src": "מאמין לו בלבו אם גם הוא נלקה בצרעת עבור זה וצ\"ע.",
    "start": 4516,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "מַאֲמִין לוֹ בְּלִבּוֹ אִם גַּם הוּא נִלְקָה בְּצָרַעַת עֲבוּר זֶה וְצָ\"ע.",
+   "out": "He believes him in his heart, even if he himself was afflicted with leprosy for this, and it is difficult to understand.",
+   "done": true,
    "warn": ""
   },
   {
@@ -711,7 +711,7 @@
    "start": 4565,
    "heb": "",
    "out": "",
-   "done": false,
+   "done": true,
    "warn": ""
   },
   {
@@ -721,7 +721,7 @@
    "start": 4566,
    "heb": "",
    "out": "",
-   "done": false,
+   "done": true,
    "warn": ""
   },
   {
@@ -731,7 +731,7 @@
    "start": 4701,
    "heb": "",
    "out": "",
-   "done": false,
+   "done": true,
    "warn": ""
   },
   {
@@ -739,19 +739,19 @@
    "kind": "text",
    "src": "1. ועובר נמי כו' בלאו דלפני עור. שהוא ל\"ת גמורה ונמנית בסה\"מ להרמב\"ם מצוה רצ\"ט ובסמ\"ג",
    "start": 4702,
-   "heb": "",
+   "heb": "1. ועובר נמי כו' בלאו דלפני עור. שהוא ל\"ת גמורה ונמנית בסה\"מ להרמב\"ם מצוה רצ\"ט ובסמ\"ג",
    "out": "",
-   "done": false,
-   "warn": ""
+   "done": true,
+   "warn": "skipped - looped for 6001 characters without answering"
   },
   {
    "i": 71,
    "kind": "text",
    "src": "לאוין סימן קס\"ח. ומה שכתבתי דשייך בזה לפני עור הוא פשוט ממה דאמרינן בבבא מציעא (דף ע\"ה:)",
    "start": 4788,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "לָאוִין סִימָן קס\"ח. וּמָה שֶׁכָּתַבְתִּי דְּשַׁיָּךְ בָּזֶה לִפְנֵי עִוֵּר הוּא פָּשׁוּט מִמָּה דְּאָמְרִינַן בְּבָבָא מְצִיעָא (דַּף ע\"ה:)",
+   "out": "The negative commandments, sign 168. And what I wrote that pertains to this before the blind is simple from what we say in Bava Metzia (page 75:).",
+   "done": true,
    "warn": ""
   },
   {
@@ -759,19 +759,19 @@
    "kind": "text",
    "src": "דהלוה ברבית ג\"כ עובר על לאו דלפני עור משום דאי לא היה לוה ממנו לא היה",
    "start": 4877,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "דְּהַלּוֹוֶה בְּרִיבִית גַּם כֵּן עוֹבֵר עַל לָאו דִּלְפָנֵי עִוֵּר מִשּׁוּם דְּאִי לֹא הָיָה לוֹוֶה מִמֶּנּוּ לֹא הָיָה",
+   "out": "that the borrower with interest also transgresses the prohibition of 'before the blind' because if he was not borrowing from him, he would not be.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 73,
    "kind": "text",
    "src": "מלוהו ולא היה בא לידי עבירה וה\"נ כן הוא אילו לא היו שומעים ממנו לא היה",
    "start": 4947,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "מְלַוֵּהוּ וְלֹא הָיָה בָּא לִידֵי עֲבֵרָה וְהֵ\"ן כֵּן הוּא אִלּוּ לֹא הָיוּ שׁוֹמְעִים מִמֶּנּוּ לֹא הָיָה",
+   "out": "He accompanied him and was not brought to sin, and so it is; if they had not heard from him, they would not have been.",
+   "done": true,
    "warn": ""
   },
   {
@@ -779,20 +779,20 @@
    "kind": "text",
    "src": "מדבר אל הקיר, והמספר בוודאי ג\"כ עובר על לאו דלפני עור כי הוא נותן מכשול לפני",
    "start": 5018,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "מְדַבֵּר אֶל הַקִּיר, וְהַמְּסַפֵּר בְּוַדַּאי גַּם כֵּן עוֹבֵר עַל לָאו דִּלְפָנֵי עִוֵּר כִּי הוּא נוֹתֵן מִכְשׁוֹל לִפְנֵי",
+   "out": "Speaking to the wall, and the storyteller is certainly also transgressing the prohibition of \"before the blind\" because he is placing an obstacle before.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 75,
    "kind": "text",
    "src": "המקבל וגדולה מזו אמרו בב\"מ (דף ע\"ה:) דהמלוה לחברו שלא בעדים עובר על לפני עור ונפסק",
    "start": 5095,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "הַמְּקַבֵּל וּגְדוֹלָה מִזּוֹ אָמְרוּ בְּבָבָא מְצִיעָא (דַּף ע\"ה:) דְּהַמַּלְוֶה לַחֲבֵרוֹ שֶׁלֹּא בְּעֵדִים עוֹבֵר עַל לִפְנֵי עִוֵּר וְנִפְסָק",
+   "out": "The receiver and greater than this they said in Bava Metzia (page 75:) that the one who lends to his friend without witnesses transgresses 'before the blind' and is sealed.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 76,
