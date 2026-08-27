@@ -1204,23 +1204,26 @@ class Handler(http.server.BaseHTTPRequestHandler):
         to do from a phone.
         """
         req = self._read_json()
-        job = load_job(req.get("id"))
+        jid = req.get("id")
+        # Edit the worker's own copy when one is running, otherwise the on-disk
+        # copy; either way the new name is what gets saved next. Renaming the
+        # disk copy underneath a running translation would be undone by the
+        # worker's next per-chunk save, which is the same reason the chunk
+        # editor reaches into RUNNING first.
+        job = RUNNING.get(jid, {}).get("job") or load_job(jid)
         if not job:
             self._json({"ok": False, "error": "no such job"}, 404)
-            return
-        # A running translation holds its own copy of this dict and writes it
-        # back after every chunk, so a title saved here would be reverted
-        # within seconds and the rename would look like it simply did not take.
-        # The settings endpoint refuses for the same reason.
-        if job["id"] in RUNNING:
-            self._json({"ok": False, "error": "pause it first, then rename"}, 409)
             return
         title = " ".join(str(req.get("title") or "").split())[:120]
         if not title:
             self._json({"ok": False, "error": "a document needs a name"}, 400)
             return
-        job["title"] = title
-        save_job(job)
+        # No write_output: build_output never mentions the title, so there is
+        # nothing to rewrite - which is what makes this safe to do while a
+        # translation is streaming into that very file.
+        with JOB_LOCK:
+            job["title"] = title
+            save_job(job)
         self._json({"ok": True, "id": job["id"], "title": title})
 
     def _job_settings(self):
