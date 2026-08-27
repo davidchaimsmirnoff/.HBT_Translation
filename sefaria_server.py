@@ -1,0 +1,484 @@
+#!/usr/bin/env python3
+"""Sefaria Commentary Downloader - browse and download whole commentaries.
+
+Stdlib only. Serves sefaria.html and proxies Sefaria's public API on the same
+origin so the browser never hits a CORS wall (the same trick server.py uses for
+Ollama). Responses are cached on disk, so re-browsing a book is instant and we
+stay polite to Sefaria's servers.
+"""
+import http.server
+import socketserver
+import hashlib
+import json
+import os
+import re
+import sys
+import threading
+import time
+import urllib.parse
+import urllib.request
+import urllib.error
+import webbrowser
+
+ROOT = os.path.dirname(os.path.abspath(__file__))
+PORT = int(os.environ.get("SEFARIA_PORT", "8771"))
+SEFARIA = os.environ.get("SEFARIA_HOST", "https://www.sefaria.org").rstrip("/")
+CACHE_DIR = os.path.join(ROOT, ".sefaria_cache")
+SAVE_DIR = os.path.join(ROOT, "sefaria_downloads")
+UA = "LocalHBT-Sefaria-Downloader/1.0 (personal study tool; stdlib urllib)"
+
+# Sefaria asks for courtesy over volume. Capping in-flight upstream requests and
+# keeping a small floor between them stops a 50-chapter download from looking
+# like a scrape.
+_gate = threading.Semaphore(int(os.environ.get("SEFARIA_CONCURRENCY", "3")))
+_last = [0.0]
+_lastlock = threading.Lock()
+MIN_GAP = float(os.environ.get("SEFARIA_MIN_GAP", "0.08"))
+
+
+def _throttle():
+    with _lastlock:
+        gap = time.time() - _last[0]
+        if gap < MIN_GAP:
+            time.sleep(MIN_GAP - gap)
+        _last[0] = time.time()
+
+
+def _cache_path(url):
+    return os.path.join(CACHE_DIR, hashlib.sha256(url.encode()).hexdigest() + ".json")
+
+
+def fetch(path, ttl=86400):
+    """GET a Sefaria API path, returning parsed JSON. Disk-cached for `ttl` seconds."""
+    url = SEFARIA + path
+    cp = _cache_path(url)
+    if ttl and os.path.exists(cp) and (time.time() - os.path.getmtime(cp)) < ttl:
+        try:
+            with open(cp, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass  # corrupt cache entry: fall through and refetch
+
+    with _gate:
+        _throttle()
+        req = urllib.request.Request(
+            url, headers={"User-Agent": UA, "Accept": "application/json"})
+        with urllib.request.urlopen(req, timeout=120) as r:
+            data = json.loads(r.read().decode("utf-8"))
+
+    try:
+        os.makedirs(CACHE_DIR, exist_ok=True)
+        with open(cp, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False)
+    except OSError:
+        pass  # the cache is an optimisation, never a hard requirement
+    return data
+
+
+def q(s):
+    """Percent-encode a Sefaria ref for use in a URL path."""
+    return urllib.parse.quote(str(s).replace(" ", "_"), safe="_,.:-")
+
+
+# ---------------------------------------------------------------- shape -> refs
+
+def section_label(i, addr):
+    """Render 1-based section index `i` the way this book is addressed.
+
+    Talmud is paginated by daf, not numbered by chapter: section 1 is 1a, 2 is
+    1b, 3 is 2a. Emitting a bare "Berakhot 3" gets rejected by the API, so the
+    address type from the book's index decides the notation.
+    """
+    if addr and str(addr[0]) == "Talmud":
+        return "%d%s" % ((i + 1) // 2, "a" if i % 2 else "b")
+    return str(i)
+
+
+def seg_count(entry):
+    """Segments under one shape entry, whatever nesting it arrived in.
+
+    A single book can mix the two: Rashi on Berakhot lists most dapim as a list
+    of per-line counts but a few empty ones as a bare 0, so branching on the
+    first element alone is not safe.
+    """
+    if isinstance(entry, bool):
+        return 0
+    if isinstance(entry, (int, float)):
+        return int(entry)
+    if isinstance(entry, list):
+        return sum(seg_count(x) for x in entry)
+    return 0
+
+
+def refs_from_shape(shape, addr=None):
+    """Turn /api/shape output into the list of section refs that cover a book.
+
+    Sefaria books are either 'simple' (a jagged array, depth 1-3) or 'complex'
+    (a tree of named nodes, where `chapters` holds further node dicts rather
+    than counts). Both shapes flatten to one list of refs covering the work.
+
+    Per-section counts come back alongside, because a single total is not enough
+    to judge a download. Shape describes the *primary* (usually Hebrew) text, so
+    a translation covering fewer comments is legitimately shorter. Comparing
+    section by section separates "this version says less here" from "this
+    section failed to download", which is the distinction that matters.
+
+    Sections the source records as empty are dropped: there is nothing to fetch,
+    and for Talmud they are the non-existent dapim (1a/1b) that error out.
+    """
+    refs, per, depth = [], [], 0
+    if not isinstance(shape, list):
+        return refs, per, depth
+
+    for node in shape:
+        if not isinstance(node, dict):
+            continue
+        title = node.get("title") or ""
+        chapters = node.get("chapters")
+
+        if isinstance(chapters, list) and chapters and isinstance(chapters[0], dict):
+            # complex book: this node's "chapters" are really child nodes, each
+            # carrying its own full title. Recurse and splice the results in.
+            sub_refs, sub_per, sub_depth = refs_from_shape(chapters, addr)
+            refs.extend(sub_refs)
+            per.extend(sub_per)
+            depth = max(depth, sub_depth)
+        elif isinstance(chapters, list) and chapters:
+            # chapters[i] is either a segment count (depth 2) or a list of
+            # per-verse counts (depth 3); one book may contain both.
+            depth = max(depth, 3 if any(isinstance(c, list) for c in chapters) else 2)
+            for i, c in enumerate(chapters, 1):
+                n = seg_count(c)
+                if n:
+                    refs.append("%s %s" % (title, section_label(i, addr)))
+                    per.append(n)
+        elif isinstance(chapters, int):
+            # Depth 1: the node itself is one flat run of segments. A count of
+            # zero means a structural node rather than a short one -- the
+            # "Preface" and per-chapter heading nodes a complex book interleaves
+            # with its text, which carry nothing of their own. Sefaria has no ref
+            # to serve for those and answers 404, so they are dropped here
+            # instead of being fetched and thrown away.
+            if chapters:
+                depth = max(depth, 1)
+                refs.append(title)
+                per.append(int(chapters))
+        elif title:
+            refs.append(title)
+            per.append(0)
+
+    return refs, per, depth
+
+
+def address_types(title):
+    """The book's addressing scheme, so section refs come out in its notation."""
+    try:
+        idx = fetch("/api/index/%s" % q(title), ttl=604800)
+    except Exception:
+        return None
+    schema = idx.get("schema") or {}
+    addr = schema.get("addressTypes")
+    if addr:
+        return addr
+    # Complex books keep addressTypes on their child nodes instead.
+    for node in (schema.get("nodes") or []):
+        if isinstance(node, dict) and node.get("addressTypes"):
+            return node["addressTypes"]
+    return None
+
+
+def _flatten(node, ref, out, trail=()):
+    """Walk a nested text array into flat {ref, text} segments.
+
+    A section fetch comes back as a list of strings for a depth-2 book and a
+    list of lists for a depth-3 one, so the same code has to handle both.
+    """
+    if node is None:
+        return
+    if isinstance(node, str):
+        label = "%s:%s" % (ref, ":".join(str(a) for a in trail)) if trail else ref
+        out.append({"ref": label, "text": node})
+        return
+    if isinstance(node, list):
+        for i, child in enumerate(node, 1):
+            _flatten(child, ref, out, tuple(trail) + (i,))
+
+
+# ---------------------------------------------------------------- handler
+
+class Handler(http.server.BaseHTTPRequestHandler):
+    server_version = "SefariaDL/1.0"
+    protocol_version = "HTTP/1.1"
+
+    def log_message(self, fmt, *args):
+        pass  # keep the console clean; errors surface in the UI
+
+    def _send(self, code, ctype, body):
+        if isinstance(body, str):
+            body = body.encode("utf-8")
+        self.send_response(code)
+        self.send_header("Content-Type", ctype)
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        try:
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionAbortedError, ConnectionResetError):
+            pass  # user navigated away mid-response
+
+    def _json(self, obj, code=200):
+        self._send(code, "application/json; charset=utf-8",
+                   json.dumps(obj, ensure_ascii=False))
+
+    def _fail(self, msg, code=502):
+        self._json({"ok": False, "error": str(msg)}, code)
+
+    # ------------------------------------------------------------ GET
+
+    def do_GET(self):
+        parts = urllib.parse.urlparse(self.path)
+        path = parts.path
+        args = urllib.parse.parse_qs(parts.query)
+
+        def one(k, d=""):
+            return (args.get(k) or [d])[0]
+
+        try:
+            if path in ("/", "/index.html", "/sefaria.html"):
+                return self._file("sefaria.html")
+            if path == "/api/ping":
+                return self._ping()
+            if path == "/api/toc":
+                return self._json({"ok": True, "toc": fetch("/api/index", ttl=604800)})
+            if path == "/api/book":
+                return self._book(one("title"))
+            if path == "/api/commentaries":
+                return self._commentaries(one("title"), int(one("samples", "12") or 12))
+            if path == "/api/text":
+                return self._text(one("ref"), one("version", "english"))
+            self._send(404, "text/plain; charset=utf-8", "not found")
+        except urllib.error.HTTPError as e:
+            self._fail("Sefaria returned HTTP %s for that request" % e.code)
+        except urllib.error.URLError as e:
+            self._fail("Cannot reach Sefaria (%s). Check your connection." % e.reason)
+        except Exception as e:
+            self._fail(e, 500)
+
+    def _file(self, name):
+        try:
+            with open(os.path.join(ROOT, name), "rb") as f:
+                self._send(200, "text/html; charset=utf-8", f.read())
+        except OSError as e:
+            self._send(500, "text/plain; charset=utf-8", "%s missing: %s" % (name, e))
+
+    def _ping(self):
+        try:
+            fetch("/api/shape/Genesis", ttl=604800)
+            self._json({"ok": True})
+        except Exception as e:
+            self._json({"ok": False, "error": str(e)})
+
+    def _book(self, title):
+        """Shape, section refs and available versions for one book or commentary."""
+        if not title:
+            return self._json({"ok": False, "error": "no title given"}, 400)
+        shape = fetch("/api/shape/%s" % q(title), ttl=604800)
+        refs, per, depth = refs_from_shape(shape, address_types(title))
+
+        # The version menu is a convenience; the refs are the substance. So one
+        # ref that will not resolve should cost the menu, never the whole book.
+        # Complex works can also open on a node with no text, so try a handful
+        # before concluding there is nothing to list.
+        versions = []
+        for probe_ref in refs[:5]:
+            try:
+                probe = fetch("/api/v3/texts/%s?version=english" % q(probe_ref),
+                              ttl=604800)
+            except Exception:
+                continue
+            for v in probe.get("available_versions", []):
+                lang = v.get("languageFamilyName") or v.get("language") or ""
+                versions.append({
+                    "versionTitle": v.get("versionTitle") or "",
+                    "language": lang,
+                    "actualLanguage": v.get("actualLanguage") or "",
+                    "license": v.get("license") or "unknown",
+                    "source": v.get("versionSource") or "",
+                    "notes": v.get("versionNotes") or "",
+                    "direction": v.get("direction") or "ltr",
+                    # v3 addresses one version as languageFamilyName|versionTitle
+                    "selector": "%s|%s" % (lang, v.get("versionTitle") or ""),
+                })
+            if versions:
+                break
+
+        self._json({"ok": True, "title": title,
+                    "heTitle": (shape[0].get("heTitle") if shape else ""),
+                    "refs": refs, "depth": depth, "sections": len(refs),
+                    "perSection": per, "expectedSegments": sum(per),
+                    "versions": versions})
+
+    def _commentaries(self, title, samples):
+        """Discover which commentaries exist on a book.
+
+        Sefaria has no 'list every commentary on X' endpoint, so we sample link
+        data from refs spread across the book and union the results. Spreading
+        the samples matters: a commentator who only speaks from chapter 30
+        onwards would be invisible if we only ever looked at chapter 1.
+        """
+        if not title:
+            return self._json({"ok": False, "error": "no title given"}, 400)
+        shape = fetch("/api/shape/%s" % q(title), ttl=604800)
+        refs = refs_from_shape(shape, address_types(title))[0]
+        if not refs:
+            return self._json({"ok": True, "title": title, "commentaries": []})
+
+        samples = max(1, min(samples, 40))
+        step = max(1, len(refs) // samples)
+        picks = refs[::step][:samples]
+
+        found, sampled, errors = {}, 0, 0
+        for ref in picks:
+            try:
+                links = fetch("/api/links/%s?with_text=0" % q(ref), ttl=604800)
+            except Exception:
+                errors += 1
+                continue
+            sampled += 1
+            if not isinstance(links, list):
+                continue
+            for l in links:
+                if l.get("category") != "Commentary":
+                    continue
+                it = l.get("index_title")
+                if not it:
+                    continue
+                rec = found.get(it)
+                if rec is None:
+                    ct = l.get("collectiveTitle") or {}
+                    rec = found[it] = {
+                        "indexTitle": it,
+                        "name": ct.get("en") or it,
+                        "heName": ct.get("he") or l.get("heTitle") or "",
+                        "hits": 0,
+                        "hasEnglish": False,
+                    }
+                rec["hits"] += 1
+                if l.get("sourceHasEn"):
+                    rec["hasEnglish"] = True
+
+        out = sorted(found.values(), key=lambda r: (-r["hits"], r["name"].lower()))
+        self._json({"ok": True, "title": title, "commentaries": out,
+                    "sampledSections": sampled, "totalSections": len(refs),
+                    "sampleErrors": errors})
+
+    def _text(self, ref, version):
+        """One section, flattened to a list of {ref, text} segments."""
+        if not ref:
+            return self._json({"ok": False, "error": "no ref given"}, 400)
+        url = "/api/v3/texts/%s?version=%s" % (
+            q(ref), urllib.parse.quote(version, safe=""))
+        try:
+            d = fetch(url, ttl=86400)
+        except urllib.error.HTTPError as e:
+            if e.code in (400, 404):
+                # a gap in the book, not a failure of the download
+                return self._json({"ok": True, "ref": ref, "segments": [],
+                                   "empty": True})
+            raise
+
+        versions = d.get("versions") or []
+        if not versions:
+            return self._json({"ok": True, "ref": ref, "segments": [], "empty": True,
+                               "warnings": d.get("warnings")})
+
+        v = versions[0]
+        segs = []
+        _flatten(v.get("text"), ref, segs)
+        self._json({"ok": True, "ref": ref, "segments": segs,
+                    "versionTitle": v.get("versionTitle") or "",
+                    "license": v.get("license") or "unknown",
+                    "direction": v.get("direction") or "ltr"})
+
+    # ------------------------------------------------------------ POST
+
+    def do_POST(self):
+        path = urllib.parse.urlparse(self.path).path
+        try:
+            n = int(self.headers.get("Content-Length") or 0)
+            body = json.loads(self.rfile.read(n) or b"{}")
+        except Exception as e:
+            return self._json({"ok": False, "error": "bad request: %s" % e}, 400)
+        if path == "/api/save":
+            return self._save(body)
+        self._send(404, "text/plain; charset=utf-8", "not found")
+
+    def _save(self, body):
+        """Write a finished download into sefaria_downloads/ next to this script."""
+        raw = body.get("name") or "sefaria.txt"
+        name = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "_", os.path.basename(raw)).strip()
+        if not name or name in (".", ".."):
+            return self._json({"ok": False, "error": "bad filename"}, 400)
+        text = body.get("text") or ""
+        try:
+            os.makedirs(SAVE_DIR, exist_ok=True)
+            dest = os.path.join(SAVE_DIR, name)
+            with open(dest, "w", encoding="utf-8", newline="\n") as f:
+                f.write(text)
+            self._json({"ok": True, "path": dest,
+                        "bytes": len(text.encode("utf-8"))})
+        except OSError as e:
+            self._json({"ok": False, "error": str(e)}, 500)
+
+
+class Server(socketserver.ThreadingTCPServer):
+    daemon_threads = True
+
+    # SO_REUSEADDR means something different on Windows. On Unix it only allows
+    # a quick rebind after a restart, which is what we want. On Windows it lets
+    # a second process bind a port another process is already listening on --
+    # both sockets stay open and new connections land on whichever the OS
+    # picks. Two copies of this server then share the port, and if one of them
+    # predates an edit to this file you get answers from stale code at random,
+    # which is a genuinely baffling thing to debug. It also means the bind
+    # below succeeds when it should fail, so main()'s "already running" message
+    # never appears. Unix keeps the convenience; Windows gets the safety.
+    allow_reuse_address = os.name != "nt"
+
+
+def main():
+    try:
+        httpd = Server(("127.0.0.1", PORT), Handler)
+    except OSError as e:
+        print("Could not bind port %d: %s" % (PORT, e))
+        print("Another copy is probably already running -> http://127.0.0.1:%d"
+              % PORT)
+        print("Close that window first, or set SEFARIA_PORT to another port.")
+        print("A stale copy keeps serving the code it started with, so restart")
+        print("it after editing this file.")
+        return 1
+
+    url = "http://127.0.0.1:%d" % PORT
+    print("=" * 60)
+    print("  Sefaria Commentary Downloader")
+    print("=" * 60)
+    print("  UI       : %s" % url)
+    print("  Source   : %s (public API)" % SEFARIA)
+    print("  Cache    : %s" % CACHE_DIR)
+    print("  Saves to : %s" % SAVE_DIR)
+    print("  Stop     : Ctrl+C (or just close this window)")
+    print("=" * 60)
+
+    if "--no-browser" not in sys.argv:
+        threading.Timer(0.6, lambda: webbrowser.open(url)).start()
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print("\nshutting down")
+    finally:
+        httpd.server_close()
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

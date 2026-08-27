@@ -1,0 +1,1507 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sefaria Downloader</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --panel:#ffffff; --ink:#16181d; --muted:#6b7280;
+    --line:#e2e5ea; --accent:#2f6fed; --accent-ink:#ffffff;
+    --ok:#16a34a; --bad:#dc2626; --warn:#b45309; --soft:#eef2f8;
+    --hebrew:"Segoe UI","Arial Hebrew","Noto Sans Hebrew",David,"Times New Roman",serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0f1115; --panel:#171a21; --ink:#e8eaef; --muted:#9aa3b2;
+      --line:#262b35; --accent:#4c8dff; --accent-ink:#0b0d11;
+      --ok:#4ade80; --bad:#f87171; --warn:#fbbf24; --soft:#1d222c;
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:15px/1.5 "Segoe UI",system-ui,-apple-system,sans-serif;
+    height:100vh; display:flex; flex-direction:column; overflow:hidden;
+  }
+  header{
+    padding:12px 20px; border-bottom:1px solid var(--line); background:var(--panel);
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap; flex:none;
+  }
+  h1{font-size:16px; margin:0; font-weight:650; letter-spacing:-.01em}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+  .dot.on{background:var(--ok)} .dot.off{background:var(--bad)}
+  #status{color:var(--muted); font-size:13px; display:flex; align-items:center; gap:7px}
+  .spacer{flex:1}
+
+  input,select,button{
+    font:inherit; font-size:13px; color:var(--ink); background:var(--soft);
+    border:1px solid var(--line); border-radius:8px; padding:7px 11px;
+  }
+  button{cursor:pointer}
+  select:hover,button:hover:not(:disabled){border-color:var(--accent)}
+  input:focus,select:focus{outline:none;border-color:var(--accent)}
+  button.primary{background:var(--accent); color:var(--accent-ink); border-color:var(--accent); font-weight:600}
+  button:disabled{opacity:.45; cursor:not-allowed}
+  button.ghost{background:transparent}
+
+  main{flex:1; display:grid; grid-template-columns:270px 300px 1fr; min-height:0}
+  @media (max-width:1000px){ main{grid-template-columns:200px 230px 1fr} }
+  .col{display:flex; flex-direction:column; min-height:0; min-width:0; background:var(--panel)}
+  .col + .col{border-left:1px solid var(--line)}
+  .col h2{
+    font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted);
+    margin:0; padding:11px 14px 8px; font-weight:600; flex:none;
+    display:flex; align-items:center; gap:8px;
+  }
+  .col h2 .count{font-weight:400; text-transform:none; letter-spacing:0}
+  .search{margin:0 12px 8px; padding:6px 10px; width:calc(100% - 24px); flex:none}
+  .list{flex:1; overflow-y:auto; padding:0 8px 12px}
+  .item{
+    padding:7px 10px; border-radius:7px; cursor:pointer; font-size:13px;
+    display:flex; align-items:baseline; gap:8px; border:1px solid transparent;
+  }
+  .item:hover{background:var(--soft)}
+  .item.sel{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+  .item .he{font-family:var(--hebrew); color:var(--muted); font-size:12px; margin-inline-start:auto; direction:rtl; unicode-bidi:isolate}
+  .item.sel .he{color:var(--accent-ink); opacity:.8}
+  .item .cat{font-size:11px; color:var(--muted); display:block}
+  .item.sel .cat{color:var(--accent-ink); opacity:.75}
+  .item .nm{min-width:0; overflow:hidden; text-overflow:ellipsis}
+  .hint{padding:14px; color:var(--muted); font-size:12.5px; line-height:1.6}
+
+  /* ---- library drill-down ---- */
+  .crumbs{
+    padding:0 12px 8px; font-size:11.5px; color:var(--muted); flex:none;
+    display:flex; flex-wrap:wrap; gap:3px; align-items:center; line-height:1.7;
+  }
+  .crumbs a{color:var(--accent); cursor:pointer; text-decoration:none}
+  .crumbs a:hover{text-decoration:underline}
+  .crumbs .sep{opacity:.5}
+  .crumbs .here{color:var(--ink); font-weight:600}
+  .item.dir{font-weight:600}
+  .item.dir .arrow{flex:none; color:var(--muted); font-size:11px}
+  .item.dir.sel .arrow{color:var(--accent-ink)}
+  .item .kids{
+    flex:none; font-size:10.5px; color:var(--muted); background:var(--soft);
+    border-radius:99px; padding:1px 7px; margin-inline-start:auto;
+  }
+  .item.sel .kids{background:transparent; color:var(--accent-ink); opacity:.8}
+  .item.up{color:var(--muted)}
+  .grouphead{
+    padding:10px 10px 4px; font-size:10.5px; text-transform:uppercase;
+    letter-spacing:.07em; color:var(--muted); font-weight:700;
+  }
+
+  /* ---- reader ---- */
+  .rbar{
+    padding:10px 16px; border-bottom:1px solid var(--line); flex:none;
+    display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+  }
+  .rtitle{font-weight:650; font-size:14px}
+  .rtitle .he{font-family:var(--hebrew); color:var(--muted); font-weight:400; margin-inline-start:8px; direction:rtl; unicode-bidi:isolate}
+
+  .meter{
+    padding:9px 16px; border-bottom:1px solid var(--line); flex:none;
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap; font-size:12.5px;
+  }
+  .bar{flex:1; min-width:120px; height:6px; border-radius:99px; background:var(--soft); overflow:hidden}
+  .bar > i{display:block; height:100%; width:0; background:var(--accent); transition:width .2s}
+  .badge{
+    font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    padding:3px 9px; border-radius:99px; border:1px solid;
+  }
+  .badge.full{color:var(--ok); border-color:var(--ok)}
+  .badge.part{color:var(--warn); border-color:var(--warn)}
+  .badge.busy{color:var(--muted); border-color:var(--line)}
+  .badge.err{color:var(--bad); border-color:var(--bad)}
+  .lic{font-size:11.5px; color:var(--muted)}
+  .lic b{color:var(--ink); font-weight:600}
+
+  #reader{
+    flex:1; overflow-y:auto; padding:6px 0 40px;
+    font-family:var(--hebrew); font-size:17px; line-height:1.8;
+  }
+  .sect{padding:14px 22px 4px; font-size:11px; text-transform:uppercase;
+        letter-spacing:.08em; color:var(--muted); font-family:"Segoe UI",system-ui,sans-serif;
+        font-weight:600; position:sticky; top:0; background:var(--panel);
+        border-bottom:1px solid var(--line); margin-bottom:6px}
+  .seg{padding:5px 22px; display:flex; gap:12px; align-items:baseline}
+  .seg:hover{background:var(--soft)}
+  .seg .n{
+    flex:none; font-family:"Segoe UI",system-ui,sans-serif; font-size:11px;
+    color:var(--muted); min-width:62px; text-align:end; padding-top:4px;
+    direction:ltr; unicode-bidi:isolate;
+  }
+  .seg .t{flex:1; min-width:0; text-align:start; word-wrap:break-word}
+  .seg.gap .t{color:var(--muted); font-style:italic; font-size:14px;
+              font-family:"Segoe UI",system-ui,sans-serif}
+  .seg .t sup{font-size:.7em; color:var(--accent)}
+  .seg .t i.footnote{display:block; font-size:13px; color:var(--muted); margin-top:3px}
+  #reader .empty{padding:40px 24px; color:var(--muted); font-family:"Segoe UI",system-ui,sans-serif;
+                 font-size:13.5px; line-height:1.7; max-width:60ch}
+  #reader .empty h3{font-size:15px; color:var(--ink); margin:0 0 8px}
+  #reader .empty code{background:var(--soft); padding:1px 5px; border-radius:4px; font-size:12px}
+
+  footer{
+    padding:9px 16px; border-top:1px solid var(--line); background:var(--panel);
+    display:flex; gap:8px; align-items:center; flex-wrap:wrap; flex:none; font-size:12px;
+  }
+  #note{color:var(--muted); font-size:12px}
+  #note.bad{color:var(--bad)} #note.ok{color:var(--ok)}
+
+  /* ---- tabs ---- */
+  .tabs{display:flex; gap:4px; margin-inline-start:4px}
+  .tabs button{
+    background:transparent; border:1px solid transparent; font-weight:600;
+    padding:6px 13px; color:var(--muted);
+  }
+  .tabs button:hover{color:var(--ink)}
+  .tabs button.sel{background:var(--soft); border-color:var(--line); color:var(--ink)}
+
+  /* ---- pages ---- */
+  main[hidden]{display:none}
+  #page-lib{grid-template-columns:330px 1fr 320px}
+  @media (max-width:1200px){ #page-lib{grid-template-columns:270px 1fr 260px} }
+
+  /* ---- library tab ---- */
+  .colfoot{
+    padding:8px 10px; border-top:1px solid var(--line); flex:none;
+    display:flex; gap:6px; align-items:center; flex-wrap:wrap; font-size:12px;
+    color:var(--muted);
+  }
+  .colfoot button{padding:5px 9px; font-size:12px}
+  .item .add{
+    flex:none; border:1px solid var(--line); background:var(--panel); color:var(--muted);
+    border-radius:6px; font-size:12px; line-height:1; padding:3px 7px; cursor:pointer;
+    margin-inline-start:auto;
+  }
+  .item .add:hover{border-color:var(--accent); color:var(--accent)}
+  .item .add.in{border-color:var(--ok); color:var(--ok)}
+  .item.sel .add{border-color:var(--accent-ink); color:var(--accent-ink); background:transparent}
+
+  #libBody{flex:1; overflow-y:auto; padding:0 0 30px}
+  .detail{padding:20px 22px; max-width:68ch; font-size:13.5px; line-height:1.7; color:var(--muted)}
+  .detail h3{margin:0 0 10px; font-size:15px; color:var(--ink)}
+  .detail b{color:var(--ink)} .detail p{margin:0 0 10px}
+  .detail code{background:var(--soft); padding:1px 5px; border-radius:4px; font-size:12px}
+  .facts{display:grid; grid-template-columns:auto 1fr; gap:6px 16px; margin:0 0 16px}
+  .facts dt{color:var(--muted); font-size:12px}
+  .detail .sample{font-family:var(--hebrew); font-size:15.5px; line-height:1.75; color:var(--ink)}
+  .detail .sample .n{color:var(--muted); font-family:"Segoe UI",system-ui,sans-serif; font-size:11px}
+  .facts dd{margin:0; color:var(--ink); font-size:13px}
+  .facts dd .he{font-family:var(--hebrew); direction:rtl; unicode-bidi:isolate}
+
+  /* ---- queue ---- */
+  .qbar{
+    padding:9px 10px; border-bottom:1px solid var(--line); flex:none;
+    display:flex; gap:6px; align-items:center; flex-wrap:wrap; font-size:12px;
+  }
+  .qbar select,.qbar button{padding:5px 8px; font-size:12px}
+  .qbar label{display:flex; align-items:center; gap:5px; color:var(--muted); cursor:pointer}
+  .qrow{
+    padding:8px 10px; border:1px solid var(--line); border-radius:8px;
+    margin:6px 0; display:flex; flex-direction:column; gap:5px; font-size:12.5px;
+  }
+  .qrow .top{display:flex; gap:8px; align-items:baseline}
+  .qrow .t{
+    font-weight:600; color:var(--ink); flex:1; min-width:0;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .qrow .sub{color:var(--muted); font-size:11.5px}
+  .qrow .x{
+    flex:none; background:none; border:none; padding:0 2px; cursor:pointer;
+    color:var(--muted); font-size:15px; line-height:1;
+  }
+  .qrow .x:hover{color:var(--bad)}
+  .qrow.run{border-color:var(--accent)}
+  .qrow.done{border-color:var(--ok)}
+  .qrow.part{border-color:var(--warn)}
+  .qrow.fail{border-color:var(--bad)}
+  .qrow .bar{height:4px}
+  .st{font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; flex:none}
+  .st.queued{color:var(--muted)} .st.run{color:var(--accent)}
+  .st.done{color:var(--ok)} .st.part{color:var(--warn)} .st.fail{color:var(--bad)}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Sefaria Downloader</h1>
+  <nav class="tabs" id="tabs">
+    <button data-tab="comm" class="sel">Commentary</button>
+    <button data-tab="lib">Whole library</button>
+  </nav>
+  <div id="status"><span class="dot" id="dot"></span><span id="statusTxt">connecting…</span></div>
+  <div class="spacer"></div>
+  <button class="ghost" id="btnClearSel" title="Start over">Reset</button>
+</header>
+
+<main id="page-comm">
+  <!-- ---------------- books ---------------- -->
+  <section class="col">
+    <h2>1 · Library <span class="count" id="bookCount"></span></h2>
+    <input class="search" id="bookSearch" placeholder="Search every book…" autocomplete="off">
+    <div class="crumbs" id="crumbs"></div>
+    <div class="list" id="bookList"><div class="hint">Loading Sefaria's library…</div></div>
+  </section>
+
+  <!-- ---------------- commentaries ---------------- -->
+  <section class="col">
+    <h2>2 · Commentary <span class="count" id="commCount"></span></h2>
+    <input class="search" id="commSearch" placeholder="Filter commentaries…" autocomplete="off">
+    <div class="list" id="commList"><div class="hint">Pick a book on the left.</div></div>
+  </section>
+
+  <!-- ---------------- reader ---------------- -->
+  <section class="col">
+    <div class="rbar">
+      <span class="rtitle" id="rTitle">3 · Full text</span>
+      <div class="spacer"></div>
+      <label class="sr" for="verSel">Version</label>
+      <select id="verSel" disabled><option>—</option></select>
+      <button id="btnLoad" disabled>Load full text</button>
+      <button class="ghost" id="btnStop" disabled>Stop</button>
+    </div>
+
+    <div class="meter">
+      <span class="badge busy" id="badge">idle</span>
+      <div class="bar"><i id="barFill"></i></div>
+      <span id="mText">—</span>
+      <span class="spacer"></span>
+      <span class="lic" id="licTxt"></span>
+    </div>
+
+    <div id="reader">
+      <div class="empty">
+        <h3>How this works</h3>
+        <p>Pick a <b>book</b>, then a <b>commentary</b> on it. The whole commentary
+        loads into this pane so you can scroll and read it before committing to
+        anything.</p>
+        <p>The bar above tracks coverage against Sefaria's own segment count for
+        that work. It reads <b>COMPLETE</b> only when every section came back with
+        text; otherwise it says <b>PARTIAL</b> and lists what is missing. Download
+        stays available either way — you just always know which one you are getting.</p>
+        <p>Downloads land in your browser's Downloads folder, or next to this app in
+        <code>sefaria_downloads\</code> via <b>Save to folder</b>.</p>
+      </div>
+    </div>
+
+    <footer>
+      <button class="primary" id="dlTxt" disabled>Download .txt</button>
+      <button id="dlMd" disabled>.md</button>
+      <button id="dlJson" disabled>.json</button>
+      <button class="ghost" id="dlSave" disabled>Save to folder</button>
+      <span class="spacer"></span>
+      <span id="note"></span>
+    </footer>
+  </section>
+</main>
+
+<!-- ======================= whole-library tab =========================== -->
+<main id="page-lib" hidden>
+  <!-- ---------------- browse everything ---------------- -->
+  <section class="col">
+    <h2>Every text on Sefaria <span class="count" id="libCount"></span></h2>
+    <input class="search" id="libSearch" placeholder="Search every text…" autocomplete="off">
+    <div class="crumbs" id="libCrumbs"></div>
+    <div class="list" id="libList"><div class="hint">Loading Sefaria's library…</div></div>
+    <div class="colfoot">
+      <button id="libQueueAll" disabled>Queue everything here</button>
+      <span id="libHere"></span>
+    </div>
+  </section>
+
+  <!-- ---------------- the chosen text ---------------- -->
+  <section class="col">
+    <div class="rbar">
+      <span class="rtitle" id="libTitle">Pick any text</span>
+      <div class="spacer"></div>
+      <label class="sr" for="libVer">Version</label>
+      <select id="libVer" disabled><option>—</option></select>
+      <button id="libAdd" disabled>Add to queue</button>
+      <button class="primary" id="libGo" disabled>Download now</button>
+      <button class="ghost" id="libStop" disabled>Stop</button>
+    </div>
+
+    <div class="meter">
+      <span class="badge busy" id="libBadge">idle</span>
+      <div class="bar"><i id="libBar"></i></div>
+      <span id="libMeter">—</span>
+      <span class="spacer"></span>
+      <span class="lic" id="libLic"></span>
+    </div>
+
+    <div id="libBody">
+      <div class="detail">
+        <h3>Download anything in the library</h3>
+        <p>This tab is not limited to commentaries. Every text Sefaria carries is in
+        the tree on the left — Tanakh, Mishnah, Talmud, Midrash, Halakhah, Kabbalah,
+        Chasidut, Liturgy, Jewish Thought, Responsa, and the commentaries too.</p>
+        <p>Click a text to see its structure and the versions available for it, then
+        <b>Download now</b> for a single work, or <b>Add to queue</b> to line up as many
+        as you like and fetch them one after another.</p>
+        <p>The <b>+</b> beside any title queues it without leaving the tree, and
+        <b>Queue everything here</b> takes every text in the section you are browsing,
+        sub-sections included.</p>
+        <p>Format and destination are set once, in the queue column, and apply to
+        <b>Download now</b> as well: with <b>to folder</b> ticked everything lands next
+        to this app in <code>sefaria_downloads\</code>, and unticked it goes to your
+        browser's Downloads folder.</p>
+      </div>
+    </div>
+
+    <footer>
+      <span id="libNote"></span>
+    </footer>
+  </section>
+
+  <!-- ---------------- queue ---------------- -->
+  <section class="col">
+    <h2>Download queue <span class="count" id="qCount"></span></h2>
+    <div class="qbar">
+      <label class="sr" for="qLang">Language</label>
+      <select id="qLang" title="Which version to take for queued texts">
+        <option value="english">English</option>
+        <option value="hebrew">Hebrew / original</option>
+      </select>
+      <label class="sr" for="qFmt">Format</label>
+      <select id="qFmt" title="File format">
+        <option value="txt">.txt</option>
+        <option value="md">.md</option>
+        <option value="json">.json</option>
+      </select>
+      <label title="Write into sefaria_downloads\ instead of the browser's Downloads folder">
+        <input type="checkbox" id="qSave" checked> to folder
+      </label>
+      <span class="spacer"></span>
+      <button class="primary" id="qStart" disabled>Start</button>
+      <button class="ghost" id="qStopB" disabled>Stop</button>
+      <button class="ghost" id="qClear" disabled>Clear</button>
+    </div>
+    <div class="list" id="qList"><div class="hint">Nothing queued yet.</div></div>
+  </section>
+</main>
+
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+
+const el = {
+  dot: $("#dot"), statusTxt: $("#statusTxt"),
+  bookList: $("#bookList"), bookSearch: $("#bookSearch"), bookCount: $("#bookCount"),
+  crumbs: $("#crumbs"),
+  commList: $("#commList"), commSearch: $("#commSearch"), commCount: $("#commCount"),
+  rTitle: $("#rTitle"), verSel: $("#verSel"), btnLoad: $("#btnLoad"), btnStop: $("#btnStop"),
+  badge: $("#badge"), barFill: $("#barFill"), mText: $("#mText"), licTxt: $("#licTxt"),
+  reader: $("#reader"), note: $("#note"),
+  dlTxt: $("#dlTxt"), dlMd: $("#dlMd"), dlJson: $("#dlJson"), dlSave: $("#dlSave"),
+};
+
+/* Everything about the download currently on screen. `sections` is kept in ref
+   order regardless of the order responses arrive in, so the reader and every
+   export read top-to-bottom correctly. */
+let toc = [], flat = [], path = [];   // library tree, search index, current trail
+let bookSel = null, comms = [], commSel = null;
+let book = null;                 // /api/book payload for the selected commentary
+let run = null;                  // { abort, sections, done, segs, chars, missing }
+
+// ---------------------------------------------------------------- helpers
+
+function say(msg, kind) {
+  el.note.textContent = msg || "";
+  el.note.className = kind || "";
+}
+
+async function api(path) {
+  const r = await fetch(path);
+  const d = await r.json().catch(() => ({ ok: false, error: "bad JSON from server" }));
+  if (!d.ok) throw new Error(d.error || ("HTTP " + r.status));
+  return d;
+}
+
+/* Sefaria segments carry light markup (<b>, <i>, <sup>, footnotes). Keep the
+   formatting, drop anything executable. */
+const ALLOWED = new Set(["B","I","EM","STRONG","SUP","SUB","BIG","SMALL","SPAN","BR","U"]);
+function sanitize(html) {
+  const box = document.createElement("div");
+  box.innerHTML = String(html == null ? "" : html);
+  for (const node of [...box.querySelectorAll("*")]) {
+    if (!ALLOWED.has(node.tagName)) { node.replaceWith(...node.childNodes); continue; }
+    for (const a of [...node.attributes]) {
+      if (a.name !== "class") node.removeAttribute(a.name);
+    }
+  }
+  return box.innerHTML;
+}
+
+function plain(html) {
+  const box = document.createElement("div");
+  box.innerHTML = String(html == null ? "" : html)
+    .replace(/<\/(p|div|li|h\d)>/gi, "\n")
+    .replace(/<br\s*\/?>/gi, "\n");
+  return (box.textContent || "").replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
+}
+
+function isHebrewish(s) { return /[֐-׿]/.test(s || ""); }
+
+function download(name, text, mime) {
+  const url = URL.createObjectURL(new Blob([text], { type: (mime || "text/plain") + ";charset=utf-8" }));
+  const a = document.createElement("a");
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+function slug(s) { return String(s).replace(/[^\w֐-׿]+/g, "_").replace(/^_|_$/g, ""); }
+
+// ---------------------------------------------------------------- 1. books
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+
+const isDir = n => Array.isArray(n.contents);
+const dirName = n => n.category || n.heCategory || "";
+
+async function loadToc() {
+  try {
+    const d = await api("/api/toc");
+    toc = (d.toc || []).filter(n => isDir(n) || n.title);
+    // A flat index alongside the tree, so search can cut across the whole
+    // library without the user having to know where a book lives.
+    flat = [];
+    (function walk(nodes, trail) {
+      for (const n of nodes || []) {
+        if (isDir(n)) walk(n.contents, trail.concat(dirName(n)));
+        else if (n.title) flat.push({
+          title: n.title, he: n.heTitle || "",
+          cat: trail.filter(Boolean).join(" › "),
+        });
+      }
+    })(toc, []);
+    flat.sort((a, b) => a.title.localeCompare(b.title));
+    path = [];
+    el.dot.className = "dot on";
+    el.statusTxt.textContent = "Sefaria reachable · " + flat.length.toLocaleString() + " texts";
+    renderLibrary();
+    renderLib();
+    renderQueue();
+  } catch (e) {
+    el.dot.className = "dot off";
+    el.statusTxt.textContent = "offline";
+    const oops = '<div class="hint">Could not load the library.<br><br>' +
+      escapeHtml(e.message) + "</div>";
+    el.bookList.innerHTML = oops;
+    L.list.innerHTML = oops;
+  }
+}
+
+/* Where we currently are in the tree. */
+function here() {
+  return path.length ? path[path.length - 1].contents : toc;
+}
+
+function renderCrumbs() {
+  if (el.bookSearch.value.trim()) {
+    el.crumbs.innerHTML = '<span class="here">Search results</span>' +
+      '<span class="sep">·</span><a data-i="-1">clear</a>';
+  } else if (!path.length) {
+    el.crumbs.innerHTML = '<span class="here">Library</span>';
+  } else {
+    const parts = ['<a data-i="-1">Library</a>'];
+    path.forEach((n, i) => {
+      parts.push('<span class="sep">›</span>');
+      parts.push(i === path.length - 1
+        ? '<span class="here">' + escapeHtml(dirName(n)) + "</span>"
+        : '<a data-i="' + i + '">' + escapeHtml(dirName(n)) + "</a>");
+    });
+    el.crumbs.innerHTML = parts.join("");
+  }
+  el.crumbs.querySelectorAll("a").forEach(a => a.onclick = () => {
+    const i = +a.dataset.i;
+    el.bookSearch.value = "";
+    path = i < 0 ? [] : path.slice(0, i + 1);
+    renderLibrary();
+  });
+}
+
+function renderLibrary() {
+  renderCrumbs();
+  const qs = el.bookSearch.value.trim().toLowerCase();
+
+  if (qs) return renderSearch(qs);
+
+  const nodes = here();
+  const dirs = nodes.filter(isDir);
+  const leaves = nodes.filter(n => !isDir(n) && n.title);
+  el.bookCount.textContent = (dirs.length ? dirs.length + " sections" : "") +
+    (dirs.length && leaves.length ? " · " : "") +
+    (leaves.length ? leaves.length + " texts" : "");
+
+  let html = "";
+  if (path.length) {
+    html += '<div class="item up" data-up="1"><span class="arrow">↑</span>' +
+            '<span class="nm">Back</span></div>';
+  }
+  if (dirs.length) {
+    if (leaves.length) html += '<div class="grouphead">Sections</div>';
+    html += dirs.map((n, i) =>
+      '<div class="item dir" data-dir="' + i + '">' +
+        '<span class="arrow">▸</span>' +
+        '<span class="nm">' + escapeHtml(dirName(n)) + "</span>" +
+        (n.heCategory ? '<span class="he">' + escapeHtml(n.heCategory) + "</span>" : "") +
+        '<span class="kids">' + n.contents.length + "</span>" +
+      "</div>").join("");
+  }
+  if (leaves.length) {
+    if (dirs.length) html += '<div class="grouphead">Texts</div>';
+    html += leaves.map(n =>
+      '<div class="item' + (bookSel === n.title ? " sel" : "") + '" data-t="' +
+        escapeHtml(n.title) + '">' +
+        '<span class="nm">' + escapeHtml(n.title) + "</span>" +
+        (n.heTitle ? '<span class="he">' + escapeHtml(n.heTitle) + "</span>" : "") +
+      "</div>").join("");
+  }
+  el.bookList.innerHTML = html || '<div class="hint">Nothing here.</div>';
+
+  el.bookList.querySelectorAll("[data-up]").forEach(n =>
+    n.onclick = () => { path.pop(); renderLibrary(); });
+  el.bookList.querySelectorAll("[data-dir]").forEach(n =>
+    n.onclick = () => { path.push(dirs[+n.dataset.dir]); el.bookList.scrollTop = 0; renderLibrary(); });
+  el.bookList.querySelectorAll("[data-t]").forEach(n =>
+    n.onclick = () => pickBook(n.dataset.t));
+}
+
+function renderSearch(qs) {
+  const hit = flat.filter(b => b.title.toLowerCase().includes(qs) ||
+                               b.he.includes(qs) ||
+                               b.cat.toLowerCase().includes(qs));
+  el.bookCount.textContent = hit.length + " / " + flat.length;
+  const view = hit.slice(0, 300);
+  el.bookList.innerHTML = view.length
+    ? view.map(b =>
+        '<div class="item' + (bookSel === b.title ? " sel" : "") + '" data-t="' +
+          escapeHtml(b.title) + '">' +
+          '<span class="nm">' + escapeHtml(b.title) +
+            '<span class="cat">' + escapeHtml(b.cat) + "</span></span>" +
+          (b.he ? '<span class="he">' + escapeHtml(b.he) + "</span>" : "") +
+        "</div>").join("") +
+      (hit.length > view.length
+        ? '<div class="hint">…' + (hit.length - view.length) + " more. Keep typing to narrow.</div>" : "")
+    : '<div class="hint">Nothing matches that.</div>';
+  el.bookList.querySelectorAll("[data-t]").forEach(n =>
+    n.onclick = () => pickBook(n.dataset.t));
+}
+
+// ---------------------------------------------------------------- 2. commentaries
+
+async function pickBook(title) {
+  bookSel = title;
+  commSel = null;
+  renderLibrary();
+  resetReader();
+  el.commCount.textContent = "";
+  el.commList.innerHTML = '<div class="hint">Finding commentaries on <b>' +
+    escapeHtml(title) + "</b>…<br><br>Sampling link data across the whole book, " +
+    "so commentators who only appear in later chapters still show up. " +
+    "First look at a book takes a few seconds; after that it is cached.</div>";
+  try {
+    const d = await api("/api/commentaries?title=" + encodeURIComponent(title) + "&samples=14");
+    comms = d.commentaries || [];
+    renderComms(d);
+  } catch (e) {
+    el.commList.innerHTML = '<div class="hint">Could not list commentaries.<br><br>' +
+      escapeHtml(e.message) + "</div>";
+  }
+}
+
+function renderComms(meta) {
+  const qs = el.commSearch.value.trim().toLowerCase();
+  const hit = qs ? comms.filter(c => c.name.toLowerCase().includes(qs) ||
+                                     c.indexTitle.toLowerCase().includes(qs) ||
+                                     (c.heName || "").includes(qs)) : comms;
+  el.commCount.textContent = qs ? hit.length + " / " + comms.length : comms.length;
+
+  // The base text itself is always offered first. Having drilled down to
+  // Berakhot or Genesis, wanting to read and download *that* is at least as
+  // likely as wanting a commentary on it.
+  const self = '<div class="grouphead">The text itself</div>' +
+    '<div class="item' + (commSel === bookSel ? " sel" : "") + '" data-t="' +
+      escapeHtml(bookSel) + '"><span class="nm">' + escapeHtml(bookSel) +
+      '<span class="cat">the base text, not a commentary</span></span></div>';
+
+  if (!comms.length) {
+    el.commList.innerHTML = self +
+      '<div class="hint">Sefaria lists no commentaries linked to this text.</div>';
+    el.commList.querySelectorAll("[data-t]").forEach(n =>
+      n.onclick = () => pickComm(n.dataset.t));
+    return;
+  }
+  const rows = hit.map(c =>
+    '<div class="item' + (commSel === c.indexTitle ? " sel" : "") + '" data-t="' + escapeHtml(c.indexTitle) + '">' +
+      '<span class="nm">' + escapeHtml(c.name) +
+        '<span class="cat">' + escapeHtml(c.indexTitle) + "</span></span>" +
+      (c.heName ? '<span class="he">' + escapeHtml(c.heName) + "</span>" : "") +
+    "</div>").join("");
+  el.commList.innerHTML = self + '<div class="grouphead">Commentaries</div>' +
+    (rows || '<div class="hint">No commentary matches that filter.</div>');
+
+  if (meta && meta.sampledSections) {
+    el.commList.insertAdjacentHTML("beforeend",
+      '<div class="hint">Sampled ' + meta.sampledSections + " of " + meta.totalSections +
+      " sections. Rare commentators may be missed — use the filter box to search by name.</div>");
+  }
+  el.commList.querySelectorAll(".item").forEach(n =>
+    n.onclick = () => pickComm(n.dataset.t));
+}
+
+async function pickComm(indexTitle) {
+  commSel = indexTitle;
+  renderComms();
+  resetReader();
+  el.rTitle.textContent = indexTitle;
+  el.reader.innerHTML = '<div class="empty">Reading the structure of <b>' +
+    escapeHtml(indexTitle) + "</b>…</div>";
+  try {
+    book = await api("/api/book?title=" + encodeURIComponent(indexTitle));
+    el.rTitle.innerHTML = escapeHtml(book.title) +
+      (book.heTitle ? '<span class="he">' + escapeHtml(book.heTitle) + "</span>" : "");
+    fillVersions(el.verSel, el.licTxt, book.versions);
+    el.btnLoad.disabled = false;
+    el.mText.textContent = book.sections + " sections · " +
+      (book.expectedSegments || "?") + " segments in the original";
+    el.reader.innerHTML = '<div class="empty"><h3>Ready</h3><p><b>' +
+      escapeHtml(book.title) + "</b> has " + book.sections + " sections and " +
+      (book.expectedSegments || "?") + " comment segments in the original.</p>" +
+      "<p>Choose a version above, then hit <b>Load full text</b> to pull it all in and read it here. " +
+      "Translations often cover fewer segments than the original — that is normal, and the " +
+      "check below accounts for it.</p></div>";
+    say("");
+  } catch (e) {
+    el.reader.innerHTML = '<div class="empty"><h3>Could not open that</h3><p>' +
+      escapeHtml(e.message) + "</p></div>";
+  }
+}
+
+/* Both tabs offer the same version menu, so it is built against whichever
+   <select> asked for it rather than the commentary tab's one. */
+function fillVersions(sel, out, versions) {
+  const vs = versions || [];
+  sel.innerHTML = "";
+  // Sensible defaults first: they always resolve even when no version is named.
+  const add = (val, label) => {
+    const o = document.createElement("option");
+    o.value = val; o.textContent = label;
+    sel.appendChild(o);
+  };
+  add("english", "English (Sefaria's default)");
+  add("hebrew", "Hebrew / original");
+  if (vs.length) {
+    const g = document.createElement("optgroup");
+    g.label = "Specific versions";
+    for (const v of vs) {
+      const o = document.createElement("option");
+      o.value = v.selector;
+      o.textContent = v.versionTitle + "  [" + (v.actualLanguage || v.language) + " · " + v.license + "]";
+      o.dataset.license = v.license;
+      o.dataset.source = v.source || "";
+      g.appendChild(o);
+    }
+    sel.appendChild(g);
+  }
+  sel.disabled = false;
+  showLicense(sel, out);
+}
+
+function showLicense(sel, out) {
+  const o = sel.selectedOptions[0];
+  const lic = o && o.dataset.license;
+  out.innerHTML = lic
+    ? "License: <b>" + escapeHtml(lic) + "</b>"
+    : "License shown once text loads";
+}
+
+// ---------------------------------------------------------------- 3. load full text
+
+function resetReader() {
+  if (run) run.abort = true;
+  run = null;
+  book = null;
+  el.verSel.disabled = true; el.verSel.innerHTML = "<option>—</option>";
+  el.btnLoad.disabled = true; el.btnStop.disabled = true;
+  el.badge.className = "badge busy"; el.badge.textContent = "idle";
+  el.barFill.style.width = "0"; el.mText.textContent = "—"; el.licTxt.textContent = "";
+  setExports(false);
+  say("");
+}
+
+function setExports(on) {
+  for (const b of [el.dlTxt, el.dlMd, el.dlJson, el.dlSave]) b.disabled = !on;
+}
+
+/* A fresh run record: everything one whole-work download accumulates. */
+function newRun(bk, version) {
+  return {
+    abort: false, version,
+    sections: new Array(bk.refs.length).fill(null),
+    done: 0, segs: 0, chars: 0,
+    gaps: [],      // source has content here, this version returned none
+    failed: [],    // the request itself failed
+    license: "", versionTitle: "", dir: "ltr",
+  };
+}
+
+/* Pull every section of `bk` into `st`, `conc` requests at a time.
+ *
+ * Both tabs download the same way and only differ in what they do as sections
+ * land — the commentary tab paints them into a reader, the library tab just
+ * moves a progress bar — so the fetching lives here once and the caller passes
+ * hooks. Setting st.abort from outside stops the workers between sections.
+ */
+async function fetchWork(bk, st, hooks, conc) {
+  hooks = hooks || {};
+  let next = 0;
+  const worker = async () => {
+    while (!st.abort) {
+      const i = next++;
+      if (i >= bk.refs.length) return;
+      const ref = bk.refs[i];
+      try {
+        const d = await api("/api/text?ref=" + encodeURIComponent(ref) +
+                            "&version=" + encodeURIComponent(st.version));
+        if (st.abort) return;
+        st.sections[i] = d;
+        if (d.license && !st.license) {
+          st.license = d.license;
+          st.versionTitle = d.versionTitle || "";
+          st.dir = d.direction || "ltr";
+        }
+        const real = (d.segments || []).filter(x => plain(x.text).length);
+        st.segs += real.length;
+        for (const x of real) st.chars += plain(x.text).length;
+        // A gap is a section the source says has content but this version
+        // returned nothing for. A section that is empty in the source too is
+        // not a gap — there is simply no comment there.
+        if (!real.length && expectedAt(bk, i) > 0) st.gaps.push(ref);
+        if (hooks.section) hooks.section(i, ref, d);
+      } catch (e) {
+        if (st.abort) return;
+        st.sections[i] = { ref, segments: [], error: e.message };
+        st.failed.push(ref);
+        if (hooks.section) hooks.section(i, ref, { segments: [], error: e.message });
+      }
+      st.done++;
+      if (hooks.progress) hooks.progress(st);
+    }
+  };
+  await Promise.all(Array.from({ length: conc || 4 }, worker));
+  score(bk, st);
+  return st;
+}
+
+/* The completeness verdict.
+ *
+ * The obvious test — "did we get as many segments as Sefaria's shape says?" —
+ * is wrong, and quietly so. Shape describes the primary (usually Hebrew) text.
+ * Rashi on Genesis has 2017 Hebrew segments but the 1929 Silbermann English
+ * translates only 1239 of them. That download is complete; the translation is
+ * simply shorter. Scoring it against the Hebrew count would stamp a perfect
+ * download PARTIAL and send you hunting for text that was never there.
+ *
+ * So completeness is structural: every section fetched without error, and no
+ * section that the source says has content came back empty. The ratio against
+ * the source is kept as context about the version, not as a grade.
+ */
+function score(bk, st) {
+  const allFetched = st.done === bk.refs.length && !st.abort;
+  const clean = st.failed.length === 0 && st.gaps.length === 0;
+  st.complete = allFetched && clean && st.segs > 0;
+  st.ratio = bk.expectedSegments ? st.segs / bk.expectedSegments : null;
+}
+
+/* How many segments the source structure has in section i. Sefaria's shape
+   describes the primary text, so this is a yardstick, not a quota. */
+function expectedAt(bk, i) {
+  return (bk && bk.perSection && bk.perSection[i]) || 0;
+}
+
+async function loadFull() {
+  if (!book || !book.refs.length) return;
+  const bk = book;
+  const state = run = newRun(bk, el.verSel.value);
+
+  el.btnLoad.disabled = true; el.btnStop.disabled = false;
+  setExports(false);
+  el.reader.innerHTML = "";
+  el.badge.className = "badge busy"; el.badge.textContent = "loading";
+  say("");
+
+  // Placeholders up front so sections render in ref order no matter which
+  // response lands first.
+  const frag = document.createDocumentFragment();
+  bk.refs.forEach((ref, i) => {
+    const wrap = document.createElement("div");
+    wrap.id = "s" + i;
+    wrap.innerHTML = '<div class="sect">' + escapeHtml(ref) + "</div>" +
+                     '<div class="seg gap"><span class="n"></span><span class="t">loading…</span></div>';
+    frag.appendChild(wrap);
+  });
+  el.reader.appendChild(frag);
+
+  // 4 in flight matches the server's upstream gate.
+  await fetchWork(bk, state, { section: paintSection, progress }, 4);
+  if (state.abort) { say("Stopped. Partial text is still on screen and downloadable."); }
+  finish(state);
+}
+
+function paintSection(i, ref, d) {
+  const wrap = document.getElementById("s" + i);
+  if (!wrap) return;
+  const segs = (d.segments || []).filter(s => plain(s.text).length);
+  let html = '<div class="sect">' + escapeHtml(ref) +
+             (segs.length ? "  ·  " + segs.length + (segs.length === 1 ? " comment" : " comments") : "") +
+             "</div>";
+  if (d.error) {
+    html += '<div class="seg gap"><span class="n">!</span><span class="t">failed: ' +
+            escapeHtml(d.error) + "</span></div>";
+  } else if (!segs.length) {
+    html += '<div class="seg gap"><span class="n">—</span><span class="t">no text in this version</span></div>';
+  } else {
+    for (const s of segs) {
+      const label = s.ref.startsWith(ref) ? s.ref.slice(ref.length).replace(/^:/, "") : s.ref;
+      const body = sanitize(s.text);
+      html += '<div class="seg"><span class="n">' + escapeHtml(label || "•") +
+              '</span><span class="t" dir="auto">' + body + "</span></div>";
+    }
+  }
+  wrap.innerHTML = html;
+}
+
+function progress(state) {
+  const pct = Math.round(100 * state.done / book.refs.length);
+  el.barFill.style.width = pct + "%";
+  el.mText.textContent = state.done + " / " + book.refs.length + " sections · " +
+    state.segs + " segments · " + state.chars.toLocaleString() + " chars";
+  if (state.license) {
+    el.licTxt.innerHTML = "License: <b>" + escapeHtml(state.license) + "</b>" +
+      (state.versionTitle ? " · " + escapeHtml(state.versionTitle) : "");
+  }
+}
+
+/* Render the verdict score() reached. */
+function finish(state) {
+  el.btnLoad.disabled = false; el.btnStop.disabled = true;
+  const expected = book.expectedSegments || 0;
+  const complete = state.complete;
+
+  el.badge.className = "badge " + (complete ? "full" : (state.segs ? "part" : "err"));
+  el.badge.textContent = complete ? "complete" : (state.segs ? "partial" : "empty");
+
+  const bits = [state.segs.toLocaleString() + " segments",
+                state.chars.toLocaleString() + " chars"];
+  if (state.abort) bits.push("stopped at " + state.done + "/" + book.refs.length);
+  if (state.failed.length) bits.push(state.failed.length + " section(s) failed: " +
+    state.failed.slice(0, 4).join(", ") + (state.failed.length > 4 ? ", …" : ""));
+  if (state.gaps.length) bits.push(state.gaps.length + " section(s) empty in this version: " +
+    state.gaps.slice(0, 4).join(", ") + (state.gaps.length > 4 ? ", …" : ""));
+  el.mText.textContent = bits.join(" · ");
+
+  if (!state.segs) {
+    say("This version has no text for this work — pick another version above.", "bad");
+    setExports(false);
+    return;
+  }
+  setExports(true);
+
+  if (complete) {
+    // Say plainly when a version is complete but thinner than the original, so
+    // a legitimately shorter translation is not mistaken for a failed download.
+    const thin = state.ratio !== null && state.ratio < 0.95;
+    say(thin
+      ? "Full text of this version — all " + book.refs.length + " sections. It covers " +
+        state.segs.toLocaleString() + " of the " + expected.toLocaleString() +
+        " segments in the original (" + Math.round(100 * state.ratio) +
+        "%); this translation is simply shorter, nothing is missing."
+      : "Full text confirmed — all " + book.refs.length + " sections, nothing missing.",
+      "ok");
+  } else {
+    say("Incomplete — downloads will contain exactly what you see above.", "");
+  }
+}
+
+// ---------------------------------------------------------------- exports
+
+/* Render a finished run as a file. Takes the work and its run explicitly, so
+   the library tab can build a file for a book it never put on screen. */
+function buildText(fmt, bk, s) {
+  const head = [
+    bk.title + (bk.heTitle ? "  /  " + bk.heTitle : ""),
+    "Source: Sefaria (https://www.sefaria.org/" + encodeURIComponent(bk.title.replace(/ /g, "_")) + ")",
+    "Version: " + (s.versionTitle || s.version),
+    "License: " + (s.license || "unknown"),
+    "Status: " + (s.complete ? "COMPLETE" : "PARTIAL") +
+      " — " + s.done + " of " + bk.refs.length + " sections fetched",
+    "Coverage: " + s.segs + " segments" +
+      (bk.expectedSegments
+        ? " (the original has " + bk.expectedSegments +
+          "; translations often cover fewer)" : ""),
+    s.failed.length ? "Failed sections: " + s.failed.join(", ") : "",
+    s.gaps.length ? "Empty in this version: " + s.gaps.join(", ") : "",
+    "Retrieved: " + new Date().toISOString().slice(0, 19).replace("T", " "),
+  ].filter(Boolean);
+
+  if (fmt === "json") {
+    return JSON.stringify({
+      title: bk.title, heTitle: bk.heTitle,
+      version: s.versionTitle || s.version, license: s.license || "unknown",
+      source: "https://www.sefaria.org/api",
+      complete: !!s.complete, segments: s.segs,
+      sectionsFetched: s.done, sectionsTotal: bk.refs.length,
+      sourceSegments: bk.expectedSegments || null,
+      failedSections: s.failed, emptySections: s.gaps,
+      retrieved: new Date().toISOString(),
+      sections: bk.refs.map((ref, i) => ({
+        ref,
+        segments: ((s.sections[i] || {}).segments || [])
+          .filter(x => plain(x.text).length)
+          .map(x => ({ ref: x.ref, text: plain(x.text), html: x.text })),
+      })),
+    }, null, 2);
+  }
+
+  const md = fmt === "md";
+  const out = [];
+  out.push(md ? "# " + head[0] : head[0]);
+  out.push(md ? "" : "=".repeat(Math.min(head[0].length, 70)));
+  for (const line of head.slice(1)) out.push(md ? "> " + line : line);
+  out.push("");
+
+  bk.refs.forEach((ref, i) => {
+    const segs = ((s.sections[i] || {}).segments || []).filter(x => plain(x.text).length);
+    if (!segs.length) return;
+    out.push(md ? "## " + ref : "\n[" + ref + "]");
+    out.push("");
+    for (const seg of segs) {
+      const label = seg.ref.startsWith(ref) ? seg.ref.slice(ref.length).replace(/^:/, "") : seg.ref;
+      const body = plain(seg.text);
+      out.push(md ? "**" + (label || "•") + "** " + body : (label ? label + ". " : "") + body);
+      out.push("");
+    }
+  });
+  return out.join("\n").replace(/\n{3,}/g, "\n\n") + "\n";
+}
+
+function baseName(bk, s) {
+  return slug(bk.title) + "__" + slug(s.versionTitle || s.version) +
+    (s.complete ? "__full" : "__partial");
+}
+
+const MIME = { txt: "text/plain", md: "text/markdown", json: "application/json" };
+
+/* Write a finished file to the app's folder, returning where it landed. */
+async function saveToFolder(name, text) {
+  const r = await fetch("/api/save", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, text }),
+  });
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.error);
+  return d;
+}
+
+el.dlTxt.onclick = () => download(baseName(book, run) + ".txt", buildText("txt", book, run), MIME.txt);
+el.dlMd.onclick = () => download(baseName(book, run) + ".md", buildText("md", book, run), MIME.md);
+el.dlJson.onclick = () => download(baseName(book, run) + ".json", buildText("json", book, run), MIME.json);
+
+el.dlSave.onclick = async () => {
+  say("saving…");
+  try {
+    const d = await saveToFolder(baseName(book, run) + ".txt", buildText("txt", book, run));
+    say("Saved to " + d.path + " (" + d.bytes.toLocaleString() + " bytes)", "ok");
+  } catch (e) {
+    say("Save failed: " + e.message, "bad");
+  }
+};
+
+// ==================================================================
+// Whole-library tab
+//
+// The commentary tab is a guided path: pick a book, pick a commentary on it,
+// read it, download it. This tab is deliberately flat. Anything Sefaria
+// indexes — Tanakh, Mishnah, Talmud, Midrash, Halakhah, Kabbalah, Liturgy,
+// commentaries, all of it — is one click from a file, and a queue covers the
+// case where "anything" means fifty things at once.
+// ==================================================================
+
+const L = {
+  list: $("#libList"), search: $("#libSearch"), count: $("#libCount"),
+  crumbs: $("#libCrumbs"), here: $("#libHere"), queueAll: $("#libQueueAll"),
+  title: $("#libTitle"), ver: $("#libVer"), add: $("#libAdd"), go: $("#libGo"),
+  stop: $("#libStop"), badge: $("#libBadge"), bar: $("#libBar"),
+  meter: $("#libMeter"), lic: $("#libLic"), body: $("#libBody"), note: $("#libNote"),
+  qList: $("#qList"), qCount: $("#qCount"), qLang: $("#qLang"), qFmt: $("#qFmt"),
+  qSave: $("#qSave"), qStart: $("#qStart"), qStop: $("#qStopB"), qClear: $("#qClear"),
+};
+
+let libPath = [], libSel = null, libBook = null, libRun = null;
+let queue = [], qBusy = false, qHalt = false, qCurrent = null;
+
+function libSay(msg, kind) {
+  L.note.textContent = msg || "";
+  L.note.className = kind || "";
+}
+
+// ---------------------------------------------------------------- browsing
+
+function libHere() {
+  return libPath.length ? libPath[libPath.length - 1].contents : toc;
+}
+
+/* Every text under these nodes, however deep they nest. "Queue everything
+   here" has to mean everything, not just the titles that happen to sit at
+   the level currently on screen. */
+function textsUnder(nodes, out) {
+  out = out || [];
+  for (const n of nodes || []) {
+    if (isDir(n)) textsUnder(n.contents, out);
+    else if (n.title) out.push(n.title);
+  }
+  return out;
+}
+
+const queued = t => queue.some(j => j.title === t);
+
+function textRow(title, he, cat) {
+  const inQ = queued(title);
+  return '<div class="item' + (libSel === title ? " sel" : "") +
+      '" data-t="' + escapeHtml(title) + '">' +
+    '<span class="nm">' + escapeHtml(title) +
+      (cat ? '<span class="cat">' + escapeHtml(cat) + "</span>" : "") + "</span>" +
+    (he ? '<span class="he">' + escapeHtml(he) + "</span>" : "") +
+    '<button class="add' + (inQ ? " in" : "") + '" data-add="' + escapeHtml(title) +
+      '" title="' + (inQ ? "Already in the queue" : "Add to the download queue") +
+      '">' + (inQ ? "\u2713" : "+") + "</button>" +
+  "</div>";
+}
+
+function libCrumbs() {
+  if (L.search.value.trim()) {
+    L.crumbs.innerHTML = '<span class="here">Search results</span>' +
+      '<span class="sep">·</span><a data-i="-1">clear</a>';
+  } else if (!libPath.length) {
+    L.crumbs.innerHTML = '<span class="here">Library</span>';
+  } else {
+    const parts = ['<a data-i="-1">Library</a>'];
+    libPath.forEach((n, i) => {
+      parts.push('<span class="sep">›</span>');
+      parts.push(i === libPath.length - 1
+        ? '<span class="here">' + escapeHtml(dirName(n)) + "</span>"
+        : '<a data-i="' + i + '">' + escapeHtml(dirName(n)) + "</a>");
+    });
+    L.crumbs.innerHTML = parts.join("");
+  }
+  L.crumbs.querySelectorAll("a").forEach(a => a.onclick = () => {
+    const i = +a.dataset.i;
+    L.search.value = "";
+    libPath = i < 0 ? [] : libPath.slice(0, i + 1);
+    renderLib();
+  });
+}
+
+function renderLib() {
+  if (!toc.length) return;
+  libCrumbs();
+  const qs = L.search.value.trim().toLowerCase();
+
+  if (qs) {
+    const hit = flat.filter(b => b.title.toLowerCase().includes(qs) ||
+                                 b.he.includes(qs) ||
+                                 b.cat.toLowerCase().includes(qs));
+    L.count.textContent = hit.length + " / " + flat.length;
+    const view = hit.slice(0, 400);
+    L.list.innerHTML = view.length
+      ? view.map(b => textRow(b.title, b.he, b.cat)).join("") +
+        (hit.length > view.length
+          ? '<div class="hint">…' + (hit.length - view.length) +
+            " more. Keep typing to narrow — the queue button below takes all " +
+            hit.length + " matches, listed or not.</div>" : "")
+      : '<div class="hint">Nothing matches that.</div>';
+    libTargets = hit.map(b => b.title);
+    L.here.textContent = hit.length + " matching";
+  } else {
+    const nodes = libHere();
+    const dirs = nodes.filter(isDir);
+    const leaves = nodes.filter(n => !isDir(n) && n.title);
+    L.count.textContent = (dirs.length ? dirs.length + " sections" : "") +
+      (dirs.length && leaves.length ? " · " : "") +
+      (leaves.length ? leaves.length + " texts" : "");
+
+    let html = "";
+    if (libPath.length) {
+      html += '<div class="item up" data-up="1"><span class="arrow">↑</span>' +
+              '<span class="nm">Back</span></div>';
+    }
+    if (dirs.length) {
+      if (leaves.length) html += '<div class="grouphead">Sections</div>';
+      html += dirs.map((n, i) =>
+        '<div class="item dir" data-dir="' + i + '">' +
+          '<span class="arrow">▸</span>' +
+          '<span class="nm">' + escapeHtml(dirName(n)) + "</span>" +
+          (n.heCategory ? '<span class="he">' + escapeHtml(n.heCategory) + "</span>" : "") +
+          '<span class="kids">' + textsUnder(n.contents).length + "</span>" +
+        "</div>").join("");
+    }
+    if (leaves.length) {
+      if (dirs.length) html += '<div class="grouphead">Texts</div>';
+      html += leaves.map(n => textRow(n.title, n.heTitle || "", "")).join("");
+    }
+    L.list.innerHTML = html || '<div class="hint">Nothing here.</div>';
+
+    libTargets = textsUnder(nodes);
+    L.here.textContent = libTargets.length + " text" + (libTargets.length === 1 ? "" : "s") +
+      (libPath.length ? " in " + dirName(libPath[libPath.length - 1]) : " in the library");
+
+    L.list.querySelectorAll("[data-up]").forEach(n =>
+      n.onclick = () => { libPath.pop(); L.list.scrollTop = 0; renderLib(); });
+    L.list.querySelectorAll("[data-dir]").forEach(n =>
+      n.onclick = () => { libPath.push(dirs[+n.dataset.dir]); L.list.scrollTop = 0; renderLib(); });
+  }
+
+  L.queueAll.disabled = !libTargets.length;
+  L.queueAll.textContent = "Queue all " + libTargets.length;
+
+  L.list.querySelectorAll("[data-add]").forEach(b => b.onclick = e => {
+    e.stopPropagation();               // the row behind it opens the text
+    qAdd(b.dataset.add);
+  });
+  L.list.querySelectorAll("[data-t]").forEach(n =>
+    n.onclick = () => pickLib(n.dataset.t));
+}
+
+let libTargets = [];   // what "Queue all" would take, given the current view
+
+// ---------------------------------------------------------------- one text
+
+function libReset() {
+  if (libRun) libRun.abort = true;
+  libRun = null;
+  L.ver.disabled = true; L.ver.innerHTML = "<option>—</option>";
+  L.add.disabled = true; L.go.disabled = true; L.stop.disabled = true;
+  L.badge.className = "badge busy"; L.badge.textContent = "idle";
+  L.bar.style.width = "0"; L.meter.textContent = "—"; L.lic.textContent = "";
+  libSay("");
+}
+
+async function pickLib(title) {
+  libSel = title;
+  libBook = null;
+  renderLib();
+  libReset();
+  L.title.textContent = title;
+  L.body.innerHTML = '<div class="detail"><p>Reading the structure of <b>' +
+    escapeHtml(title) + "</b>…</p></div>";
+  try {
+    const bk = await api("/api/book?title=" + encodeURIComponent(title));
+    if (libSel !== title) return;              // user moved on while we waited
+    libBook = bk;
+    L.title.innerHTML = escapeHtml(bk.title) +
+      (bk.heTitle ? '<span class="he">' + escapeHtml(bk.heTitle) + "</span>" : "");
+    fillVersions(L.ver, L.lic, bk.versions);
+    L.add.disabled = false;
+    L.go.disabled = !bk.refs.length;
+    L.meter.textContent = bk.sections + " sections · " +
+      (bk.expectedSegments || "?") + " segments in the original";
+    L.body.innerHTML = detailHtml(bk);
+    sample(bk);
+  } catch (e) {
+    L.body.innerHTML = '<div class="detail"><h3>Could not open that</h3><p>' +
+      escapeHtml(e.message) + "</p></div>";
+  }
+}
+
+function detailHtml(bk) {
+  const refs = bk.refs || [];
+  const vs = bk.versions || [];
+  return '<div class="detail">' +
+    '<dl class="facts">' +
+      "<dt>Title</dt><dd>" + escapeHtml(bk.title) + "</dd>" +
+      (bk.heTitle ? '<dt>Hebrew</dt><dd><span class="he">' +
+        escapeHtml(bk.heTitle) + "</span></dd>" : "") +
+      "<dt>Sections</dt><dd>" + refs.length.toLocaleString() + "</dd>" +
+      "<dt>Segments</dt><dd>" + (bk.expectedSegments || 0).toLocaleString() +
+        " in the original</dd>" +
+      "<dt>Versions</dt><dd>" + (vs.length ? vs.length + " named, plus Sefaria's defaults"
+        : "Sefaria's defaults only") + "</dd>" +
+      "<dt>Range</dt><dd>" + escapeHtml(refs[0] || "—") + " … " +
+        escapeHtml(refs[refs.length - 1] || "—") + "</dd>" +
+    "</dl>" +
+    (refs.length
+      ? "<p>Choose a version above, then <b>Download now</b> to pull all " +
+        refs.length.toLocaleString() + " sections straight into a file, or " +
+        "<b>Add to queue</b> to fetch it alongside others.</p>"
+      : "<p>Sefaria lists no sections for this title, so there is nothing to " +
+        "download. It is usually a category placeholder rather than a text.</p>") +
+    '<div id="libSample"></div></div>';
+}
+
+/* A few lines of the opening section, so you can see what a version actually
+   gives you before committing to the whole work. */
+async function sample(bk) {
+  const box = $("#libSample");
+  if (!box || !bk.refs.length) return;
+  box.innerHTML = "<p>Loading a sample…</p>";
+  const version = L.ver.value;
+  try {
+    const d = await api("/api/text?ref=" + encodeURIComponent(bk.refs[0]) +
+                        "&version=" + encodeURIComponent(version));
+    if (libBook !== bk || L.ver.value !== version) return;
+    const segs = (d.segments || []).filter(x => plain(x.text).length).slice(0, 5);
+    box.innerHTML = segs.length
+      ? "<h3>Sample — " + escapeHtml(bk.refs[0]) + "</h3>" +
+        '<div class="sample" dir="auto">' + segs.map(x => {
+          const label = x.ref.startsWith(bk.refs[0])
+            ? x.ref.slice(bk.refs[0].length).replace(/^:/, "") : x.ref;
+          return "<p><span class=\"n\">" + escapeHtml(label || "•") + "</span> " +
+                 sanitize(x.text) + "</p>";
+        }).join("") + "</div>"
+      : "<p>This version has no text for the opening section. Pick another " +
+        "version above — many works are only complete in the original.</p>";
+  } catch (e) {
+    box.innerHTML = "<p>No sample: " + escapeHtml(e.message) + "</p>";
+  }
+}
+
+function libProgress(bk, st) {
+  L.bar.style.width = Math.round(100 * st.done / bk.refs.length) + "%";
+  L.meter.textContent = st.done + " / " + bk.refs.length + " sections · " +
+    st.segs.toLocaleString() + " segments · " + st.chars.toLocaleString() + " chars";
+  if (st.license) {
+    L.lic.innerHTML = "License: <b>" + escapeHtml(st.license) + "</b>" +
+      (st.versionTitle ? " · " + escapeHtml(st.versionTitle) : "");
+  }
+}
+
+/* Download the selected text end to end, right now. */
+async function libDownload() {
+  if (!libBook || !libBook.refs.length) return;
+  const bk = libBook, fmt = L.qFmt.value;
+  const st = libRun = newRun(bk, L.ver.value);
+
+  L.go.disabled = true; L.add.disabled = true; L.stop.disabled = false;
+  L.badge.className = "badge busy"; L.badge.textContent = "downloading";
+  libSay("");
+
+  await fetchWork(bk, st, { progress: () => libProgress(bk, st) }, 4);
+
+  L.go.disabled = false; L.add.disabled = false; L.stop.disabled = true;
+  libProgress(bk, st);
+  L.badge.className = "badge " + (st.complete ? "full" : (st.segs ? "part" : "err"));
+  L.badge.textContent = st.complete ? "complete" : (st.segs ? "partial" : "empty");
+
+  if (!st.segs) {
+    libSay("That version has no text for this work — pick another version above.", "bad");
+    return;
+  }
+  const name = baseName(bk, st) + "." + fmt;
+  try {
+    if (L.qSave.checked) {
+      const d = await saveToFolder(name, buildText(fmt, bk, st));
+      libSay((st.complete ? "Complete — saved to " : "Partial — saved to ") +
+        d.path + " (" + d.bytes.toLocaleString() + " bytes)", st.complete ? "ok" : "");
+    } else {
+      download(name, buildText(fmt, bk, st), MIME[fmt]);
+      libSay((st.complete ? "Complete — " : "Partial — ") + name +
+        " sent to your browser's Downloads folder.", st.complete ? "ok" : "");
+    }
+  } catch (e) {
+    libSay("Download failed: " + e.message, "bad");
+  }
+}
+
+// ---------------------------------------------------------------- the queue
+
+function qAdd(title) {
+  if (queued(title)) { libSay(title + " is already queued."); return; }
+  queue.push({ title, status: "queued", pct: 0, note: "" });
+  renderQueue(); renderLib();
+  libSay(title + " queued.", "ok");
+}
+
+/* Bulk add. Sefaria is a small non-profit serving these texts for free, so a
+   run big enough to matter asks first rather than quietly firing off hundreds
+   of requests. */
+function qAddMany(titles) {
+  const fresh = titles.filter(t => !queued(t));
+  if (!fresh.length) {
+    libSay(titles.length ? "Everything there is already queued." : "Nothing to queue.");
+    return;
+  }
+  if (fresh.length > 25 && !confirm(
+      "Queue " + fresh.length + " texts?\n\n" +
+      "They download one after another and this can take a long time. " +
+      "Sefaria serves these texts for free — please pull what you will " +
+      "actually use.")) return;
+  for (const t of fresh) queue.push({ title: t, status: "queued", pct: 0, note: "" });
+  renderQueue(); renderLib();
+  libSay("Queued " + fresh.length + " text" + (fresh.length === 1 ? "" : "s") + ".", "ok");
+}
+
+function renderQueue() {
+  const done = queue.filter(j => j.status === "done" || j.status === "part").length;
+  L.qCount.textContent = queue.length ? done + " / " + queue.length : "";
+  L.qStart.disabled = qBusy || !queue.some(j => j.status === "queued" || j.status === "fail");
+  L.qStop.disabled = !qBusy;
+  L.qClear.disabled = qBusy || !queue.length;
+
+  if (!queue.length) {
+    L.qList.innerHTML = '<div class="hint">Nothing queued yet.<br><br>' +
+      "Use <b>+</b> next to any title, <b>Add to queue</b> on the text itself, " +
+      "or <b>Queue all</b> to take a whole section of the library at once.</div>";
+    return;
+  }
+  L.qList.innerHTML = queue.map((j, i) =>
+    '<div class="qrow ' + j.status + '">' +
+      '<div class="top">' +
+        '<span class="t" title="' + escapeHtml(j.title) + '">' + escapeHtml(j.title) + "</span>" +
+        '<span class="st ' + j.status + '">' + j.status + "</span>" +
+        (j.status === "run" ? "" :
+          '<button class="x" data-rm="' + i + '" title="Remove">×</button>') +
+      "</div>" +
+      '<div class="bar"><i style="width:' + (j.pct || 0) + '%"></i></div>' +
+      (j.note ? '<div class="sub">' + escapeHtml(j.note) + "</div>" : "") +
+    "</div>").join("");
+  L.qList.querySelectorAll("[data-rm]").forEach(b => b.onclick = () => {
+    queue.splice(+b.dataset.rm, 1);
+    renderQueue(); renderLib();
+  });
+}
+
+async function qStart() {
+  if (qBusy) return;
+  const fmt = L.qFmt.value, lang = L.qLang.value, toFolder = L.qSave.checked;
+  const pending = queue.filter(j => j.status === "queued" || j.status === "fail").length;
+  if (!toFolder && pending > 3 && !confirm(
+      "Download " + pending + " files through the browser?\n\n" +
+      "Browsers block long runs of automatic downloads. Ticking " +
+      '"to folder" writes them straight into sefaria_downloads\\ instead.')) return;
+
+  qBusy = true; qHalt = false;
+  renderQueue();
+
+  for (const j of queue) {
+    if (qHalt) break;
+    if (j.status === "done" || j.status === "part") continue;
+    j.status = "run"; j.pct = 0; j.note = "reading structure…";
+    renderQueue();
+    try {
+      const bk = await api("/api/book?title=" + encodeURIComponent(j.title));
+      if (!bk.refs.length) throw new Error("no sections — this looks like a category, not a text");
+      const st = qCurrent = newRun(bk, lang);
+      await fetchWork(bk, st, { progress: () => {
+        j.pct = Math.round(100 * st.done / bk.refs.length);
+        j.note = st.done + " / " + bk.refs.length + " sections · " +
+                 st.segs.toLocaleString() + " segments";
+        renderQueue();
+      } }, 3);
+      qCurrent = null;
+      if (st.abort && !st.segs) { j.status = "queued"; j.note = "stopped"; break; }
+      if (!st.segs) {
+        j.status = "fail";
+        j.note = "no text in the " + lang + " version — try the other language";
+        renderQueue();
+        continue;
+      }
+      const name = baseName(bk, st) + "." + fmt;
+      const text = buildText(fmt, bk, st);
+      let where;
+      if (toFolder) {
+        where = "sefaria_downloads\\";
+        await saveToFolder(name, text);
+      } else {
+        where = "Downloads";
+        download(name, text, MIME[fmt]);
+      }
+      j.status = st.complete ? "done" : "part";
+      j.pct = 100;
+      j.note = name + " · " + st.segs.toLocaleString() + " segments → " + where;
+      if (st.abort) { renderQueue(); break; }
+    } catch (e) {
+      qCurrent = null;
+      j.status = "fail"; j.pct = 0; j.note = e.message;
+    }
+    renderQueue();
+  }
+
+  qBusy = false; qHalt = false; qCurrent = null;
+  renderQueue();
+  const ok = queue.filter(j => j.status === "done").length;
+  const part = queue.filter(j => j.status === "part").length;
+  const bad = queue.filter(j => j.status === "fail").length;
+  libSay(ok + " complete" + (part ? ", " + part + " partial" : "") +
+    (bad ? ", " + bad + " failed" : "") + " · " +
+    (L.qSave.checked ? "written to sefaria_downloads\\" : "sent to your browser"),
+    bad ? "" : "ok");
+}
+
+// ---------------------------------------------------------------- lib wiring
+
+let lt;
+L.search.oninput = () => { clearTimeout(lt); lt = setTimeout(renderLib, 120); };
+L.ver.onchange = () => {
+  showLicense(L.ver, L.lic);
+  if (libBook) sample(libBook);
+};
+L.go.onclick = libDownload;
+L.add.onclick = () => { if (libSel) qAdd(libSel); };
+L.stop.onclick = () => { if (libRun) libRun.abort = true; L.stop.disabled = true; };
+L.queueAll.onclick = () => qAddMany(libTargets);
+L.qStart.onclick = qStart;
+L.qStop.onclick = () => { qHalt = true; if (qCurrent) qCurrent.abort = true; L.qStop.disabled = true; };
+L.qClear.onclick = () => { queue = []; renderQueue(); renderLib(); libSay(""); };
+
+// ---------------------------------------------------------------- tabs
+
+function showTab(t) {
+  $("#page-comm").hidden = t !== "comm";
+  $("#page-lib").hidden = t !== "lib";
+  for (const b of $("#tabs").children) b.classList.toggle("sel", b.dataset.tab === t);
+  $("#btnClearSel").hidden = t !== "comm";   // it only resets the commentary path
+  if (t === "lib") renderLib();
+}
+$("#tabs").addEventListener("click", e => {
+  const b = e.target.closest("button[data-tab]");
+  if (b) showTab(b.dataset.tab);
+});
+
+// ---------------------------------------------------------------- wiring
+
+let bt;
+el.bookSearch.oninput = () => { clearTimeout(bt); bt = setTimeout(renderLibrary, 120); };
+el.commSearch.oninput = () => renderComms();
+el.verSel.onchange = () => showLicense(el.verSel, el.licTxt);
+el.btnLoad.onclick = loadFull;
+el.btnStop.onclick = () => { if (run) run.abort = true; el.btnStop.disabled = true; };
+$("#btnClearSel").onclick = () => {
+  bookSel = commSel = null; comms = [];
+  el.bookSearch.value = el.commSearch.value = "";
+  el.commList.innerHTML = '<div class="hint">Pick a book on the left.</div>';
+  el.commCount.textContent = "";
+  el.rTitle.textContent = "3 · Full text";
+  resetReader();
+  el.reader.innerHTML = '<div class="empty"><h3>Reset</h3><p>Pick a book to start again.</p></div>';
+  renderLibrary();
+};
+
+window.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  if (run && !el.btnStop.disabled) el.btnStop.click();
+  if (libRun && !L.stop.disabled) L.stop.click();
+  if (qBusy && !L.qStop.disabled) L.qStop.click();
+});
+
+loadToc();
+</script>
+</body>
+</html>

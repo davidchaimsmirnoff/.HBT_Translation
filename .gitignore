@@ -1,0 +1,10 @@
+# Sefaria's on-disk HTTP cache: ~90MB of responses that regenerate on demand.
+.sefaria_cache/
+
+# Build output and bytecode.
+Android/build/
+__pycache__/
+*.pyc
+
+# Downloads the app writes for you; your texts live in Texts/ and Translations/.
+sefaria_downloads/

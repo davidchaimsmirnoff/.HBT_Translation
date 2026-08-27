@@ -1,0 +1,2311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LocalHBT Translator</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=&apos;http://www.w3.org/2000/svg&apos; viewBox=&apos;0 0 32 32&apos;%3E%3Crect width=&apos;32&apos; height=&apos;32&apos; rx=&apos;7&apos; fill=&apos;%2316223A&apos;/%3E%3Crect x=&apos;7&apos; y=&apos;7&apos; width=&apos;11&apos; height=&apos;18&apos; rx=&apos;2&apos; fill=&apos;%23ffffff&apos; opacity=&apos;.5&apos;/%3E%3Crect x=&apos;15&apos; y=&apos;9&apos; width=&apos;11&apos; height=&apos;18&apos; rx=&apos;2&apos; fill=&apos;%23ffffff&apos;/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#f6f7f9; --panel:#ffffff; --ink:#16181d; --muted:#6b7280;
+    --line:#e2e5ea; --accent:#2f6fed; --accent-ink:#ffffff;
+    --ok:#16a34a; --bad:#dc2626; --warn:#b45309; --soft:#eef2f8;
+    --hebrew:"Segoe UI","Arial Hebrew","Noto Sans Hebrew",David,"Times New Roman",serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0f1115; --panel:#171a21; --ink:#e8eaef; --muted:#9aa3b2;
+      --line:#262b35; --accent:#4c8dff; --accent-ink:#0b0d11;
+      --ok:#4ade80; --bad:#f87171; --warn:#fbbf24; --soft:#1d222c;
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:15px/1.5 "Segoe UI",system-ui,-apple-system,sans-serif;
+    height:100vh; display:flex; flex-direction:column; overflow:hidden;
+  }
+  header{
+    padding:10px 18px; border-bottom:1px solid var(--line);
+    background:var(--panel); display:flex; align-items:center;
+    gap:14px; flex-wrap:wrap; flex:none;
+  }
+  h1{font-size:15px; margin:0; font-weight:650; letter-spacing:-.01em}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+  .dot.on{background:var(--ok)} .dot.off{background:var(--bad)}
+  #status{color:var(--muted); font-size:13px; display:flex; align-items:center; gap:7px}
+  .spacer{flex:1}
+  label.lbl{font-size:12px;color:var(--muted);margin-right:2px}
+  select,button,input[type=text],input[type=number]{
+    font:inherit; font-size:13px; color:var(--ink); background:var(--soft);
+    border:1px solid var(--line); border-radius:8px; padding:6px 10px;
+  }
+  button{cursor:pointer}
+  select:hover,button:hover{border-color:var(--accent)}
+  button.primary{background:var(--accent); color:var(--accent-ink); border-color:var(--accent); font-weight:600}
+  button:disabled{opacity:.45; cursor:not-allowed}
+  button.ghost{background:transparent}
+  button.danger{color:var(--bad)}
+  .seg{display:flex; border:1px solid var(--line); border-radius:8px; overflow:hidden}
+  .seg button{border:0;border-radius:0;background:transparent;padding:6px 12px}
+  .seg button.sel{background:var(--accent); color:var(--accent-ink); font-weight:600}
+
+  /* ---- tabs ---- */
+  .tabs{display:flex; gap:4px}
+  .tabs button{background:transparent;border:1px solid transparent;font-weight:600;font-size:13px}
+  .tabs button.sel{background:var(--soft); border-color:var(--line)}
+  .page{flex:1; min-height:0; display:none}
+  .page.on{display:flex; flex-direction:column}
+
+  /* ---- quick tab ---- */
+  .controls{
+    display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+    padding:10px 18px; border-bottom:1px solid var(--line); background:var(--panel); flex:none;
+  }
+  main{flex:1; display:grid; grid-template-columns:1fr auto 1fr; min-height:0}
+  .pane{display:flex; flex-direction:column; min-width:0; min-height:0; background:var(--panel)}
+  .pane + .pane{border-left:1px solid var(--line)}
+  .pane h2{
+    font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted);
+    margin:0; padding:10px 16px 6px; font-weight:600; display:flex; align-items:center; gap:10px;
+  }
+  .swapwrap{display:flex; align-items:center; justify-content:center; padding:0 10px; background:var(--panel)}
+  #swap{border-radius:50%; width:36px; height:36px; padding:0; font-size:15px; line-height:1}
+  #src,#out{
+    flex:1; margin:0; padding:12px 16px 16px; border:0; outline:none; resize:none;
+    background:transparent; color:var(--ink); overflow-y:auto;
+    font-family:var(--hebrew); font-size:19px; line-height:1.75;
+    text-align:start; white-space:pre-wrap; word-wrap:break-word; min-height:150px;
+  }
+  #out.placeholder,#src::placeholder{color:var(--muted); font-style:italic; font-size:15px}
+  #out .cursor{
+    display:inline-block; width:7px; height:1.05em; background:var(--accent);
+    vertical-align:-2px; animation:b 1s steps(2) infinite; margin-inline-start:2px;
+  }
+  @keyframes b{0%,50%{opacity:1}51%,100%{opacity:0}}
+  #reasonBox{
+    margin:6px 16px 0; border:1px dashed var(--line); border-radius:8px;
+    background:var(--soft); font-size:12px; flex:none; max-height:26vh; overflow:auto;
+  }
+  #reasonBox summary{cursor:pointer; padding:6px 10px; color:var(--muted);
+    font-size:11px; text-transform:uppercase; letter-spacing:.07em; font-weight:600}
+  #reason{padding:0 10px 10px; color:var(--muted); font-family:var(--hebrew);
+    font-size:13px; line-height:1.6; white-space:pre-wrap; text-align:start}
+
+  /* ---- documents tab ---- */
+  .docwrap{flex:1; display:grid; grid-template-columns:290px 1fr; min-height:0}
+  .sidebar{border-right:1px solid var(--line); background:var(--panel);
+    display:flex; flex-direction:column; min-height:0}
+  .sidebar .head{padding:10px 12px; border-bottom:1px solid var(--line); display:flex; gap:6px}
+  .sidebar .head button{flex:1}
+  #jobList{flex:1; overflow-y:auto; padding:8px}
+  .jobcard{
+    border:1px solid var(--line); border-radius:9px; padding:9px 10px; margin-bottom:7px;
+    cursor:pointer; background:var(--bg);
+  }
+  .jobcard:hover{border-color:var(--accent)}
+  .jobcard.sel{border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent)}
+  .jobcard .t{font-size:13px; font-weight:600; line-height:1.3; overflow:hidden;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical}
+  .jobcard .m{font-size:11px; color:var(--muted); margin-top:3px; display:flex; gap:6px; flex-wrap:wrap}
+  .bar{height:5px; border-radius:3px; background:var(--soft); margin-top:6px; overflow:hidden}
+  .bar > i{display:block; height:100%; background:var(--accent); transition:width .3s}
+  .pill{font-size:10px; text-transform:uppercase; letter-spacing:.05em; font-weight:700;
+    border-radius:20px; padding:1px 7px; background:var(--soft); color:var(--muted)}
+  .pill.running{background:var(--accent); color:var(--accent-ink)}
+  .pill.done{background:var(--ok); color:#06240f}
+  .pill.interrupted,.pill.error{background:var(--bad); color:#2b0707}
+  .pill.paused{background:var(--warn); color:#231301}
+
+  .docmain{display:flex; flex-direction:column; min-width:0; min-height:0}
+  .docbar{padding:9px 14px; border-bottom:1px solid var(--line); background:var(--panel);
+    display:flex; gap:7px; align-items:center; flex-wrap:wrap; flex:none}
+  .docbar .title{font-weight:650; font-size:14px; max-width:38ch; overflow:hidden;
+    text-overflow:ellipsis; white-space:nowrap}
+  .docsplit{flex:1; display:grid; grid-template-columns:1fr 1fr; min-height:0}
+  .docpane{display:flex; flex-direction:column; min-width:0; min-height:0; background:var(--panel)}
+  .docpane + .docpane{border-left:1px solid var(--line)}
+  .docpane .ph{padding:8px 14px; border-bottom:1px solid var(--line); display:flex;
+    gap:7px; align-items:center; flex-wrap:wrap; flex:none;
+    font-size:11px; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--muted); font-weight:600}
+  .docpane .ph button{font-size:11px; padding:3px 8px; text-transform:none; letter-spacing:0}
+  #srcText,#outText{
+    flex:1; margin:0; padding:12px 16px; border:0; outline:none; resize:none;
+    background:transparent; color:var(--ink); overflow-y:auto;
+    font-family:var(--hebrew); font-size:18px; line-height:1.8;
+    white-space:pre-wrap; word-wrap:break-word;
+  }
+  #chunks{flex:1; overflow-y:auto; padding:10px 14px}
+  .ch{border-bottom:1px solid var(--line); padding:9px 0}
+  .ch:last-child{border-bottom:0}
+  .ch .n{font-size:10px; color:var(--muted); font-variant-numeric:tabular-nums;
+    display:flex; gap:8px; align-items:center; margin-bottom:2px}
+  .ch .he{font-family:var(--hebrew); font-size:21px; line-height:1.9; direction:rtl; text-align:right}
+  .ch .en{font-size:15px; line-height:1.6; direction:ltr; text-align:left; margin-top:1px}
+  .ch .orig{font-family:var(--hebrew); font-size:14px; color:var(--muted);
+    direction:rtl; text-align:right; opacity:.7}
+  .ch .he[contenteditable]:focus,.ch .en[contenteditable]:focus{
+    outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+  .ch.pass{opacity:.55}
+  .ch.live .en{color:var(--accent)}
+  .ch.live.thinking .en{color:var(--muted); font-style:italic; font-size:13px}
+  .ch .badge{color:var(--warn); font-weight:700; font-size:10px}
+  .ch.mark{background:linear-gradient(to right,var(--soft),transparent); border-radius:6px}
+
+  footer{
+    border-top:1px solid var(--line); background:var(--panel); padding:7px 18px;
+    font-size:12px; color:var(--muted); display:flex; gap:16px; flex-wrap:wrap;
+    align-items:center; flex:none;
+  }
+  footer b{color:var(--ink); font-weight:600; font-variant-numeric:tabular-nums}
+  .err{color:var(--bad)}
+  .okc{color:var(--ok)}
+  kbd{font:inherit; font-size:11px; background:var(--soft); border:1px solid var(--line);
+    border-bottom-width:2px; border-radius:4px; padding:1px 5px}
+
+  /* ---- modal ---- */
+  .modal{position:fixed; inset:0; background:rgba(0,0,0,.45); display:none;
+    align-items:center; justify-content:center; z-index:50; padding:20px}
+  .modal.on{display:flex}
+  .sheet{background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    width:min(760px,100%); max-height:88vh; display:flex; flex-direction:column;
+    box-shadow:0 20px 60px rgba(0,0,0,.35)}
+  .sheet h3{margin:0; padding:14px 18px; border-bottom:1px solid var(--line); font-size:14px}
+  .sheet .body{padding:14px 18px; overflow-y:auto}
+  .sheet .foot{padding:12px 18px; border-top:1px solid var(--line);
+    display:flex; gap:8px; justify-content:flex-end}
+  .row{display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap}
+  .row > label.lbl{width:120px; flex:none; margin:0}
+  .row input[type=text]{flex:1; min-width:200px}
+  .hint{font-size:12px; color:var(--muted); margin:-4px 0 12px 128px}
+  #browseList{border:1px solid var(--line); border-radius:9px; max-height:44vh;
+    overflow-y:auto; font-size:13px}
+  #browseList div{padding:6px 11px; cursor:pointer; border-bottom:1px solid var(--line);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  #browseList div:last-child{border-bottom:0}
+  #browseList div:hover{background:var(--soft)}
+  #browseList .fi{color:var(--ink)} #browseList .di{color:var(--muted)}
+  #toast{position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    background:var(--ink); color:var(--bg); padding:9px 16px; border-radius:9px;
+    font-size:13px; z-index:80; opacity:0; pointer-events:none; transition:opacity .2s}
+  #toast.on{opacity:1}
+
+  /* ==================== PHONE LAYOUT ====================
+     Everything below is scoped to body.mob, which JS sets only on a narrow
+     screen. The desktop three-pane grid is never touched by any of it.
+
+     The desktop shows library, source and translation side by side. A phone
+     cannot, so the same three panes become one pane at a time, chosen from a
+     thumb-reachable bar pinned to the bottom. Nothing is removed - every
+     control that exists on the computer exists here. */
+
+  #mobbar{display:none}
+  .mob-only{display:none}
+
+  /* Nothing may be wider than the screen: a fixed bottom bar is laid out against
+     the page width, so one overflowing row on the Quick tab would push the whole
+     nav off the right edge. */
+  body.mob{overflow-x:hidden; max-width:100vw}
+  body.mob .page{max-width:100vw; overflow-x:hidden}
+  body.mob header{padding:8px 10px; gap:6px 10px; row-gap:6px}
+  body.mob header h1{font-size:14px}
+  body.mob header #status{font-size:11px}
+  body.mob header label.lbl[for=model]{display:none}
+  body.mob header select#model{max-width:46vw; font-size:12px}
+  body.mob header .spacer{display:none}
+  header .hbreak{display:none}
+  body.mob header h1{order:1}
+  body.mob header .tabs{order:2}
+  body.mob header #btnMenu{order:3; margin-inline-start:auto}
+  body.mob header .hbreak{display:block; order:4; flex-basis:100%; height:0}
+  body.mob header label.lbl[for=model]{order:5}
+  body.mob header select#model{order:5}
+  body.mob header #netchip{order:6}
+  body.mob header #status{order:7}
+  body.mob header #btnApp{order:8}
+  /* Pinning the menu button to the right of row one pushed everything else down,
+     and in the Android shell - where the gear also shows - that spilled onto a
+     third row. The dot and the online/offline chip already say what the words
+     say, so drop the words and it fits on two. */
+  body.mob header #statustext{display:none}
+  body.mob header #status{gap:0}
+  body.mob header #btnApp{padding:6px 11px}
+
+  /* Quick tab: the desktop puts source and translation side by side, which on a
+     phone leaves each of them too narrow to read. Stack them instead. */
+  body.mob #page-quick main{grid-template-columns:1fr; grid-template-rows:1fr auto 1fr}
+  body.mob #page-quick .pane{border-left:0 !important; border-top:1px solid var(--line)}
+  body.mob #page-quick .swapwrap{padding:4px 0}
+  /* Six controls do not fit across a phone. Let the row scroll like the document
+     toolbar does, and pull the two buttons that matter to the front so the
+     primary action is never the one that scrolled off. */
+  body.mob #page-quick .controls{
+    flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; padding:8px 10px; gap:6px;
+  }
+  body.mob #page-quick .controls::-webkit-scrollbar{display:none}
+  body.mob #page-quick .controls > *{flex:none}
+  body.mob #page-quick .controls .spacer{display:none}
+  body.mob #page-quick #go{order:-2}
+  body.mob #page-quick #stop{order:-1}
+  body.mob #page-quick footer span:last-child{display:none}
+
+  /* one pane at a time, picked by data-mv on the documents page */
+  body.mob .docwrap{grid-template-columns:1fr}
+  body.mob .docsplit{grid-template-columns:1fr}
+  body.mob .sidebar{border-right:0; display:none}
+  body.mob .docpane{display:none; border-left:0 !important; border-top:1px solid var(--line)}
+  body.mob #page-docs[data-mv=library] .sidebar{display:flex; flex-direction:column}
+  body.mob #page-docs[data-mv=library] .docmain{display:none}
+  body.mob #page-docs[data-mv=source]  .docpane.p-src{display:flex; flex-direction:column}
+  body.mob #page-docs[data-mv=trans]   .docpane.p-out{display:flex; flex-direction:column}
+
+  /* the document toolbar keeps all its buttons; it just scrolls sideways */
+  body.mob .docbar{overflow-x:auto; flex-wrap:nowrap; scrollbar-width:none;
+                   padding:8px 10px; gap:6px}
+  body.mob .docbar::-webkit-scrollbar{display:none}
+  body.mob .docbar > *{flex:none}
+  body.mob .docbar .title{max-width:44vw; overflow:hidden; text-overflow:ellipsis}
+  body.mob .ph{overflow-x:auto; flex-wrap:nowrap; scrollbar-width:none}
+  body.mob .ph::-webkit-scrollbar{display:none}
+  body.mob .ph > *{flex:none}
+
+  /* 16px stops Android/iOS zooming the whole page when a field takes focus */
+  body.mob #srcText, body.mob #outText, body.mob #src{font-size:16px; line-height:1.65}
+  body.mob button, body.mob select, body.mob input[type=text]{min-height:40px; font-size:14px}
+  body.mob .seg button{min-height:40px}
+  body.mob footer{font-size:11px; padding:6px 10px}
+  /* A Windows path is unusable on a phone and costs a whole footer line. */
+  body.mob #docPaths{display:none}
+  body.mob.tab-docs #page-docs{padding-bottom:104px}   /* clear the fixed bar */
+  body.mob .mob-only{display:inline-flex}
+  body.mob .desk-only{display:none !important}
+
+  /* Grid items default to min-width:auto, so one long unbreakable Hebrew title
+     widens its whole column past the screen and drags the fixed bottom bar with
+     it. Every track on the phone has to be allowed to be narrower than its
+     content. */
+  body.mob .docwrap > *, body.mob .docsplit > *,
+  body.mob .docmain, body.mob .sidebar{min-width:0}
+  body.mob .jobcard{padding:12px 12px; min-width:0}
+  body.mob .jobcard .t{overflow-wrap:anywhere}
+  body.mob .sidebar .head{gap:8px}
+  body.mob .sidebar .head #refreshJobs{flex:none; width:46px}
+  body.mob .modal .sheet{width:96vw; max-height:88vh; overflow:auto}
+  body.mob .modal .row{flex-wrap:wrap}
+
+  /* ---- bottom bar: actions on top, view switcher underneath ---- */
+  body.mob.tab-docs #mobbar{
+    display:flex; flex-direction:column; position:fixed; left:0; right:0; bottom:0;
+    background:var(--panel); border-top:1px solid var(--line); z-index:70;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  #mobbar .acts{display:flex; gap:6px; padding:7px 8px 0}
+  #mobbar .acts button{flex:1; min-height:42px; font-size:13px; font-weight:600}
+  #mobbar .nav{display:flex; gap:0; padding:6px 8px 7px}
+  #mobbar .nav button{
+    flex:1; min-width:0; background:transparent; border:0; border-radius:8px;
+    min-height:44px; padding:4px 2px;
+    color:var(--muted); font-weight:600; font-size:11px; display:flex;
+    flex-direction:column; align-items:center; justify-content:center; gap:2px;
+  }
+  #mobbar .nav button > span:nth-child(2){
+    max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  #mobbar .nav button.sel{background:var(--soft); color:var(--accent)}
+  #mobbar .nav .ic{font-size:15px; line-height:1}
+  #mobbar .nav .cnt{font-size:10px; font-weight:500; color:var(--muted)}
+
+  /* ---- connection + sync chip ---- */
+  #netchip{
+    font-size:11px; padding:3px 8px; border-radius:99px; border:1px solid var(--line);
+    background:var(--soft); color:var(--muted); display:inline-flex; align-items:center; gap:5px;
+  }
+  #netchip.off{border-color:var(--bad); color:var(--bad)}
+  #netchip.pend{border-color:var(--warn); color:var(--warn)}
+
+  /* ==================== SLIDE-IN MENU ====================
+     Anchored to the right edge and translated fully off it, so opening is one
+     transform rather than a layout change - which is what keeps it smooth on a
+     phone. Phone only; the desktop has the room to show everything at once. */
+  #btnMenu{display:none}
+  body.mob #btnMenu{
+    display:inline-flex; align-items:center; justify-content:center;
+    font-size:18px; line-height:1; padding:6px 13px; min-height:38px;
+  }
+  #scrim{
+    position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:88;
+    opacity:0; pointer-events:none; transition:opacity .22s;
+  }
+  body.menu-open #scrim{opacity:1; pointer-events:auto}
+  #drawer{
+    position:fixed; top:0; right:0; bottom:0; width:min(78vw, 320px); z-index:89;
+    background:var(--panel); border-left:1px solid var(--line);
+    box-shadow:-14px 0 34px rgba(0,0,0,.18);
+    transform:translateX(101%); transition:transform .24s ease;
+    display:flex; flex-direction:column;
+    padding-top:env(safe-area-inset-top); padding-bottom:env(safe-area-inset-bottom);
+  }
+  body.menu-open #drawer{transform:translateX(0)}
+  #drawer .dhead{
+    display:flex; align-items:center; gap:10px; padding:14px 14px 12px;
+    border-bottom:1px solid var(--line);
+  }
+  #drawer .dhead b{font-size:14px}
+  #drawer .dhead button{margin-inline-start:auto; padding:6px 11px; font-size:16px}
+  #drawer .item{
+    display:flex; align-items:flex-start; gap:13px; width:100%;
+    background:transparent; border:0; border-radius:0; padding:16px 15px;
+    font-size:15px; font-weight:600; color:var(--ink); text-align:start;
+    border-bottom:1px solid var(--line);
+  }
+  #drawer .item:hover{background:var(--soft); border-color:var(--line)}
+  #drawer .item .ic{font-size:19px; width:22px; text-align:center; flex:none}
+  #drawer .item small{
+    display:block; font-weight:400; font-size:12px; color:var(--muted);
+    margin-top:3px; line-height:1.45; white-space:normal;
+  }
+  #drawer .dfoot{margin-top:auto; padding:14px 15px; font-size:11px; color:var(--muted)}
+
+  /* ==================== READING MODE ====================
+     The translation pane with everything that is not the text taken away: no
+     chunk numbers, no editing, no polling. It keeps its own bookmark per book,
+     stored on this device, because "where I stopped reading" is a property of
+     the reader and not of the document on the PC. */
+  #readOverlay{position:fixed; inset:0; z-index:95; background:var(--bg); display:none}
+  body.reading{overflow:hidden}
+  body.reading #readOverlay{display:flex; flex-direction:column}
+  #readTop{
+    display:flex; align-items:center; gap:9px; flex:none;
+    padding:10px 12px; padding-top:calc(10px + env(safe-area-inset-top));
+    border-bottom:1px solid var(--line); background:var(--panel);
+  }
+  #readTop .ttl{
+    flex:1; min-width:0; font-weight:650; font-size:14px;
+    overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
+  }
+  #readTop button{padding:7px 11px; min-height:38px}
+  #readBody{
+    flex:1; overflow-y:auto; overflow-x:hidden;
+    padding:18px 18px 104px; font-size:18px; line-height:1.9;
+    overflow-wrap:anywhere;
+  }
+  #readBody .rl{padding:1px 0; cursor:pointer}
+  #readBody .rl.bm{
+    background:var(--soft); border-inline-start:3px solid var(--accent);
+    padding-inline-start:10px; margin-inline-start:-13px; border-radius:0 7px 7px 0;
+  }
+  #readBody .gap{height:14px}
+  #readBooks{flex:1; overflow-y:auto; padding:12px 12px 104px; display:none}
+  body.reading.picking #readBooks{display:block}
+  body.reading.picking #readBody{display:none}
+  #readBooks .bk{
+    border:1px solid var(--line); border-radius:10px; padding:14px 13px;
+    margin-bottom:9px; background:var(--panel); cursor:pointer;
+  }
+  #readBooks .bk .t{font-weight:650; font-size:14px; line-height:1.35; overflow-wrap:anywhere}
+  #readBooks .bk .m{font-size:11.5px; color:var(--muted); margin-top:5px}
+  #readBar{
+    position:absolute; left:0; right:0; bottom:0; z-index:96;
+    display:flex; align-items:center; gap:10px;
+    padding:10px 12px; padding-bottom:calc(10px + env(safe-area-inset-bottom));
+    background:var(--panel); border-top:1px solid var(--line);
+  }
+  #readBar .pos{font-size:12px; color:var(--muted); flex:1; min-width:0}
+  #readBar button{min-height:40px; font-size:13px}
+  body.reading.picking #readBar{display:none}
+
+  /* ---- conflict chooser ---- */
+  #conflictModal .sheet{width:min(680px,96vw)}
+  #conflictModal .cmp{display:grid; gap:10px}
+  #conflictModal .side{border:1px solid var(--line); border-radius:10px; padding:10px}
+  #conflictModal .side h4{margin:0 0 6px; font-size:13px}
+  #conflictModal pre{
+    margin:0; max-height:26vh; overflow:auto; font-size:12px; white-space:pre-wrap;
+    word-break:break-word; color:var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>LocalHBT Translator</h1>
+  <div class="tabs" id="tabs">
+    <button data-tab="quick" class="sel">Quick</button>
+    <button data-tab="docs">Documents</button>
+  </div>
+  <span id="status"><span class="dot" id="dot"></span><span id="statustext">connecting…</span></span>
+  <span id="netchip" style="display:none"><span id="netdot">●</span><span id="nettext">online</span></span>
+  <button class="ghost" id="btnApp" style="display:none" title="App settings">⚙</button>
+  <button class="ghost" id="btnMenu" title="Menu" aria-label="Menu">&#9776;</button>
+  <span class="hbreak"></span>
+  <span class="spacer"></span>
+  <label class="lbl" for="model">Model</label>
+  <select id="model"></select>
+</header>
+
+<!-- ============================ QUICK ============================ -->
+<div class="page on" id="page-quick">
+  <div class="controls">
+    <div class="seg" id="styleSeg">
+      <button data-style="natural" class="sel">Natural</button>
+      <button data-style="literal">Literal</button>
+    </div>
+    <label class="lbl" style="margin-inline-start:8px">
+      <input type="checkbox" id="think"> thinking
+    </label>
+    <span class="spacer"></span>
+    <button class="ghost" id="clear">Clear</button>
+    <button class="ghost" id="copy">Copy result</button>
+    <button class="primary" id="go">Translate</button>
+    <button id="stop" style="display:none">Stop</button>
+  </div>
+
+  <main>
+    <section class="pane">
+      <h2><span id="srcLabel">Hebrew</span> — source</h2>
+      <textarea id="src" dir="auto" spellcheck="false"
+        placeholder="Paste Hebrew here…  (Ctrl+Enter to translate)"></textarea>
+    </section>
+    <div class="swapwrap"><button id="swap" title="Swap direction">⇄</button></div>
+    <section class="pane">
+      <h2><span id="outLabel">English</span> — translation</h2>
+      <details id="reasonBox" style="display:none">
+        <summary>Model reasoning</summary>
+        <div id="reason" dir="auto"></div>
+      </details>
+      <div id="out" dir="auto" class="placeholder">Translation appears here.</div>
+    </section>
+  </main>
+
+  <footer>
+    <span id="stats">ready</span>
+    <span class="spacer"></span>
+    <span><kbd>Ctrl</kbd>+<kbd>Enter</kbd> translate · <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> swap</span>
+  </footer>
+</div>
+
+<!-- ========================== DOCUMENTS ========================== -->
+<div class="page" id="page-docs">
+  <div class="docwrap">
+    <aside class="sidebar">
+      <div class="head">
+        <button class="primary" id="newJob">+ New document</button>
+        <button class="ghost" id="refreshJobs" title="Refresh">⟳</button>
+      </div>
+      <div id="jobList"></div>
+    </aside>
+
+    <div class="docmain">
+      <div class="docbar" id="docbar">
+        <span class="title" id="jobTitle">No document selected</span>
+        <span class="pill" id="jobPill">—</span>
+        <span class="spacer"></span>
+        <button class="primary" id="btnGo" disabled>Translate</button>
+        <button id="btnPause" disabled>Pause</button>
+        <button class="ghost" id="btnRestart" disabled>Restart</button>
+        <button class="ghost" id="btnCut" disabled title="Scroll the source to the point translation stopped">Go to cut point</button>
+        <button class="ghost" id="btnSettings" disabled>Options…</button>
+        <button class="ghost" id="btnFolder" disabled>Output folder</button>
+        <button class="ghost mob-only" id="btnPush" disabled>⬆ Push to computer</button>
+        <button class="ghost" id="btnDevice" disabled>⬇ Save to device</button>
+        <button class="ghost danger" id="btnDelete" disabled>Delete</button>
+      </div>
+
+      <div class="docsplit">
+        <section class="docpane p-src">
+          <div class="ph">
+            <span>Source .txt</span>
+            <span class="spacer"></span>
+            <span id="srcInfo"></span>
+            <button class="ghost" id="btnSrcReload">Reload</button>
+            <button id="btnSrcSave" disabled>Save source</button>
+          </div>
+          <textarea id="srcText" dir="auto" spellcheck="false"
+            placeholder="Pick or create a document to see its text here."></textarea>
+        </section>
+
+        <section class="docpane p-out">
+          <div class="ph">
+            <span>Translation</span>
+            <div class="seg" id="viewSeg" style="margin-inline-start:6px">
+              <button data-view="chunks" class="sel">Live</button>
+              <button data-view="text">Full text</button>
+            </div>
+            <label class="lbl" style="text-transform:none;letter-spacing:0">
+              <input type="checkbox" id="follow" checked> follow
+            </label>
+            <span class="spacer"></span>
+            <button id="btnOutSave" disabled>Save translation</button>
+            <button class="ghost" id="btnOutSaveAs" disabled>Save as…</button>
+          </div>
+          <div id="chunks"></div>
+          <textarea id="outText" dir="auto" spellcheck="false" style="display:none"
+            placeholder="Translated text appears here as it is produced."></textarea>
+        </section>
+      </div>
+
+      <footer>
+        <span id="docStats">no document loaded</span>
+        <span class="spacer"></span>
+        <span id="docPaths"></span>
+      </footer>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE-IN MENU (phone) ===================== -->
+<div id="scrim"></div>
+<aside id="drawer" aria-label="Menu">
+  <div class="dhead">
+    <b>LocalHBT</b>
+    <button class="ghost" id="drawerClose" aria-label="Close menu">&#10005;</button>
+  </div>
+  <button class="item" id="mnuRead">
+    <span class="ic">&#128214;</span>
+    <span>Reading mode
+      <small>Read a finished translation without the editor. Keeps a bookmark
+      where you stopped.</small></span>
+  </button>
+  <div class="dfoot" id="drawerFoot"></div>
+</aside>
+
+<!-- ======================= READING MODE =========================== -->
+<div id="readOverlay">
+  <div id="readTop">
+    <button class="ghost" id="readBack" aria-label="Leave reading mode">&#10005;</button>
+    <span class="ttl" id="readTitle">Choose a book</span>
+    <button class="ghost" id="readPick" title="Choose another book">Books</button>
+    <button class="ghost" id="readReload" title="Reload the text">&#8635;</button>
+  </div>
+  <div id="readBooks"></div>
+  <div id="readBody"></div>
+  <div id="readBar">
+    <span class="pos" id="readPos"></span>
+    <button class="ghost" id="readGoBm">&#128278; Bookmark</button>
+  </div>
+</div>
+
+<!-- ================= PHONE BOTTOM BAR (mobile only) ================ -->
+<div id="mobbar">
+  <div class="acts">
+    <button class="primary" id="mGo" disabled>Translate</button>
+    <button id="mPush" disabled>⬆ Push</button>
+    <button id="mSave" disabled>⬇ Save</button>
+  </div>
+  <div class="nav" id="mobnav">
+    <button data-mv="library" class="sel"><span class="ic">☰</span><span>Library</span><span class="cnt" id="mvLib"></span></button>
+    <button data-mv="source"><span class="ic">א</span><span>Source</span><span class="cnt" id="mvSrc"></span></button>
+    <button data-mv="trans"><span class="ic">A</span><span>Translation</span><span class="cnt" id="mvOut"></span></button>
+    <button data-mv="read"><span class="ic">&#128214;</span><span>Read</span><span class="cnt" id="mvRead"></span></button>
+  </div>
+</div>
+
+<!-- ====================== CONFLICT CHOOSER ======================== -->
+<div class="modal" id="conflictModal">
+  <div class="sheet">
+    <h3>Both copies changed</h3>
+    <div class="body">
+      <p class="lbl" id="cfWhat" style="text-transform:none;letter-spacing:0"></p>
+      <div class="cmp">
+        <div class="side">
+          <h4>On this phone</h4>
+          <pre id="cfMine"></pre>
+        </div>
+        <div class="side">
+          <h4>On the computer <span class="lbl" id="cfWhen"></span></h4>
+          <pre id="cfTheirs"></pre>
+        </div>
+      </div>
+    </div>
+    <div class="foot">
+      <button class="ghost" id="cfCancel">Cancel</button>
+      <span class="spacer"></span>
+      <button class="ghost" id="cfTake">Keep the computer’s</button>
+      <button class="primary" id="cfForce">Keep the phone’s</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== NEW DOCUMENT MODAL ====================== -->
+<div class="modal" id="newModal">
+  <div class="sheet">
+    <h3>New translation document</h3>
+    <div class="body">
+      <div class="row">
+        <label class="lbl">Source .txt</label>
+        <input type="text" id="nSource" placeholder="C:\…\text.txt">
+        <button class="ghost" id="nBrowse">Browse…</button>
+        <button class="ghost" id="nPick">From computer…</button>
+        <input type="file" id="nFile" accept=".txt,.md" style="display:none">
+      </div>
+      <div class="row">
+        <label class="lbl">Layout</label>
+        <div class="seg" id="nMode">
+          <button data-mode="paragraph" class="sel">Paragraph</button>
+          <button data-mode="interlinear">Interlinear</button>
+        </div>
+        <span id="nModeHint" class="lbl"></span>
+      </div>
+      <div class="row" id="nInterRow" style="display:none">
+        <label class="lbl">Words per line</label>
+        <input type="number" id="nWords" value="16" min="4" max="40" style="width:80px">
+        <label class="lbl" style="width:auto">
+          <input type="checkbox" id="nNikkud" checked> add nikkud to the Hebrew
+        </label>
+      </div>
+      <div class="hint" id="nInterHint" style="display:none">
+        Each line carries 16&ndash;17 Hebrew words (a 17th is pulled in when it ends
+        the clause), vocalized, with its English directly underneath.
+      </div>
+      <div class="row">
+        <label class="lbl">Direction</label>
+        <div class="seg" id="nDir">
+          <button data-dir="he2en" class="sel">Hebrew → English</button>
+          <button data-dir="en2he">English → Hebrew</button>
+        </div>
+        <div class="seg" id="nStyle" style="margin-inline-start:8px">
+          <button data-style="natural" class="sel">Natural</button>
+          <button data-style="literal">Literal</button>
+        </div>
+      </div>
+      <div class="row">
+        <label class="lbl">Save output to</label>
+        <input type="text" id="nOut" placeholder="Translated\">
+        <button class="ghost" id="nOutBrowse">Browse…</button>
+      </div>
+      <div class="row">
+        <label class="lbl">Options</label>
+        <label class="lbl" style="width:auto"><input type="checkbox" id="nInclude"> keep the source line above each translation</label>
+        <label class="lbl" style="width:auto"><input type="checkbox" id="nMark" checked> mark cut points in the source file</label>
+      </div>
+      <div class="hint">
+        A cut point is three blank lines pushed into the source .txt wherever a run
+        stopped early, so you can see by eye where it left off. Resuming always uses
+        the bookmark in the job's .json.
+      </div>
+      <div id="nStatus" class="hint" style="margin-left:0"></div>
+    </div>
+    <div class="foot">
+      <button class="ghost" id="nCancel">Cancel</button>
+      <button class="primary" id="nCreate">Create &amp; open</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== BROWSE MODAL ========================= -->
+<div class="modal" id="browseModal">
+  <div class="sheet">
+    <h3 id="browseTitle">Choose a file</h3>
+    <div class="body">
+      <div class="row">
+        <input type="text" id="browsePath">
+        <button class="ghost" id="browseUp">Up</button>
+        <button class="ghost" id="browseGoto">Go</button>
+      </div>
+      <div id="browseList"></div>
+    </div>
+    <div class="foot">
+      <button class="ghost" id="browseCancel">Cancel</button>
+      <button class="primary" id="browsePick" style="display:none">Use this folder</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= OPTIONS MODAL ========================= -->
+<div class="modal" id="optModal">
+  <div class="sheet">
+    <h3>Document options</h3>
+    <div class="body">
+      <div class="row">
+        <label class="lbl">Model</label>
+        <select id="oModel"></select>
+        <div class="seg" id="oStyle" style="margin-inline-start:8px">
+          <button data-style="natural" class="sel">Natural</button>
+          <button data-style="literal">Literal</button>
+        </div>
+      </div>
+      <div class="row">
+        <label class="lbl">Save output to</label>
+        <input type="text" id="oOut">
+        <button class="ghost" id="oOutBrowse">Browse…</button>
+      </div>
+      <div class="row">
+        <label class="lbl">Options</label>
+        <label class="lbl" style="width:auto"><input type="checkbox" id="oNikkud"> nikkud</label>
+        <label class="lbl" style="width:auto"><input type="checkbox" id="oInclude"> keep source line</label>
+        <label class="lbl" style="width:auto"><input type="checkbox" id="oMark"> mark cut points</label>
+        <label class="lbl" style="width:auto"><input type="checkbox" id="oThink"> thinking</label>
+      </div>
+      <div class="hint" style="margin-left:0">
+        Options apply to chunks translated from here on. Pause first — a running
+        document will not accept changes.
+      </div>
+    </div>
+    <div class="foot">
+      <button class="ghost" id="oCancel">Cancel</button>
+      <button class="primary" id="oSave">Apply</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+function toast(msg, bad){
+  const t = $("#toast");
+  t.textContent = msg;
+  t.style.background = bad ? "var(--bad)" : "var(--ink)";
+  t.style.color = bad ? "#fff" : "var(--bg)";
+  t.classList.add("on");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove("on"), 2600);
+}
+
+async function api(path, body){
+  const r = await fetch(path, body ? {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify(body)
+  } : undefined);
+  // A plain-text 404 on an /api/ route means this endpoint does not exist in the
+  // server that answered — i.e. an older copy is still holding the port. Say
+  // that, instead of leaving the user staring at "HTTP 404".
+  const d = await r.json().catch(() => ({
+    ok: false,
+    error: r.status === 404 && path.startsWith("/api/")
+      ? "This page is talking to an OLD copy of the server (it has no " + path
+        + "). Close every LocalHBT console window, then run Run Translator.bat again."
+      : "HTTP " + r.status
+  }));
+  if (d.ok === false) throw new Error(d.error || "request failed");
+  return d;
+}
+
+/* segmented control helper: click a button, it becomes the selection */
+function seg(sel, attr, onPick){
+  $(sel).addEventListener("click", e => {
+    const b = e.target.closest("button"); if(!b) return;
+    [...$(sel).children].forEach(x => x.classList.toggle("sel", x === b));
+    onPick(b.dataset[attr]);
+  });
+}
+function segSet(sel, attr, val){
+  [...$(sel).children].forEach(x => x.classList.toggle("sel", x.dataset[attr] === val));
+}
+
+/* ======================== shared: models ======================== */
+let MODELS = [], DEFAULT_MODEL = "";
+async function loadModels(){
+  try {
+    const d = await api("/api/models");
+    MODELS = d.models; DEFAULT_MODEL = d.default;
+    for (const el of [$("#model"), $("#oModel")]){
+      el.innerHTML = "";
+      d.models.forEach(m => {
+        const o = document.createElement("option");
+        o.value = o.textContent = m;
+        if (m === d.default || m.startsWith(d.default)) o.selected = true;
+        el.appendChild(o);
+      });
+    }
+    if (!d.models.length) throw new Error("no models installed");
+    $("#dot").className = "dot on";
+    $("#statustext").textContent = "Ollama connected";
+  } catch (e) {
+    $("#dot").className = "dot off";
+    $("#statustext").textContent = "Ollama offline — " + e.message;
+    $("#go").disabled = true;
+  }
+}
+
+/* ============================ tabs ============================== */
+function showTab(t){
+  $$(".page").forEach(p => p.classList.toggle("on", p.id === "page-" + t));
+  segSet("#tabs", "tab", t);
+  // The phone's bottom bar acts on the selected document, so it belongs to the
+  // Documents tab only.
+  document.body.classList.toggle("tab-docs", t === "docs");
+  if (t === "docs") loadJobs();
+}
+seg("#tabs", "tab", showTab);
+
+/* ========================== QUICK TAB =========================== */
+const srcEl=$("#src"), outEl=$("#out"), goEl=$("#go"), stopEl=$("#stop"),
+      modelEl=$("#model"), statsEl=$("#stats");
+let direction = "he2en", style = "natural", controller = null;
+
+function paintDirection(){
+  const he2en = direction === "he2en";
+  $("#srcLabel").textContent = he2en ? "Hebrew" : "English";
+  $("#outLabel").textContent = he2en ? "English" : "Hebrew";
+  srcEl.placeholder = he2en
+    ? "Paste Hebrew here…  (Ctrl+Enter to translate)"
+    : "Type English here…  (Ctrl+Enter to translate)";
+}
+
+seg("#styleSeg", "style", v => style = v);
+
+$("#swap").addEventListener("click", () => {
+  direction = direction === "he2en" ? "en2he" : "he2en";
+  // carry a finished translation back into the source box for round-tripping
+  const done = outEl.classList.contains("placeholder") ? "" : outEl.textContent.trim();
+  if (done) { srcEl.value = done; outEl.textContent = "Translation appears here."; outEl.className = "placeholder"; }
+  paintDirection();
+  srcEl.focus();
+});
+
+$("#clear").addEventListener("click", () => {
+  srcEl.value = "";
+  outEl.textContent = "Translation appears here.";
+  outEl.className = "placeholder";
+  statsEl.textContent = "ready"; statsEl.classList.remove("err");
+  srcEl.focus();
+});
+
+$("#copy").addEventListener("click", async () => {
+  if (outEl.classList.contains("placeholder")) return;
+  try {
+    await navigator.clipboard.writeText(outEl.textContent.trim());
+    const b = $("#copy"); b.textContent = "Copied ✓";
+    setTimeout(() => b.textContent = "Copy result", 1200);
+  } catch { /* clipboard blocked; user can select manually */ }
+});
+
+document.addEventListener("keydown", e => {
+  if (e.ctrlKey && e.key === "Enter" && $("#page-quick").classList.contains("on")) {
+    e.preventDefault(); translate();
+  }
+  if (e.ctrlKey && e.shiftKey && (e.key === "S" || e.key === "s")) { e.preventDefault(); $("#swap").click(); }
+  if (e.key === "Escape") $$(".modal.on").forEach(m => m.classList.remove("on"));
+});
+
+async function translate(){
+  const text = srcEl.value.trim();
+  if (!text || controller) return;
+
+  outEl.textContent = ""; outEl.className = "";
+  $("#reasonBox").style.display = "none";
+  $("#reason").textContent = "";
+  const cur = document.createElement("span");
+  cur.className = "cursor";
+  outEl.appendChild(cur);
+
+  goEl.disabled = true; stopEl.style.display = "";
+  statsEl.classList.remove("err");
+  statsEl.textContent = "loading model…";
+
+  controller = new AbortController();
+  const t0 = performance.now();
+  let firstAt = null, acc = "", reasonAcc = "";
+
+  // This model sometimes emits its reasoning chain inline in `content` and
+  // closes it with </think> instead of routing it to the `thinking` field.
+  // Render optimistically, then retroactively move any such prefix into the
+  // collapsible reasoning box so only the translation stays in the pane.
+  const CLOSE = "</think>";
+  function render(){
+    let body = acc, inline = "";
+    const i = acc.lastIndexOf(CLOSE);
+    if (i >= 0) {
+      inline = acc.slice(0, i).replace(/^\s*<think>/, "").trim();
+      body = acc.slice(i + CLOSE.length);
+    }
+    const reasoning = [reasonAcc.trim(), inline].filter(Boolean).join("\n");
+    if (reasoning) {
+      $("#reason").textContent = reasoning;
+      $("#reasonBox").style.display = "";
+    }
+    outEl.textContent = body.replace(/^\s+/, "");
+    outEl.appendChild(cur);
+    outEl.scrollTop = outEl.scrollHeight;
+  }
+
+  try {
+    const res = await fetch("/api/translate", {
+      method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({text, direction, style, model: modelEl.value,
+                            think: $("#think").checked}),
+      signal: controller.signal
+    });
+    if (!res.ok) {
+      let msg = "HTTP " + res.status;
+      try { msg = (await res.json()).error || msg; } catch {}
+      throw new Error(msg);
+    }
+
+    const reader = res.body.getReader();
+    const dec = new TextDecoder("utf-8");
+    let buf = "";
+    for (;;) {
+      const {value, done} = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, {stream: true});
+      let nl;
+      while ((nl = buf.indexOf("\n")) >= 0) {
+        const line = buf.slice(0, nl).trim();
+        buf = buf.slice(nl + 1);
+        if (!line) continue;
+        let j;
+        try { j = JSON.parse(line); } catch { continue; }
+        if (j.error) throw new Error(j.error);
+        const msg = j.message || {};
+        if (msg.thinking) { reasonAcc += msg.thinking; render(); }
+        if (msg.content) {
+          if (firstAt === null) firstAt = performance.now();
+          acc += msg.content; render();
+        }
+        if (j.done) {
+          const total = (performance.now() - t0) / 1000;
+          const ttft = firstAt ? (firstAt - t0) / 1000 : total;
+          const n = j.eval_count || 0;
+          const tps = (n && j.eval_duration) ? n / (j.eval_duration / 1e9) : 0;
+          statsEl.innerHTML =
+            "<b>" + tps.toFixed(1) + "</b> tok/s · first token <b>" +
+            ttft.toFixed(2) + "s</b> · <b>" + n + "</b> tokens · total <b>" +
+            total.toFixed(1) + "s</b>";
+        }
+      }
+    }
+    if (!acc.trim()) statsEl.textContent = "model returned nothing — try again";
+  } catch (e) {
+    if (e.name === "AbortError") statsEl.textContent = "stopped";
+    else { statsEl.textContent = "Error: " + e.message; statsEl.classList.add("err"); }
+  } finally {
+    cur.remove();
+    if (!outEl.textContent.trim()) {
+      outEl.textContent = "Translation appears here.";
+      outEl.className = "placeholder";
+    }
+    controller = null; goEl.disabled = false; stopEl.style.display = "none";
+  }
+}
+goEl.addEventListener("click", translate);
+stopEl.addEventListener("click", () => controller && controller.abort());
+
+/* ======================== DOCUMENTS TAB ========================= */
+const D = {
+  jobs: [], jid: null, job: null, chunks: [],
+  next: 0,            // how many chunks the pane has already rendered
+  poll: null, view: "chunks", srcDirty: false, outDirty: false,
+  srcPath: "", srcSha: "", outSha: "", outDir: "", root: ""
+};
+
+function fmtTime(s){
+  s = Math.round(s || 0);
+  const h = Math.floor(s/3600), m = Math.floor(s%3600/60);
+  return h ? h+"h "+m+"m" : (m ? m+"m "+(s%60)+"s" : s+"s");
+}
+
+async function loadJobs(){
+  try {
+    const d = await api("/api/jobs");
+    D.jobs = d.jobs; D.outDir = d.out_dir; D.root = d.root;
+    if (!$("#nOut").value) $("#nOut").value = d.out_dir;
+    setOnline(true);
+    CACHE.set("index", d.jobs).catch(() => {});
+    renderJobList();
+    paintMobBar();
+  } catch(e){
+    if (!netFail(e)){ toast(e.message, true); return; }
+    // The tunnel is down. The library is still worth showing: it is the list of
+    // documents whose text this phone already holds.
+    const cached = await CACHE.get("index").catch(() => null);
+    D.jobs = cached || [];
+    renderJobList();
+    paintMobBar();
+  }
+}
+
+function renderJobList(){
+  const box = $("#jobList");
+  if (!D.jobs.length){
+    box.innerHTML = '<div class="lbl" style="padding:10px">No documents yet. '
+      + 'Press <b>+ New document</b> to feed a .txt in.</div>';
+    return;
+  }
+  box.innerHTML = "";
+  for (const j of D.jobs){
+    const el = document.createElement("div");
+    el.className = "jobcard" + (j.id === D.jid ? " sel" : "");
+    el.innerHTML =
+      '<div class="t"></div>'
+      + '<div class="m"><span class="pill ' + j.status + '"></span>'
+      + '<span class="pc"></span><span class="md"></span></div>'
+      + '<div class="bar"><i style="width:' + (j.percent||0) + '%"></i></div>';
+    el.querySelector(".t").textContent = j.title || j.id;
+    el.querySelector(".pill").textContent = j.status;
+    el.querySelector(".pc").textContent =
+      (j.done_text||0) + "/" + (j.total_text||0) + " · " + (j.percent||0).toFixed(1) + "%";
+    el.querySelector(".md").textContent = j.mode === "interlinear" ? "interlinear" : "";
+    if (!NET.online) markOffline(el, j.id);
+    el.addEventListener("click", () => selectJob(j.id));
+    box.appendChild(el);
+  }
+}
+
+async function selectJob(id, keepScroll){
+  D.jid = id;
+  D.next = 0;
+  if (!keepScroll){ $("#chunks").innerHTML = ""; D.chunks = []; }
+  renderJobList();
+  if (!NET.online){ await showCachedJob(); return; }
+  await refreshJob(true);
+  if (!NET.online) return;              // refreshJob discovered the tunnel is down
+  await loadSource();
+  startPolling();
+}
+
+async function refreshJob(full){
+  if (!D.jid) return;
+  let d;
+  try { d = await api("/api/job?id=" + encodeURIComponent(D.jid) + "&from=" + (full ? 0 : D.next)); }
+  catch(e){
+    stopPolling();
+    if (netFail(e)) { await showCachedJob(); return; }
+    toast(e.message, true); return;
+  }
+  setOnline(true);
+
+  const first = full || !D.job;
+  D.job = d.job;
+  if (full){ D.chunks = []; $("#chunks").innerHTML = ""; D.next = 0; }
+  for (const c of d.chunks) D.chunks[c.i] = c;
+  // Render only as far as the bookmark: this pane is "what has been translated
+  // so far", so untranslated chunks must not show up as empty placeholders.
+  for (const c of d.chunks){
+    if (c.i < D.next){ updateChunk(c); continue; }
+    if (!c.done) break;
+    appendChunk(c);
+    D.next = c.i + 1;
+  }
+  renderLive(d.live, d.live_i, d.live_thinking, d.live_chars);
+  paintJobBar();
+  if (D.view === "text" && !D.outDirty) refreshOutText();
+  if (first && D.job.status === "interrupted")
+    toast("This document was cut off mid-translation — press Translate to resume.", true);
+}
+
+/* With the computer unreachable there is no chunk stream and no live view, but
+   the source and the translation as of the last sync are both here and both
+   editable. Say so plainly instead of showing an empty pane. */
+async function showCachedJob(){
+  const doc = await CACHE.getDoc(D.jid).catch(() => null);
+  const row = D.jobs.find(j => j.id === D.jid);
+  // paintJobBar reads status_line, percent and the counts unguarded, and a
+  // document the phone has never cached has none of them.
+  D.job = Object.assign({
+    title: D.jid, status: "unknown", status_line: "0 of 0 chunks",
+    percent: 0, done_text: 0, total_text: 0, total_chunks: 0, bookmark: 0,
+    elapsed_sec: 0, tokens_out: 0, output_file: "", source_file: ""
+  }, (doc && doc.meta) || row || {}, {running: false});
+  paintJobBar();
+  $("#jobPill").textContent = "offline";
+  $("#chunks").innerHTML =
+    '<div class="lbl" style="padding:14px;text-transform:none;letter-spacing:0">'
+    + "The computer is unreachable, so the live chunk view is not available. "
+    + "Switch to <b>Full text</b> to read and edit the translation as of "
+    + ((doc && doc.updated) || "the last sync") + "."
+    + "</div>";
+  await loadSourceCached();
+  await loadOutCached();
+  ["btnGo","btnPause","btnRestart","btnCut","btnSettings","btnFolder","btnDelete",
+   "btnSrcSave","btnOutSave","btnOutSaveAs"].forEach(b => $("#"+b).disabled = true);
+  $("#btnPush").disabled = false;
+  $("#btnDevice").disabled = false;
+  $("#docStats").textContent = doc
+    ? "offline copy from " + (doc.updated || doc.cached_at)
+    : "not cached - open this document once while the computer is reachable";
+  paintMobBar();
+}
+
+function paintJobBar(){
+  const j = D.job;
+  if (!j){
+    $("#jobTitle").textContent = "No document selected";
+    $("#jobPill").textContent = "—"; $("#jobPill").className = "pill";
+    ["btnGo","btnPause","btnRestart","btnCut","btnSettings","btnFolder","btnDelete",
+     "btnSrcSave","btnOutSave","btnOutSaveAs"].forEach(b => $("#"+b).disabled = true);
+    $("#docStats").textContent = "no document loaded";
+    $("#docPaths").textContent = "";
+    paintMobBar();
+    return;
+  }
+  $("#jobTitle").textContent = j.title;
+  $("#jobTitle").title = j.source_file;
+  $("#jobPill").textContent = j.status;
+  $("#jobPill").className = "pill " + j.status;
+
+  const run = !!j.running;
+  const finished = j.bookmark >= j.total_chunks;
+  $("#btnGo").disabled = run || finished;
+  $("#btnGo").textContent = j.done_text > 0 && !finished
+    ? "Resume from " + j.done_text : "Translate";
+  $("#btnPause").disabled = !run;
+  ["btnRestart","btnSettings","btnFolder","btnDelete","btnOutSave","btnOutSaveAs"]
+    .forEach(b => $("#"+b).disabled = false);
+  $("#btnRestart").disabled = run;
+  $("#btnSettings").disabled = run;
+  $("#btnCut").disabled = !(j.cut_marks && j.cut_marks.length) && !j.bookmark;
+
+  const rate = j.elapsed_sec && j.done_text ? j.done_text / j.elapsed_sec : 0;
+  const left = rate ? (j.total_text - j.done_text) / rate : 0;
+  $("#docStats").innerHTML =
+    j.status_line.replace(/(\d+) of (\d+)/, "<b>$1</b> of <b>$2</b>")
+    + " · bookmark <b>" + j.bookmark + "</b>/" + j.total_chunks
+    + " · <b>" + (j.tokens_out||0) + "</b> tokens · " + fmtTime(j.elapsed_sec)
+    + (run && left ? " · ~" + fmtTime(left) + " left" : "")
+    + (j.cut_marks && j.cut_marks.length
+        ? ' · <span class="err">' + j.cut_marks.length + " cut mark(s)</span>" : "")
+    + (j.skipped ? ' · <span class="err">' + j.skipped + " skipped ⚠</span>" : "")
+    + (j.error ? ' · <span class="err">' + j.error + "</span>" : "");
+  $("#docPaths").textContent = "→ " + j.output_file;
+  $("#docPaths").title = j.output_file;
+
+  if (D.srcSha && j.source_sha && D.srcSha !== j.source_sha && !D.srcDirty)
+    $("#srcInfo").innerHTML = '<span class="err">source changed — Restart to re-chunk</span>';
+  paintMobBar();
+}
+
+/* ---- chunk rendering ---- */
+function chunkNode(c){
+  const el = document.createElement("div");
+  el.className = "ch" + (c.kind === "pass" ? " pass" : "");
+  el.id = "ch" + c.i;
+  el.innerHTML = '<div class="n"><span class="ni"></span><span class="badge"></span></div>'
+    + '<div class="he" dir="rtl"></div><div class="en" dir="ltr"></div>'
+    + '<div class="orig" dir="rtl"></div>';
+  fillChunk(el, c);
+  const he = el.querySelector(".he"), en = el.querySelector(".en");
+  if (c.kind === "text"){
+    for (const [node, field] of [[he, "heb"], [en, "out"]]){
+      node.contentEditable = "true";
+      node.addEventListener("blur", async () => {
+        const val = node.textContent.trim();
+        const cur = D.chunks[c.i] || c;
+        if (val === (cur[field] || "")) return;
+        cur[field] = val;
+        try {
+          await api("/api/job/edit", {id: D.jid, i: c.i, [field]: val});
+          toast("chunk " + c.i + " saved");
+        } catch(e){ toast(e.message, true); }
+      });
+    }
+  }
+  return el;
+}
+
+function fillChunk(el, c){
+  const inter = D.job && D.job.mode === "interlinear";
+  el.querySelector(".ni").textContent = "#" + c.i + (c.kind === "pass" ? " (copied)" : "");
+  el.querySelector(".badge").textContent = c.warn ? "⚠ " + c.warn : "";
+  const he = el.querySelector(".he"), en = el.querySelector(".en"), og = el.querySelector(".orig");
+  if (c.kind === "pass"){
+    he.style.display = "none"; en.style.display = "none";
+    og.textContent = c.src; og.dir = "auto"; og.style.display = c.src.trim() ? "" : "none";
+    return;
+  }
+  he.textContent = inter ? (c.heb || c.src) : c.src;
+  he.style.display = (inter || D.job.include_source) ? "" : "none";
+  he.contentEditable = inter ? "true" : "false";
+  en.textContent = c.out || (c.done ? "" : "…");
+  og.textContent = (inter && c.heb && c.heb !== c.src) ? c.src : "";
+  og.style.display = og.textContent ? "" : "none";
+}
+
+function appendChunk(c){
+  if (c.kind === "pass" && !c.src.trim()) return;   // blank source lines add nothing here
+  $("#chunks").appendChild(chunkNode(c));
+  if ($("#follow").checked) $("#chunks").scrollTop = $("#chunks").scrollHeight;
+}
+
+function updateChunk(c){
+  const el = document.getElementById("ch" + c.i);
+  if (el) fillChunk(el, c);
+}
+
+function renderLive(text, i, thinking, chars){
+  let el = document.getElementById("chlive");
+  if (i < 0 || (!text && !chars)){ if (el) el.remove(); return; }
+  if (!el){
+    el = document.createElement("div");
+    el.className = "ch live"; el.id = "chlive";
+    el.innerHTML = '<div class="n"><span class="ni"></span></div>'
+      + '<div class="en" dir="auto"></div>';
+    $("#chunks").appendChild(el);
+  }
+  const src = D.chunks[i] ? D.chunks[i].src : "";
+  el.className = "ch live" + (thinking ? " thinking" : "");
+  el.querySelector(".ni").textContent =
+    "#" + i + (thinking ? " thinking… (" + chars.toLocaleString() + " chars)" : " translating…")
+    + (src ? "  ·  " + src.slice(0, 60) : "");
+  el.querySelector(".en").textContent = thinking ? "…" + text : text;
+  if ($("#follow").checked) $("#chunks").scrollTop = $("#chunks").scrollHeight;
+}
+
+/* ---- polling ---- */
+function startPolling(){
+  stopPolling();
+  D.poll = setInterval(async () => {
+    if (!D.jid) return;
+    await refreshJob(false);
+    if (D.job && !D.job.running){
+      stopPolling();
+      loadJobs();
+    }
+  }, 900);
+}
+function stopPolling(){ if (D.poll){ clearInterval(D.poll); D.poll = null; } }
+
+/* ---- source pane ---- */
+async function loadSource(){
+  if (!D.job) return;
+  try {
+    const d = await api("/api/fs/read?path=" + encodeURIComponent(D.job.source_file));
+    $("#srcText").value = d.text;
+    D.srcPath = d.path; D.srcSha = d.sha; D.srcDirty = false;
+    $("#btnSrcSave").disabled = true;
+    $("#srcInfo").textContent = d.chars.toLocaleString() + " chars";
+    cachePatch(D.jid, {src_text: d.text, src_sha: d.sha, updated: D.job.updated});
+    await restoreLocal("src");
+  } catch(e){
+    if (netFail(e)){ await loadSourceCached(); return; }
+    $("#srcText").value = "(could not read " + D.job.source_file + ")";
+    $("#srcInfo").innerHTML = '<span class="err">missing</span>';
+  }
+  paintMobBar();
+}
+
+/* Offline: the copy this phone pulled the last time it could reach the box. */
+async function loadSourceCached(){
+  const doc = await CACHE.getDoc(D.jid).catch(() => null);
+  const pending = doc && doc.local && doc.local.src;
+  if (!doc || (doc.src_text == null && !pending)){
+    $("#srcText").value = "";
+    $("#srcInfo").innerHTML = '<span class="err">not cached - open this document once while the computer is reachable</span>';
+    return;
+  }
+  $("#srcText").value = pending != null ? pending : doc.src_text;
+  D.srcSha = doc.src_sha || "";
+  D.srcDirty = pending != null;
+  $("#btnSrcSave").disabled = true;
+  $("#srcInfo").innerHTML = pending != null
+    ? '<span class="err">offline - unpushed edits</span>'
+    : "offline copy · " + (doc.src_text || "").length.toLocaleString() + " chars";
+}
+
+/* Put unpushed phone edits back on screen over whatever the server just sent. */
+async function restoreLocal(which){
+  const doc = await CACHE.getDoc(D.jid).catch(() => null);
+  const pending = doc && doc.local && doc.local[which];
+  if (pending == null) return;
+  if (which === "src"){
+    $("#srcText").value = pending; D.srcDirty = true;
+    $("#btnSrcSave").disabled = false;
+    $("#srcInfo").innerHTML = '<span class="err">unpushed phone edits</span>';
+  } else {
+    $("#outText").value = pending; D.outDirty = true;
+  }
+  paintMobBar();
+}
+
+/* A small dot on library rows whose text this phone actually holds. */
+async function markOffline(el, id){
+  const doc = await CACHE.getDoc(id).catch(() => null);
+  const has = doc && (doc.src_text != null || doc.out_text != null);
+  const md = el.querySelector(".md");
+  if (md) md.textContent = (md.textContent ? md.textContent + " · " : "")
+                         + (has ? "on phone" : "not cached");
+}
+
+$("#srcText").addEventListener("input", () => {
+  D.srcDirty = true;
+  $("#btnSrcSave").disabled = false;
+  $("#srcInfo").innerHTML = '<span class="err">unsaved changes</span>';
+  stashLocal();
+  paintMobBar();
+});
+
+$("#btnSrcSave").addEventListener("click", async () => {
+  if (!D.job) return;
+  try {
+    const d = await api("/api/fs/write", {path: D.job.source_file, text: $("#srcText").value});
+    D.srcSha = d.sha; D.srcDirty = false;
+    $("#btnSrcSave").disabled = true;
+    $("#srcInfo").textContent = d.chars.toLocaleString() + " chars · saved";
+    toast("source .txt saved");
+    if (D.job.source_sha !== d.sha)
+      $("#srcInfo").innerHTML += ' · <span class="err">Restart to re-chunk</span>';
+  } catch(e){ toast(e.message, true); }
+});
+
+$("#btnSrcReload").addEventListener("click", loadSource);
+
+/* Jump the source textarea to where translation stopped: select the text of the
+   chunk the bookmark points at, which is exactly where the blank lines went. */
+$("#btnCut").addEventListener("click", () => {
+  const j = D.job; if (!j) return;
+  // Same rule the server uses: the bookmark may sit on a blank line, so anchor
+  // on the next line that actually has text.
+  let needle = "";
+  for (let i = j.bookmark; i < D.chunks.length && !needle; i++)
+    if (D.chunks[i] && D.chunks[i].src.trim()) needle = D.chunks[i].src.trim().slice(0, 40);
+  if (!needle && j.cut_marks && j.cut_marks.length)
+    needle = j.cut_marks[j.cut_marks.length - 1].preview;
+  if (!needle){ toast("nothing to jump to"); return; }
+  const ta = $("#srcText");
+  const pos = ta.value.indexOf(needle);
+  if (pos < 0){ toast("cut point not found in the current source text", true); return; }
+  ta.focus();
+  ta.setSelectionRange(pos, pos + needle.length);
+  // scrollTop has no direct char mapping; approximate by line ratio
+  const before = ta.value.slice(0, pos).split("\n").length;
+  const total = ta.value.split("\n").length;
+  ta.scrollTop = Math.max(0, (before / total) * ta.scrollHeight - ta.clientHeight / 2);
+  toast("cut point #" + j.bookmark + " — look for the blank lines");
+});
+
+/* ---- translation pane ---- */
+seg("#viewSeg", "view", v => {
+  D.view = v;
+  $("#chunks").style.display = v === "chunks" ? "" : "none";
+  $("#outText").style.display = v === "text" ? "" : "none";
+  if (v === "text") refreshOutText();
+});
+
+async function refreshOutText(){
+  if (!D.jid) return;
+  try {
+    const d = await api("/api/job/output?id=" + encodeURIComponent(D.jid));
+    const ta = $("#outText");
+    const atEnd = ta.scrollTop + ta.clientHeight >= ta.scrollHeight - 40;
+    ta.value = d.text; D.outDirty = false; D.outSha = d.sha || "";
+    if (atEnd && $("#follow").checked) ta.scrollTop = ta.scrollHeight;
+    cachePatch(D.jid, {out_text: d.text, out_sha: d.sha, updated: D.job && D.job.updated});
+    await restoreLocal("out");
+  } catch(e){
+    if (netFail(e)) await loadOutCached();
+  }
+}
+
+async function loadOutCached(){
+  const doc = await CACHE.getDoc(D.jid).catch(() => null);
+  const pending = doc && doc.local && doc.local.out;
+  if (!doc || (doc.out_text == null && pending == null)) return;
+  $("#outText").value = pending != null ? pending : doc.out_text;
+  D.outSha = doc.out_sha || "";
+  D.outDirty = pending != null;
+  paintMobBar();
+}
+
+$("#outText").addEventListener("input", () => { D.outDirty = true; stashLocal(); paintMobBar(); });
+
+$("#btnOutSave").addEventListener("click", async () => {
+  if (!D.job) return;
+  try {
+    const body = {id: D.jid, path: D.job.output_file};
+    if (D.view === "text" && D.outDirty) body.text = $("#outText").value;
+    const d = await api("/api/job/export", body);
+    D.outDirty = false;
+    toast("saved → " + d.path);
+  } catch(e){ toast(e.message, true); }
+});
+
+$("#btnOutSaveAs").addEventListener("click", async () => {
+  if (!D.job) return;
+  const p = prompt("Save the translation to which file or folder?", D.job.output_file);
+  if (!p) return;
+  try {
+    const body = {id: D.jid, path: p};
+    if (D.view === "text" && D.outDirty) body.text = $("#outText").value;
+    const d = await api("/api/job/export", body);
+    toast("saved → " + d.path);
+  } catch(e){ toast(e.message, true); }
+});
+
+/* ---- run controls ---- */
+$("#btnGo").addEventListener("click", async () => {
+  if (!D.job) return;
+  const resuming = D.job.done_text > 0;
+  $("#btnGo").disabled = true;            // don't wait for the poll to catch up
+  $("#btnPause").disabled = false;
+  try {
+    await api("/api/job/start", {id: D.jid});
+    toast(resuming ? "resuming at chunk " + D.job.bookmark : "translating…");
+    await refreshJob(false);
+    startPolling();
+  } catch(e){ toast(e.message, true); }
+});
+
+$("#btnPause").addEventListener("click", async () => {
+  $("#btnPause").disabled = true;
+  try { const d = await api("/api/job/pause", {id: D.jid}); toast(d.message); }
+  catch(e){ toast(e.message, true); $("#btnPause").disabled = false; }
+});
+
+$("#btnRestart").addEventListener("click", async () => {
+  if (!D.job) return;
+  if (!confirm("Throw away all " + D.job.done_text + " translated chunks and start this "
+               + "document again from the top?\n\nThe source .txt is re-read and re-chunked."))
+    return;
+  try {
+    await api("/api/job/reset", {id: D.jid});
+    toast("restarted");
+    await selectJob(D.jid);
+  } catch(e){ toast(e.message, true); }
+});
+
+$("#btnDelete").addEventListener("click", async () => {
+  if (!D.job) return;
+  if (!confirm("Delete this job's .json?\n\nThe source .txt and any translation already "
+               + "written to disk are left alone.")) return;
+  try {
+    await api("/api/job/delete", {id: D.jid});
+    stopPolling();
+    D.jid = null; D.job = null; D.chunks = []; D.next = 0;
+    $("#chunks").innerHTML = ""; $("#srcText").value = ""; $("#outText").value = "";
+    paintJobBar(); loadJobs();
+  } catch(e){ toast(e.message, true); }
+});
+
+$("#btnFolder").addEventListener("click", () => {
+  if (D.job) api("/api/fs/open", {path: D.job.output_dir}).catch(e => toast(e.message, true));
+});
+
+$("#refreshJobs").addEventListener("click", loadJobs);
+
+/* ---- options modal ---- */
+$("#btnSettings").addEventListener("click", () => {
+  const j = D.job; if (!j) return;
+  $("#oModel").value = j.model;
+  segSet("#oStyle", "style", j.style);
+  $("#oOut").value = j.output_dir;
+  $("#oNikkud").checked = !!j.nikkud;
+  $("#oInclude").checked = !!j.include_source;
+  $("#oMark").checked = !!j.mark_cuts;
+  $("#oThink").checked = !!j.think;
+  $("#optModal").classList.add("on");
+});
+$("#oCancel").addEventListener("click", () => $("#optModal").classList.remove("on"));
+let oStyle = "natural";
+seg("#oStyle", "style", v => oStyle = v);
+$("#oSave").addEventListener("click", async () => {
+  try {
+    await api("/api/job/settings", {
+      id: D.jid, model: $("#oModel").value, style: oStyle,
+      output_dir: $("#oOut").value.trim(),
+      nikkud: $("#oNikkud").checked, include_source: $("#oInclude").checked,
+      mark_cuts: $("#oMark").checked, think: $("#oThink").checked
+    });
+    $("#optModal").classList.remove("on");
+    toast("options applied");
+    await refreshJob(true);
+  } catch(e){ toast(e.message, true); }
+});
+$("#oOutBrowse").addEventListener("click", () =>
+  browse("folder", p => $("#oOut").value = p));
+
+/* ---- new document modal ---- */
+let nMode = "paragraph", nDir = "he2en", nStyle = "natural";
+seg("#nMode", "mode", v => {
+  nMode = v;
+  const on = v === "interlinear";
+  $("#nInterRow").style.display = on ? "" : "none";
+  $("#nInterHint").style.display = on ? "" : "none";
+  $("#nModeHint").textContent = on
+    ? "Hebrew line, English underneath"
+    : "one chunk per source line";
+});
+seg("#nDir", "dir", v => nDir = v);
+seg("#nStyle", "style", v => nStyle = v);
+
+$("#newJob").addEventListener("click", () => {
+  $("#nStatus").textContent = "";
+  if (!$("#nOut").value) $("#nOut").value = D.outDir;
+  $("#nModeHint").textContent = "one chunk per source line";
+  $("#newModal").classList.add("on");
+  $("#nSource").focus();
+});
+$("#nCancel").addEventListener("click", () => $("#newModal").classList.remove("on"));
+$("#nBrowse").addEventListener("click", () => browse("file", p => $("#nSource").value = p));
+$("#nOutBrowse").addEventListener("click", () => browse("folder", p => $("#nOut").value = p));
+
+/* The browser hides real paths, so a file picked this way is copied into
+   Texts/Uploads/ and the job runs against that copy. */
+$("#nPick").addEventListener("click", () => $("#nFile").click());
+$("#nFile").addEventListener("change", async e => {
+  const f = e.target.files[0]; if (!f) return;
+  $("#nStatus").textContent = "copying " + f.name + " in…";
+  try {
+    const text = await f.text();
+    const d = await api("/api/fs/upload", {name: f.name, text});
+    $("#nSource").value = d.path;
+    $("#nStatus").textContent = "copied to " + d.path;
+  } catch(err){ $("#nStatus").innerHTML = '<span class="err">' + err.message + "</span>"; }
+  e.target.value = "";
+});
+
+$("#nCreate").addEventListener("click", async () => {
+  const src = $("#nSource").value.trim();
+  if (!src){ $("#nStatus").innerHTML = '<span class="err">pick a .txt first</span>'; return; }
+  try {
+    const d = await api("/api/job/create", {
+      source_file: src, mode: nMode, direction: nDir, style: nStyle,
+      words_per_line: parseInt($("#nWords").value, 10) || 16,
+      nikkud: $("#nNikkud").checked,
+      include_source: $("#nInclude").checked,
+      mark_cuts: $("#nMark").checked,
+      output_dir: $("#nOut").value.trim(),
+      model: $("#model").value
+    });
+    if (d.warning){ $("#nStatus").innerHTML = '<span class="err">' + d.warning + "</span>"; return; }
+    $("#newModal").classList.remove("on");
+    await loadJobs();
+    await selectJob(d.job_id);
+    toast(d.resumed ? "opened the existing job — " + d.status_line : "document ready");
+  } catch(e){ $("#nStatus").innerHTML = '<span class="err">' + e.message + "</span>"; }
+});
+
+/* ---- server-side file browser ---- */
+let browseCb = null, browseMode = "file", browseDir = "";
+function browse(mode, cb){
+  browseMode = mode; browseCb = cb;
+  $("#browseTitle").textContent = mode === "file" ? "Choose a .txt file" : "Choose a folder";
+  $("#browsePick").style.display = mode === "folder" ? "" : "none";
+  $("#browseModal").classList.add("on");
+  listDir(browseDir || D.root || "");
+}
+$("#browseCancel").addEventListener("click", () => $("#browseModal").classList.remove("on"));
+$("#browseUp").addEventListener("click", () => listDir($("#browseList").dataset.parent || ""));
+$("#browseGoto").addEventListener("click", () => listDir($("#browsePath").value.trim()));
+$("#browsePath").addEventListener("keydown", e => {
+  if (e.key === "Enter") listDir($("#browsePath").value.trim());
+});
+$("#browsePick").addEventListener("click", () => {
+  if (browseCb) browseCb(browseDir);
+  $("#browseModal").classList.remove("on");
+});
+
+async function listDir(dir){
+  try {
+    const d = await api("/api/fs/list?dir=" + encodeURIComponent(dir || ""));
+    browseDir = d.dir;
+    $("#browsePath").value = d.dir === "@drives" ? "" : d.dir;
+    const box = $("#browseList");
+    box.dataset.parent = d.parent;
+    box.innerHTML = "";
+    for (const p of d.dirs){
+      const el = document.createElement("div");
+      el.className = "di";
+      el.textContent = "📁  " + (p.split(/[\\/]/).filter(Boolean).pop() || p);
+      el.addEventListener("click", () => listDir(p));
+      box.appendChild(el);
+    }
+    if (browseMode === "file") for (const f of d.files){
+      const el = document.createElement("div");
+      el.className = "fi";
+      el.textContent = "📄  " + f.name + "   ·  "
+        + (f.size/1024).toFixed(0) + " KB  ·  " + f.mtime;
+      el.addEventListener("click", () => {
+        if (browseCb) browseCb(f.path);
+        $("#browseModal").classList.remove("on");
+      });
+      box.appendChild(el);
+    }
+    if (!box.children.length)
+      box.innerHTML = '<div class="di">(nothing here)</div>';
+  } catch(e){ toast(e.message, true); }
+}
+
+
+/* ================= PHONE: layout, offline cache, sync =================
+
+   Three things live here and nothing above this line knows about them:
+
+   1. A one-pane-at-a-time layout for narrow screens. The desktop grid is
+      untouched; `body.mob` and `#page-docs[data-mv]` do all the switching.
+   2. An IndexedDB copy of every document the phone has opened, so the source
+      and the finished translation stay readable and editable with the computer
+      asleep. The chunk-by-chunk live view is deliberately not cached - it is a
+      view of work in progress, which by definition needs the machine working.
+   3. A two-way sync with one rule: the computer is authoritative for the
+      translation it is producing, the phone is authoritative for edits you
+      typed. When both moved since the last sync the push is refused and you
+      pick a side, rather than one copy quietly winning.
+*/
+
+/* ---- tiny IndexedDB wrapper ---- */
+const CACHE = (() => {
+  let dbp = null;
+  function db(){
+    if (dbp) return dbp;
+    dbp = new Promise((res, rej) => {
+      const r = indexedDB.open("localhbt", 1);
+      r.onupgradeneeded = () => {
+        const d = r.result;
+        if (!d.objectStoreNames.contains("docs")) d.createObjectStore("docs", {keyPath:"id"});
+        if (!d.objectStoreNames.contains("kv"))   d.createObjectStore("kv");
+      };
+      r.onsuccess = () => res(r.result);
+      r.onerror   = () => rej(r.error);
+    });
+    return dbp;
+  }
+  function run(store, mode, fn){
+    return db().then(d => new Promise((res, rej) => {
+      const t = d.transaction(store, mode);
+      const rq = fn(t.objectStore(store));
+      t.oncomplete = () => res(rq ? rq.result : undefined);
+      t.onerror    = () => rej(t.error);
+      t.onabort    = () => rej(t.error);
+    }));
+  }
+  return {
+    getDoc:  id  => run("docs","readonly",  s => s.get(id)),
+    putDoc:  doc => run("docs","readwrite", s => s.put(doc)),
+    allDocs: ()  => run("docs","readonly",  s => s.getAll()),
+    delDoc:  id  => run("docs","readwrite", s => s.delete(id)),
+    get:     k     => run("kv","readonly",  s => s.get(k)),
+    set:     (k,v) => run("kv","readwrite", s => s.put(v, k)),
+  };
+})();
+
+async function cachePatch(id, patch){
+  if (!id) return null;
+  let doc = null;
+  try { doc = await CACHE.getDoc(id); } catch(e){ return null; }
+  doc = Object.assign({id: id}, doc || {}, patch);
+  doc.cached_at = new Date().toISOString();
+  try { await CACHE.putDoc(doc); } catch(e){ /* quota, or private browsing */ }
+  return doc;
+}
+
+/* ---- connection state ---- */
+const NET = {online: true, pending: 0, checked: false};
+
+function paintNet(){
+  const chip = $("#netchip");
+  chip.style.display = (document.body.classList.contains("mob") || !NET.online)
+    ? "inline-flex" : "none";
+  chip.className = NET.online ? (NET.pending ? "pend" : "") : "off";
+  $("#nettext").textContent = !NET.online
+    ? "offline - editing locally"
+    : (NET.pending ? NET.pending + " unpushed" : "online");
+}
+
+function setOnline(v){
+  if (NET.online === v && NET.checked) return;
+  const was = NET.online;
+  NET.online = v; NET.checked = true;
+  paintNet();
+  if (v && !was){
+    toast("computer is back - syncing");
+    flushOutbox();
+    loadJobs();
+    if (D.jid) selectJob(D.jid, true);
+  } else if (!v && was){
+    toast("computer unreachable - you can keep editing offline", true);
+  }
+}
+
+/* A call that never reached the box - as opposed to one the box answered with
+   an error - means the tunnel or the PC is down, not that the request was bad. */
+function isNetworkError(e){
+  const m = ((e && e.message) || "").toLowerCase();
+  return m.includes("failed to fetch") || m.includes("networkerror")
+      || m.includes("load failed")     || m.includes("network request failed");
+}
+function netFail(e){
+  if (isNetworkError(e)){ setOnline(false); return true; }
+  return false;
+}
+
+async function pingServer(){
+  try {
+    const r = await fetch("/api/jobs", {cache:"no-store"});
+    setOnline(r.ok);
+  } catch(e){ setOnline(false); }
+}
+
+/* ---- pending-edit bookkeeping ---- */
+async function countPending(){
+  try {
+    const all = await CACHE.allDocs();
+    NET.pending = all.filter(d => d.local && (d.local.src != null || d.local.out != null)).length;
+  } catch(e){ NET.pending = 0; }
+  paintNet();
+}
+
+/* Typing is stashed to IndexedDB shortly after you stop, so closing the app or
+   losing the tunnel mid-paragraph costs nothing. */
+let _stashT = null;
+function stashLocal(){
+  clearTimeout(_stashT);
+  _stashT = setTimeout(async () => {
+    if (!D.jid) return;
+    const src = D.srcDirty ? $("#srcText").value : null;
+    const out = (D.outDirty && D.view === "text") ? $("#outText").value : null;
+    if (src == null && out == null) return;
+    await stashLocalNow(src, out);
+  }, 800);
+}
+
+async function stashLocalNow(src, out){
+  if (!D.jid) return;
+  const doc = await CACHE.getDoc(D.jid).catch(() => null);
+  const local = (doc && doc.local) || {};
+  if (src != null) local.src = src;
+  if (out != null) local.out = out;
+  if (local.base_src_sha == null) local.base_src_sha = D.srcSha || (doc && doc.src_sha) || "";
+  if (local.base_out_sha == null) local.base_out_sha = D.outSha || (doc && doc.out_sha) || "";
+  local.at = new Date().toISOString();
+  await cachePatch(D.jid, {local: local});
+  countPending();
+}
+
+/* ---- pull ---- */
+async function pullDoc(id){
+  const d = await api("/api/sync/pull?ids=" + encodeURIComponent(id));
+  const doc = d.docs && d.docs[0];
+  if (!doc) throw new Error("no such document on the computer");
+  await cachePatch(id, {meta: doc.meta, src_text: doc.src_text,
+                        out_text: doc.out_text, src_sha: doc.src_sha,
+                        out_sha: doc.out_sha, updated: doc.updated});
+  return doc;
+}
+
+/* ---- push ---- */
+async function pushDoc(id, opts){
+  opts = opts || {};
+  const doc = await CACHE.getDoc(id).catch(() => null);
+  const local = (doc && doc.local) || {};
+  const body = {id: id};
+  if (opts.src != null) body.src_text = opts.src;
+  else if (local.src != null) body.src_text = local.src;
+  if (opts.out != null) body.out_text = opts.out;
+  else if (local.out != null) body.out_text = local.out;
+  // The hash of the text this edit started from. The server refuses the write if
+  // what is on disk no longer matches, which is what turns a blind overwrite
+  // into the "both copies changed" question.
+  body.base_src_sha = opts.srcSha || local.base_src_sha || (doc && doc.src_sha) || "";
+  body.base_out_sha = opts.outSha || local.base_out_sha || (doc && doc.out_sha) || "";
+  if (body.src_text == null && body.out_text == null)
+    return {ok:true, wrote:[], nothing:true};
+  if (opts.force) body.force = true;
+
+  const r = await fetch("/api/sync/push", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify(body)
+  });
+  const d = await r.json().catch(() => ({ok:false, error:"HTTP " + r.status}));
+  if (d.conflict){
+    const e = new Error(d.error); e.conflict = d; e.sent = body; throw e;
+  }
+  if (!d.ok) throw new Error(d.error || "push failed");
+
+  await cachePatch(id, {local: null, updated: d.updated,
+    src_sha: d.src_sha, out_sha: d.out_sha,
+    src_text: body.src_text != null ? body.src_text : (doc && doc.src_text),
+    out_text: body.out_text != null ? body.out_text : (doc && doc.out_text)});
+  // The panes now show exactly what the computer holds, so their baselines move
+  // with it - otherwise the next push would compare against a stale hash.
+  if (id === D.jid){ D.srcSha = d.src_sha || D.srcSha; D.outSha = d.out_sha || D.outSha; }
+  countPending();
+  return d;
+}
+
+async function flushOutbox(){
+  let all = [];
+  try { all = await CACHE.allDocs(); } catch(e){ return; }
+  for (const doc of all){
+    if (!doc.local || (doc.local.src == null && doc.local.out == null)) continue;
+    const name = (doc.meta && doc.meta.title) || doc.id;
+    try {
+      const d = await pushDoc(doc.id);
+      if (!d.nothing) toast("pushed " + name);
+    } catch(e){
+      if (e.conflict){ toast("conflict on " + name + " - open it to resolve", true); continue; }
+      if (netFail(e)) return;
+    }
+  }
+}
+
+/* ---- conflict chooser ---- */
+let CF = null;
+function showConflict(info, sent, id){
+  CF = {info: info, sent: sent, id: id};
+  const srv = info.server || {};
+  const which = info.which || (sent.out_text != null ? "translation" : "source text");
+  $("#cfWhat").textContent =
+    "You edited the " + which + " on this phone, but the computer's copy also "
+    + "changed since the last sync. Nothing has been written yet.";
+  $("#cfWhen").textContent = srv.updated ? "(saved " + srv.updated + ")" : "";
+  const isOut  = which === "translation";
+  const mine   = isOut ? sent.out_text : sent.src_text;
+  const theirs = isOut ? srv.out_text  : srv.src_text;
+  $("#cfMine").textContent   = (mine   || "").slice(0, 1200);
+  $("#cfTheirs").textContent = (theirs || "").slice(0, 1200);
+  $("#conflictModal").classList.add("on");
+}
+$("#cfCancel").addEventListener("click", () => $("#conflictModal").classList.remove("on"));
+$("#cfForce").addEventListener("click", async () => {
+  $("#conflictModal").classList.remove("on");
+  if (!CF) return;
+  try {
+    await pushDoc(CF.id, {force: true, src: CF.sent.src_text, out: CF.sent.out_text});
+    D.srcDirty = D.outDirty = false;
+    toast("phone version written to the computer");
+    selectJob(CF.id, true);
+  } catch(e){ toast(e.message, true); }
+});
+$("#cfTake").addEventListener("click", async () => {
+  $("#conflictModal").classList.remove("on");
+  if (!CF) return;
+  await cachePatch(CF.id, {local: null});
+  countPending();
+  D.srcDirty = D.outDirty = false;
+  toast("kept the computer's version");
+  selectJob(CF.id, true);
+});
+
+/* ---- push button: source and translation in one press ---- */
+async function pushCurrent(){
+  if (!D.jid){ toast("open a document first"); return; }
+  const src = D.srcDirty ? $("#srcText").value : null;
+  const out = (D.outDirty && D.view === "text") ? $("#outText").value : null;
+  if (src == null && out == null){ toast("nothing changed on this phone"); return; }
+  if (!NET.online){
+    await stashLocalNow(src, out);
+    toast("saved on the phone - it will push when the computer is back");
+    return;
+  }
+  try {
+    const d = await pushDoc(D.jid, {src: src, out: out,
+                                    srcSha: D.srcSha, outSha: D.outSha});
+    D.srcDirty = D.outDirty = false;
+    $("#btnSrcSave").disabled = true;
+    toast("pushed " + (d.wrote || []).join(" + ") + " to the computer");
+    selectJob(D.jid, true);
+  } catch(e){
+    if (e.conflict){ showConflict(e.conflict, e.sent, D.jid); return; }
+    if (netFail(e)){
+      await stashLocalNow(src, out);
+      toast("computer unreachable - kept on the phone", true);
+      return;
+    }
+    toast(e.message, true);
+  }
+}
+
+/* ---- save to device ----
+   Three ways down, best first: the Android shell's file bridge, the browser's
+   own folder picker, then plain downloads. All three produce the same files, so
+   what lands on the phone does not depend on how it got there. */
+async function saveToDevice(){
+  if (!D.jid){ toast("open a document first"); return; }
+  let bundle;
+  try {
+    bundle = await api("/api/job/bundle?id=" + encodeURIComponent(D.jid));
+  } catch(e){
+    if (!netFail(e)){ toast(e.message, true); return; }
+    const doc = await CACHE.getDoc(D.jid).catch(() => null);
+    if (!doc){ toast("no cached copy of this document", true); return; }
+    bundle = {folder: (doc.meta && doc.meta.title) || doc.id, files: [
+      {name:"source.txt",      text: (doc.local && doc.local.src) || doc.src_text || ""},
+      {name:"translation.txt", text: (doc.local && doc.local.out) || doc.out_text || ""},
+    ]};
+    toast("offline - saving the cached copy");
+  }
+
+  if (window.HBT && window.HBT.saveBundle){
+    toast(window.HBT.saveBundle(JSON.stringify(bundle)) || "saved to the phone");
+    return;
+  }
+  if (window.showDirectoryPicker){
+    try {
+      const root = await window.showDirectoryPicker({mode:"readwrite"});
+      const dir  = await root.getDirectoryHandle(bundle.folder, {create:true});
+      for (const f of bundle.files){
+        const fh = await dir.getFileHandle(f.name, {create:true});
+        const w  = await fh.createWritable();
+        await w.write(f.text); await w.close();
+      }
+      toast("saved " + bundle.files.length + " files to " + bundle.folder + "/");
+      return;
+    } catch(e){ if (e.name === "AbortError") return; }
+  }
+  for (const f of bundle.files){
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([f.text], {type:"text/plain;charset=utf-8"}));
+    a.download = bundle.folder + " - " + f.name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }
+  toast("downloaded " + bundle.files.length + " files");
+}
+
+/* The Android shell exposes a couple of things a browser tab cannot do. Show
+   the controls for them only when it is actually the shell showing this page. */
+if (window.HBT){
+  $("#btnApp").style.display = "";
+  $("#btnApp").addEventListener("click", () => {
+    if (confirm("Change which computer this app talks to?\n\nCancel = choose the folder that Save to device writes into."))
+      window.HBT.settings();
+    else if (window.HBT.pickFolder) window.HBT.pickFolder();
+  });
+}
+
+$("#btnPush").addEventListener("click", pushCurrent);
+$("#btnDevice").addEventListener("click", saveToDevice);
+$("#mPush").addEventListener("click", pushCurrent);
+$("#mSave").addEventListener("click", saveToDevice);
+$("#mGo").addEventListener("click", () => {
+  const go = $("#btnGo"), pause = $("#btnPause");
+  if (!pause.disabled) pause.click(); else if (!go.disabled) go.click();
+});
+
+/* ---- phone layout ---- */
+const MQ = window.matchMedia("(max-width: 900px)");
+function applyLayout(){
+  document.body.classList.toggle("mob", MQ.matches);
+  paintNet();
+  if (MQ.matches && !$("#page-docs").dataset.mv) setMobView("library");
+}
+function setMobView(v){
+  if (v === "read") return;
+  $("#page-docs").dataset.mv = v;
+  [...$("#mobnav").children].forEach(b => b.classList.toggle("sel", b.dataset.mv === v));
+  // Full text is the only translation view that survives offline, so landing on
+  // the translation tab with no connection should land somewhere usable.
+  if (v === "trans" && !NET.online && D.view !== "text"){
+    segSet("#viewSeg", "view", "text");
+    D.view = "text";
+    $("#chunks").style.display  = "none";
+    $("#outText").style.display = "";
+  }
+}
+$("#mobnav").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (b.dataset.mv === "read"){ openReading(); return; }
+  setMobView(b.dataset.mv);
+});
+if (MQ.addEventListener) MQ.addEventListener("change", applyLayout);
+else MQ.addListener(applyLayout);
+
+function paintMobBar(){
+  const j = D.job;
+  $("#mGo").disabled    = $("#btnGo").disabled && $("#btnPause").disabled;
+  $("#mGo").textContent = !$("#btnPause").disabled ? "Pause" : $("#btnGo").textContent;
+  $("#mPush").disabled     = !j;
+  $("#mSave").disabled     = !j;
+  $("#btnPush").disabled   = !j;
+  $("#btnDevice").disabled = !j;
+  $("#mvLib").textContent = D.jobs.length ? D.jobs.length + " docs" : "";
+  $("#mvSrc").textContent = D.srcDirty ? "edited" : "";
+  $("#mvOut").textContent = D.outDirty ? "edited"
+                                       : (j ? (j.percent || 0).toFixed(0) + "%" : "");
+  let lastMark = null, lastId = null;
+  try { lastId = localStorage.getItem(READ_LAST); } catch(e){}
+  if (lastId) lastMark = getMark(lastId);
+  $("#mvRead").textContent = lastMark && lastMark.shown ? "line " + lastMark.shown : "";
+  // Watching a long job scroll past is the one time the screen should not sleep.
+  if (window.HBT && window.HBT.keepAwake) window.HBT.keepAwake(!!(j && j.running));
+}
+
+
+/* ================= SLIDE-IN MENU AND READING MODE =================
+
+   Reading mode is the translation pane with everything that is not the text
+   removed: no chunk numbers, no textarea, no polling. It holds one bookmark per
+   book, kept on this device rather than pushed to the PC, because where you
+   stopped reading is a fact about the reader and not about the document.
+
+   Both the menu and the reading overlay push a history entry when they open, so
+   the phone's Back gesture closes them instead of leaving the app. */
+
+/* ---- history: Back closes whatever is on top ---- */
+let _navDepth = 0;
+function pushNav(name){
+  _navDepth++;
+  try { history.pushState({hbt: name, d: _navDepth}, ""); } catch(e){}
+}
+function popNav(){
+  if (_navDepth > 0) { _navDepth--; try { history.back(); } catch(e){} }
+}
+window.addEventListener("popstate", () => {
+  // Unwind one layer per Back press, innermost first.
+  if (_navDepth > 0) _navDepth--;
+  if (document.body.classList.contains("menu-open")) { setMenu(false, true); return; }
+  if (document.body.classList.contains("reading")) { closeReading(true); return; }
+});
+
+/* ---- the menu ---- */
+function setMenu(open, fromHistory){
+  const was = document.body.classList.contains("menu-open");
+  if (open === was) return;
+  document.body.classList.toggle("menu-open", open);
+  if (open) pushNav("menu");
+  else if (!fromHistory) popNav();
+}
+$("#btnMenu").addEventListener("click", () => {
+  $("#drawerFoot").textContent =
+    (D.jobs.length || 0) + " document" + (D.jobs.length === 1 ? "" : "s")
+    + (NET.online ? "" : " · offline");
+  setMenu(true);
+});
+$("#drawerClose").addEventListener("click", () => setMenu(false));
+$("#scrim").addEventListener("click", () => setMenu(false));
+
+$("#mnuRead").addEventListener("click", () => {
+  setMenu(false);
+  // Let the drawer finish sliding out before the overlay covers the screen.
+  setTimeout(openReading, 180);
+});
+
+/* ---- bookmarks ---- */
+const READ_KEY = id => "hbt.read." + id;
+const READ_LAST = "hbt.read.last";
+
+function getMark(id){
+  try { return JSON.parse(localStorage.getItem(READ_KEY(id)) || "null"); }
+  catch(e){ return null; }
+}
+function setMark(id, line, total, shown){
+  try {
+    localStorage.setItem(READ_KEY(id), JSON.stringify(
+      {line: line, total: total, shown: shown, at: new Date().toISOString()}));
+  } catch(e){ /* private mode, or storage full */ }
+}
+
+/* Line numbers the reader shows count only lines that have text on them - an
+   interlinear file is a third blank lines, so the raw index into the file means
+   nothing to a human. */
+function shownIndex(rawLine){
+  return R.lines.slice(0, rawLine + 1).filter(t => t.trim()).length;
+}
+
+/* ---- state ---- */
+const R = {id: null, title: "", lines: [], total: 0, mark: 0, saveT: null};
+
+function openReading(){
+  document.body.classList.add("reading");
+  pushNav("reading");
+  let last = null;
+  try { last = localStorage.getItem(READ_LAST); } catch(e){}
+  if (last && (D.jobs || []).some(j => j.id === last)) openBook(last);
+  else showBookList();
+}
+
+function closeReading(fromHistory){
+  if (!document.body.classList.contains("reading")) return;
+  saveReadPos(true);
+  document.body.classList.remove("reading", "picking");
+  if (!fromHistory) popNav();
+}
+
+$("#readBack").addEventListener("click", () => closeReading());
+$("#readPick").addEventListener("click", showBookList);
+$("#readReload").addEventListener("click", () => { if (R.id) openBook(R.id, true); });
+
+/* ---- choosing a book ---- */
+async function showBookList(){
+  document.body.classList.add("picking");
+  $("#readTitle").textContent = "Choose a book";
+  const box = $("#readBooks");
+  box.innerHTML = '<div class="lbl" style="padding:12px">Loading…</div>';
+  if (!D.jobs.length) await loadJobs();
+
+  if (!D.jobs.length){
+    box.innerHTML = '<div class="lbl" style="padding:14px;text-transform:none;'
+      + 'letter-spacing:0">No documents yet. Translate something on the '
+      + 'Documents tab first.</div>';
+    return;
+  }
+  box.innerHTML = "";
+  for (const j of D.jobs){
+    const mark = getMark(j.id);
+    const el = document.createElement("div");
+    el.className = "bk";
+    el.innerHTML = '<div class="t"></div><div class="m"></div>';
+    el.querySelector(".t").textContent = j.title || j.id;
+    const bits = [(j.percent || 0).toFixed(0) + "% translated"];
+    if (j.status !== "done") bits.push(j.status);
+    if (mark) bits.push("\u{1F516} line " + (mark.shown || mark.line + 1)
+                        + (mark.total ? " of " + mark.total : ""));
+    el.querySelector(".m").textContent = bits.join(" · ");
+    el.addEventListener("click", () => openBook(j.id));
+    box.appendChild(el);
+  }
+}
+
+/* ---- opening one ---- */
+async function openBook(id, reload){
+  const job = (D.jobs || []).find(j => j.id === id);
+  R.id = id;
+  R.title = (job && job.title) || id;
+  try { localStorage.setItem(READ_LAST, id); } catch(e){}
+
+  document.body.classList.remove("picking");
+  $("#readTitle").textContent = R.title;
+  $("#readBody").innerHTML = '<div class="lbl">Loading…</div>';
+  $("#readPos").textContent = "";
+
+  let text = null;
+  try {
+    const d = await api("/api/job/output?id=" + encodeURIComponent(id));
+    text = d.text;
+    cachePatch(id, {out_text: d.text, out_sha: d.sha});
+  } catch(e){
+    netFail(e);
+    const doc = await CACHE.getDoc(id).catch(() => null);
+    text = (doc && ((doc.local && doc.local.out) || doc.out_text)) || null;
+    if (text) toast("offline — reading the cached copy");
+  }
+
+  if (text == null){
+    $("#readBody").innerHTML =
+      '<div class="lbl" style="text-transform:none;letter-spacing:0">'
+      + "Cannot reach the computer, and this book is not on the phone yet. "
+      + "Open it once on the Documents tab while connected and it will be "
+      + "readable offline afterwards.</div>";
+    return;
+  }
+  renderBook(text, reload);
+}
+
+function renderBook(text, keepPos){
+  const body = $("#readBody");
+  body.innerHTML = "";
+  R.lines = text.split("\n");
+
+  // Blank lines become spacing rather than nodes: an interlinear file is a
+  // third blank lines, and a long tractate is thousands of them.
+  const frag = document.createDocumentFragment();
+  let n = 0;
+  for (let i = 0; i < R.lines.length; i++){
+    const t = R.lines[i];
+    if (!t.trim()){
+      const g = document.createElement("div");
+      g.className = "gap";
+      frag.appendChild(g);
+      continue;
+    }
+    const el = document.createElement("div");
+    el.className = "rl";
+    el.dataset.i = i;
+    el.dir = "auto";
+    el.textContent = t;
+    frag.appendChild(el);
+    n++;
+  }
+  R.total = n;
+  body.appendChild(frag);
+
+  const mark = getMark(R.id);
+  R.mark = mark ? mark.line : 0;
+  paintMark();
+  if (!keepPos) scrollToLine(R.mark, true);
+  updatePos();
+}
+
+/* ---- the bookmark itself ---- */
+function paintMark(){
+  const body = $("#readBody");
+  const old = body.querySelector(".rl.bm");
+  if (old) old.classList.remove("bm");
+  const el = body.querySelector('.rl[data-i="' + R.mark + '"]');
+  if (el) el.classList.add("bm");
+}
+
+function scrollToLine(i, instant){
+  const el = $("#readBody").querySelector('.rl[data-i="' + i + '"]');
+  if (!el) return;
+  el.scrollIntoView({block: "start", behavior: instant ? "auto" : "smooth"});
+}
+
+/* Which line is at the top of the reading area right now. elementFromPoint is
+   O(1), where walking thousands of line boxes on every scroll event is not. */
+function topLine(){
+  const body = $("#readBody");
+  const r = body.getBoundingClientRect();
+  for (let dy = 6; dy < 90; dy += 12){
+    const el = document.elementFromPoint(r.left + r.width / 2, r.top + dy);
+    const line = el && el.closest && el.closest(".rl");
+    if (line) return parseInt(line.dataset.i, 10);
+  }
+  return null;
+}
+
+function updatePos(){
+  const i = topLine();
+  const shown = i == null ? null : shownIndex(i);
+  $("#readPos").textContent = R.total
+    ? (shown ? "line " + shown + " of " + R.total : R.total + " lines")
+      + " · bookmark saved"
+    : "";
+}
+
+function saveReadPos(now){
+  if (!document.body.classList.contains("reading") || !R.id) return;
+  clearTimeout(R.saveT);
+  const run = () => {
+    const i = topLine();
+    if (i == null) return;
+    R.mark = i;
+    setMark(R.id, i, R.total, shownIndex(i));
+    paintMark();
+    updatePos();
+  };
+  if (now) run(); else R.saveT = setTimeout(run, 450);
+}
+
+$("#readBody").addEventListener("scroll", () => saveReadPos(), {passive: true});
+
+// Tapping a line pins the bookmark there deliberately, rather than wherever
+// scrolling happened to leave it.
+$("#readBody").addEventListener("click", e => {
+  const line = e.target.closest(".rl");
+  if (!line) return;
+  R.mark = parseInt(line.dataset.i, 10);
+  setMark(R.id, R.mark, R.total, shownIndex(R.mark));
+  paintMark();
+  updatePos();
+  toast("bookmark set here");
+});
+
+$("#readGoBm").addEventListener("click", () => {
+  const mark = getMark(R.id);
+  if (!mark){ toast("no bookmark in this book yet"); return; }
+  scrollToLine(mark.line);
+});
+
+// Leaving the app mid-page should not lose the place.
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) saveReadPos(true);
+});
+
+/* ---- boot the phone layer ---- */
+applyLayout();
+countPending();
+pingServer();
+setInterval(() => { if (!NET.online) pingServer(); }, 8000);
+window.addEventListener("online", pingServer);
+window.addEventListener("focus",  () => { if (!NET.online) pingServer(); });
+
+/* ---- boot ---- */
+window.addEventListener("beforeunload", e => {
+  if (D.srcDirty || D.outDirty){ e.preventDefault(); e.returnValue = ""; }
+});
+
+paintDirection();
+loadModels();
+// ?tab=docs opens straight into the library - which is where a phone shortcut
+// wants to land, since the paste box is the desktop's use for this app.
+if (new URLSearchParams(location.search).get("tab") === "docs") showTab("docs");
+else loadJobs();
+srcEl.focus();
+</script>
+</body>
+</html>

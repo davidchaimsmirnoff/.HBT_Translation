@@ -1,0 +1,1197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LocalHBT Translator</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --panel:#ffffff; --ink:#16181d; --muted:#6b7280;
+    --line:#e2e5ea; --accent:#2f6fed; --accent-ink:#ffffff;
+    --ok:#16a34a; --bad:#dc2626; --warn:#b45309; --soft:#eef2f8;
+    --hebrew:"Segoe UI","Arial Hebrew","Noto Sans Hebrew",David,"Times New Roman",serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0f1115; --panel:#171a21; --ink:#e8eaef; --muted:#9aa3b2;
+      --line:#262b35; --accent:#4c8dff; --accent-ink:#0b0d11;
+      --ok:#4ade80; --bad:#f87171; --warn:#fbbf24; --soft:#1d222c;
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:15px/1.5 "Segoe UI",system-ui,-apple-system,sans-serif;
+    height:100vh; display:flex; flex-direction:column; overflow:hidden;
+  }
+  header{
+    padding:10px 18px; border-bottom:1px solid var(--line);
+    background:var(--panel); display:flex; align-items:center;
+    gap:14px; flex-wrap:wrap; flex:none;
+  }
+  h1{font-size:15px; margin:0; font-weight:650; letter-spacing:-.01em}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+  .dot.on{background:var(--ok)} .dot.off{background:var(--bad)}
+  #status{color:var(--muted); font-size:13px; display:flex; align-items:center; gap:7px}
+  .spacer{flex:1}
+  label.lbl{font-size:12px;color:var(--muted);margin-right:2px}
+  select,button,input[type=text],input[type=number]{
+    font:inherit; font-size:13px; color:var(--ink); background:var(--soft);
+    border:1px solid var(--line); border-radius:8px; padding:6px 10px;
+  }
+  button{cursor:pointer}
+  select:hover,button:hover{border-color:var(--accent)}
+  button.primary{background:var(--accent); color:var(--accent-ink); border-color:var(--accent); font-weight:600}
+  button:disabled{opacity:.45; cursor:not-allowed}
+  button.ghost{background:transparent}
+  button.danger{color:var(--bad)}
+  .seg{display:flex; border:1px solid var(--line); border-radius:8px; overflow:hidden}
+  .seg button{border:0;border-radius:0;background:transparent;padding:6px 12px}
+  .seg button.sel{background:var(--accent); color:var(--accent-ink); font-weight:600}
+
+  /* ---- tabs ---- */
+  .tabs{display:flex; gap:4px}
+  .tabs button{background:transparent;border:1px solid transparent;font-weight:600;font-size:13px}
+  .tabs button.sel{background:var(--soft); border-color:var(--line)}
+  .page{flex:1; min-height:0; display:none}
+  .page.on{display:flex; flex-direction:column}
+
+  /* ---- quick tab ---- */
+  .controls{
+    display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+    padding:10px 18px; border-bottom:1px solid var(--line); background:var(--panel); flex:none;
+  }
+  main{flex:1; display:grid; grid-template-columns:1fr auto 1fr; min-height:0}
+  .pane{display:flex; flex-direction:column; min-width:0; min-height:0; background:var(--panel)}
+  .pane + .pane{border-left:1px solid var(--line)}
+  .pane h2{
+    font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted);
+    margin:0; padding:10px 16px 6px; font-weight:600; display:flex; align-items:center; gap:10px;
+  }
+  .swapwrap{display:flex; align-items:center; justify-content:center; padding:0 10px; background:var(--panel)}
+  #swap{border-radius:50%; width:36px; height:36px; padding:0; font-size:15px; line-height:1}
+  #src,#out{
+    flex:1; margin:0; padding:12px 16px 16px; border:0; outline:none; resize:none;
+    background:transparent; color:var(--ink); overflow-y:auto;
+    font-family:var(--hebrew); font-size:19px; line-height:1.75;
+    text-align:start; white-space:pre-wrap; word-wrap:break-word; min-height:150px;
+  }
+  #out.placeholder,#src::placeholder{color:var(--muted); font-style:italic; font-size:15px}
+  #out .cursor{
+    display:inline-block; width:7px; height:1.05em; background:var(--accent);
+    vertical-align:-2px; animation:b 1s steps(2) infinite; margin-inline-start:2px;
+  }
+  @keyframes b{0%,50%{opacity:1}51%,100%{opacity:0}}
+  #reasonBox{
+    margin:6px 16px 0; border:1px dashed var(--line); border-radius:8px;
+    background:var(--soft); font-size:12px; flex:none; max-height:26vh; overflow:auto;
+  }
+  #reasonBox summary{cursor:pointer; padding:6px 10px; color:var(--muted);
+    font-size:11px; text-transform:uppercase; letter-spacing:.07em; font-weight:600}
+  #reason{padding:0 10px 10px; color:var(--muted); font-family:var(--hebrew);
+    font-size:13px; line-height:1.6; white-space:pre-wrap; text-align:start}
+
+  /* ---- documents tab ---- */
+  .docwrap{flex:1; display:grid; grid-template-columns:290px 1fr; min-height:0}
+  .sidebar{border-right:1px solid var(--line); background:var(--panel);
+    display:flex; flex-direction:column; min-height:0}
+  .sidebar .head{padding:10px 12px; border-bottom:1px solid var(--line); display:flex; gap:6px}
+  .sidebar .head button{flex:1}
+  #jobList{flex:1; overflow-y:auto; padding:8px}
+  .jobcard{
+    border:1px solid var(--line); border-radius:9px; padding:9px 10px; margin-bottom:7px;
+    cursor:pointer; background:var(--bg);
+  }
+  .jobcard:hover{border-color:var(--accent)}
+  .jobcard.sel{border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent)}
+  .jobcard .t{font-size:13px; font-weight:600; line-height:1.3; overflow:hidden;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical}
+  .jobcard .m{font-size:11px; color:var(--muted); margin-top:3px; display:flex; gap:6px; flex-wrap:wrap}
+  .bar{height:5px; border-radius:3px; background:var(--soft); margin-top:6px; overflow:hidden}
+  .bar > i{display:block; height:100%; background:var(--accent); transition:width .3s}
+  .pill{font-size:10px; text-transform:uppercase; letter-spacing:.05em; font-weight:700;
+    border-radius:20px; padding:1px 7px; background:var(--soft); color:var(--muted)}
+  .pill.running{background:var(--accent); color:var(--accent-ink)}
+  .pill.done{background:var(--ok); color:#06240f}
+  .pill.interrupted,.pill.error{background:var(--bad); color:#2b0707}
+  .pill.paused{background:var(--warn); color:#231301}
+
+  .docmain{display:flex; flex-direction:column; min-width:0; min-height:0}
+  .docbar{padding:9px 14px; border-bottom:1px solid var(--line); background:var(--panel);
+    display:flex; gap:7px; align-items:center; flex-wrap:wrap; flex:none}
+  .docbar .title{font-weight:650; font-size:14px; max-width:38ch; overflow:hidden;
+    text-overflow:ellipsis; white-space:nowrap}
+  .docsplit{flex:1; display:grid; grid-template-columns:1fr 1fr; min-height:0}
+  .docpane{display:flex; flex-direction:column; min-width:0; min-height:0; background:var(--panel)}
+  .docpane + .docpane{border-left:1px solid var(--line)}
+  .docpane .ph{padding:8px 14px; border-bottom:1px solid var(--line); display:flex;
+    gap:7px; align-items:center; flex-wrap:wrap; flex:none;
+    font-size:11px; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--muted); font-weight:600}
+  .docpane .ph button{font-size:11px; padding:3px 8px; text-transform:none; letter-spacing:0}
+  #srcText,#outText{
+    flex:1; margin:0; padding:12px 16px; border:0; outline:none; resize:none;
+    background:transparent; color:var(--ink); overflow-y:auto;
+    font-family:var(--hebrew); font-size:18px; line-height:1.8;
+    white-space:pre-wrap; word-wrap:break-word;
+  }
+  #chunks{flex:1; overflow-y:auto; padding:10px 14px}
+  .ch{border-bottom:1px solid var(--line); padding:9px 0}
+  .ch:last-child{border-bottom:0}
+  .ch .n{font-size:10px; color:var(--muted); font-variant-numeric:tabular-nums;
+    display:flex; gap:8px; align-items:center; margin-bottom:2px}
+  .ch .he{font-family:var(--hebrew); font-size:21px; line-height:1.9; direction:rtl; text-align:right}
+  .ch .en{font-size:15px; line-height:1.6; direction:ltr; text-align:left; margin-top:1px}
+  .ch .orig{font-family:var(--hebrew); font-size:14px; color:var(--muted);
+    direction:rtl; text-align:right; opacity:.7}
+  .ch .he[contenteditable]:focus,.ch .en[contenteditable]:focus{
+    outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+  .ch.pass{opacity:.55}
+  .ch.live .en{color:var(--accent)}
+  .ch.live.thinking .en{color:var(--muted); font-style:italic; font-size:13px}
+  .ch .badge{color:var(--warn); font-weight:700; font-size:10px}
+  .ch.mark{background:linear-gradient(to right,var(--soft),transparent); border-radius:6px}
+
+  footer{
+    border-top:1px solid var(--line); background:var(--panel); padding:7px 18px;
+    font-size:12px; color:var(--muted); display:flex; gap:16px; flex-wrap:wrap;
+    align-items:center; flex:none;
+  }
+  footer b{color:var(--ink); font-weight:600; font-variant-numeric:tabular-nums}
+  .err{color:var(--bad)}
+  .okc{color:var(--ok)}
+  kbd{font:inherit; font-size:11px; background:var(--soft); border:1px solid var(--line);
+    border-bottom-width:2px; border-radius:4px; padding:1px 5px}
+
+  /* ---- modal ---- */
+  .modal{position:fixed; inset:0; background:rgba(0,0,0,.45); display:none;
+    align-items:center; justify-content:center; z-index:50; padding:20px}
+  .modal.on{display:flex}
+  .sheet{background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    width:min(760px,100%); max-height:88vh; display:flex; flex-direction:column;
+    box-shadow:0 20px 60px rgba(0,0,0,.35)}
+  .sheet h3{margin:0; padding:14px 18px; border-bottom:1px solid var(--line); font-size:14px}
+  .sheet .body{padding:14px 18px; overflow-y:auto}
+  .sheet .foot{padding:12px 18px; border-top:1px solid var(--line);
+    display:flex; gap:8px; justify-content:flex-end}
+  .row{display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap}
+  .row > label.lbl{width:120px; flex:none; margin:0}
+  .row input[type=text]{flex:1; min-width:200px}
+  .hint{font-size:12px; color:var(--muted); margin:-4px 0 12px 128px}
+  #browseList{border:1px solid var(--line); border-radius:9px; max-height:44vh;
+    overflow-y:auto; font-size:13px}
+  #browseList div{padding:6px 11px; cursor:pointer; border-bottom:1px solid var(--line);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  #browseList div:last-child{border-bottom:0}
+  #browseList div:hover{background:var(--soft)}
+  #browseList .fi{color:var(--ink)} #browseList .di{color:var(--muted)}
+  #toast{position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    background:var(--ink); color:var(--bg); padding:9px 16px; border-radius:9px;
+    font-size:13px; z-index:80; opacity:0; pointer-events:none; transition:opacity .2s}
+  #toast.on{opacity:1}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>LocalHBT Translator</h1>
+  <div class="tabs" id="tabs">
+    <button data-tab="quick" class="sel">Quick</button>
+    <button data-tab="docs">Documents</button>
+  </div>
+  <span id="status"><span class="dot" id="dot"></span><span id="statustext">connecting…</span></span>
+  <span class="spacer"></span>
+  <label class="lbl" for="model">Model</label>
+  <select id="model"></select>
+</header>
+
+<!-- ============================ QUICK ============================ -->
+<div class="page on" id="page-quick">
+  <div class="controls">
+    <div class="seg" id="styleSeg">
+      <button data-style="natural" class="sel">Natural</button>
+      <button data-style="literal">Literal</button>
+    </div>
+    <label class="lbl" style="margin-inline-start:8px">
+      <input type="checkbox" id="think"> thinking
+    </label>
+    <span class="spacer"></span>
+    <button class="ghost" id="clear">Clear</button>
+    <button class="ghost" id="copy">Copy result</button>
+    <button class="primary" id="go">Translate</button>
+    <button id="stop" style="display:none">Stop</button>
+  </div>
+
+  <main>
+    <section class="pane">
+      <h2><span id="srcLabel">Hebrew</span> — source</h2>
+      <textarea id="src" dir="auto" spellcheck="false"
+        placeholder="Paste Hebrew here…  (Ctrl+Enter to translate)"></textarea>
+    </section>
+    <div class="swapwrap"><button id="swap" title="Swap direction">⇄</button></div>
+    <section class="pane">
+      <h2><span id="outLabel">English</span> — translation</h2>
+      <details id="reasonBox" style="display:none">
+        <summary>Model reasoning</summary>
+        <div id="reason" dir="auto"></div>
+      </details>
+      <div id="out" dir="auto" class="placeholder">Translation appears here.</div>
+    </section>
+  </main>
+
+  <footer>
+    <span id="stats">ready</span>
+    <span class="spacer"></span>
+    <span><kbd>Ctrl</kbd>+<kbd>Enter</kbd> translate · <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> swap</span>
+  </footer>
+</div>
+
+<!-- ========================== DOCUMENTS ========================== -->
+<div class="page" id="page-docs">
+  <div class="docwrap">
+    <aside class="sidebar">
+      <div class="head">
+        <button class="primary" id="newJob">+ New document</button>
+        <button class="ghost" id="refreshJobs" title="Refresh">⟳</button>
+      </div>
+      <div id="jobList"></div>
+    </aside>
+
+    <div class="docmain">
+      <div class="docbar" id="docbar">
+        <span class="title" id="jobTitle">No document selected</span>
+        <span class="pill" id="jobPill">—</span>
+        <span class="spacer"></span>
+        <button class="primary" id="btnGo" disabled>Translate</button>
+        <button id="btnPause" disabled>Pause</button>
+        <button class="ghost" id="btnRestart" disabled>Restart</button>
+        <button class="ghost" id="btnCut" disabled title="Scroll the source to the point translation stopped">Go to cut point</button>
+        <button class="ghost" id="btnSettings" disabled>Options…</button>
+        <button class="ghost" id="btnFolder" disabled>Output folder</button>
+        <button class="ghost danger" id="btnDelete" disabled>Delete</button>
+      </div>
+
+      <div class="docsplit">
+        <section class="docpane">
+          <div class="ph">
+            <span>Source .txt</span>
+            <span class="spacer"></span>
+            <span id="srcInfo"></span>
+            <button class="ghost" id="btnSrcReload">Reload</button>
+            <button id="btnSrcSave" disabled>Save source</button>
+          </div>
+          <textarea id="srcText" dir="auto" spellcheck="false"
+            placeholder="Pick or create a document to see its text here."></textarea>
+        </section>
+
+        <section class="docpane">
+          <div class="ph">
+            <span>Translation</span>
+            <div class="seg" id="viewSeg" style="margin-inline-start:6px">
+              <button data-view="chunks" class="sel">Live</button>
+              <button data-view="text">Full text</button>
+            </div>
+            <label class="lbl" style="text-transform:none;letter-spacing:0">
+              <input type="checkbox" id="follow" checked> follow
+            </label>
+            <span class="spacer"></span>
+            <button id="btnOutSave" disabled>Save translation</button>
+            <button class="ghost" id="btnOutSaveAs" disabled>Save as…</button>
+          </div>
+          <div id="chunks"></div>
+          <textarea id="outText" dir="auto" spellcheck="false" style="display:none"
+            placeholder="Translated text appears here as it is produced."></textarea>
+        </section>
+      </div>
+
+      <footer>
+        <span id="docStats">no document loaded</span>
+        <span class="spacer"></span>
+        <span id="docPaths"></span>
+      </footer>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== NEW DOCUMENT MODAL ====================== -->
+<div class="modal" id="newModal">
+  <div class="sheet">
+    <h3>New translation document</h3>
+    <div class="body">
+      <div class="row">
+        <label class="lbl">Source .txt</label>
+        <input type="text" id="nSource" placeholder="C:\…\text.txt">
+        <button class="ghost" id="nBrowse">Browse…</button>
+        <button class="ghost" id="nPick">From computer…</button>
+        <input type="file" id="nFile" accept=".txt,.md" style="display:none">
+      </div>
+      <div class="row">
+        <label class="lbl">Layout</label>
+        <div class="seg" id="nMode">
+          <button data-mode="paragraph" class="sel">Paragraph</button>
+          <button data-mode="interlinear">Interlinear</button>
+        </div>
+        <span id="nModeHint" class="lbl"></span>
+      </div>
+      <div class="row" id="nInterRow" style="display:none">
+        <label class="lbl">Words per line</label>
+        <input type="number" id="nWords" value="16" min="4" max="40" style="width:80px">
+        <label class="lbl" style="width:auto">
+          <input type="checkbox" id="nNikkud" checked> add nikkud to the Hebrew
+        </label>
+      </div>
+      <div class="hint" id="nInterHint" style="display:none">
+        Each line carries 16&ndash;17 Hebrew words (a 17th is pulled in when it ends
+        the clause), vocalized, with its English directly underneath.
+      </div>
+      <div class="row">
+        <label class="lbl">Direction</label>
+        <div class="seg" id="nDir">
+          <button data-dir="he2en" class="sel">Hebrew → English</button>
+          <button data-dir="en2he">English → Hebrew</button>
+        </div>
+        <div class="seg" id="nStyle" style="margin-inline-start:8px">
+          <button data-style="natural" class="sel">Natural</button>
+          <button data-style="literal">Literal</button>
+        </div>
+      </div>
+      <div class="row">
+        <label class="lbl">Save output to</label>
+        <input type="text" id="nOut" placeholder="Translated\">
+        <button class="ghost" id="nOutBrowse">Browse…</button>
+      </div>
+      <div class="row">
+        <label class="lbl">Options</label>
+        <label class="lbl" style="width:auto"><input type="checkbox" id="nInclude"> keep the source line above each translation</label>
+        <label class="lbl" style="width:auto"><input type="checkbox" id="nMark" checked> mark cut points in the source file</label>
+      </div>
+      <div class="hint">
+        A cut point is three blank lines pushed into the source .txt wherever a run
+        stopped early, so you can see by eye where it left off. Resuming always uses
+        the bookmark in the job's .json.
+      </div>
+      <div id="nStatus" class="hint" style="margin-left:0"></div>
+    </div>
+    <div class="foot">
+      <button class="ghost" id="nCancel">Cancel</button>
+      <button class="primary" id="nCreate">Create &amp; open</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== BROWSE MODAL ========================= -->
+<div class="modal" id="browseModal">
+  <div class="sheet">
+    <h3 id="browseTitle">Choose a file</h3>
+    <div class="body">
+      <div class="row">
+        <input type="text" id="browsePath">
+        <button class="ghost" id="browseUp">Up</button>
+        <button class="ghost" id="browseGoto">Go</button>
+      </div>
+      <div id="browseList"></div>
+    </div>
+    <div class="foot">
+      <button class="ghost" id="browseCancel">Cancel</button>
+      <button class="primary" id="browsePick" style="display:none">Use this folder</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= OPTIONS MODAL ========================= -->
+<div class="modal" id="optModal">
+  <div class="sheet">
+    <h3>Document options</h3>
+    <div class="body">
+      <div class="row">
+        <label class="lbl">Model</label>
+        <select id="oModel"></select>
+        <div class="seg" id="oStyle" style="margin-inline-start:8px">
+          <button data-style="natural" class="sel">Natural</button>
+          <button data-style="literal">Literal</button>
+        </div>
+      </div>
+      <div class="row">
+        <label class="lbl">Save output to</label>
+        <input type="text" id="oOut">
+        <button class="ghost" id="oOutBrowse">Browse…</button>
+      </div>
+      <div class="row">
+        <label class="lbl">Options</label>
+        <label class="lbl" style="width:auto"><input type="checkbox" id="oNikkud"> nikkud</label>
+        <label class="lbl" style="width:auto"><input type="checkbox" id="oInclude"> keep source line</label>
+        <label class="lbl" style="width:auto"><input type="checkbox" id="oMark"> mark cut points</label>
+        <label class="lbl" style="width:auto"><input type="checkbox" id="oThink"> thinking</label>
+      </div>
+      <div class="hint" style="margin-left:0">
+        Options apply to chunks translated from here on. Pause first — a running
+        document will not accept changes.
+      </div>
+    </div>
+    <div class="foot">
+      <button class="ghost" id="oCancel">Cancel</button>
+      <button class="primary" id="oSave">Apply</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+function toast(msg, bad){
+  const t = $("#toast");
+  t.textContent = msg;
+  t.style.background = bad ? "var(--bad)" : "var(--ink)";
+  t.style.color = bad ? "#fff" : "var(--bg)";
+  t.classList.add("on");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove("on"), 2600);
+}
+
+async function api(path, body){
+  const r = await fetch(path, body ? {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify(body)
+  } : undefined);
+  // A plain-text 404 on an /api/ route means this endpoint does not exist in the
+  // server that answered — i.e. an older copy is still holding the port. Say
+  // that, instead of leaving the user staring at "HTTP 404".
+  const d = await r.json().catch(() => ({
+    ok: false,
+    error: r.status === 404 && path.startsWith("/api/")
+      ? "This page is talking to an OLD copy of the server (it has no " + path
+        + "). Close every LocalHBT console window, then run Run Translator.bat again."
+      : "HTTP " + r.status
+  }));
+  if (d.ok === false) throw new Error(d.error || "request failed");
+  return d;
+}
+
+/* segmented control helper: click a button, it becomes the selection */
+function seg(sel, attr, onPick){
+  $(sel).addEventListener("click", e => {
+    const b = e.target.closest("button"); if(!b) return;
+    [...$(sel).children].forEach(x => x.classList.toggle("sel", x === b));
+    onPick(b.dataset[attr]);
+  });
+}
+function segSet(sel, attr, val){
+  [...$(sel).children].forEach(x => x.classList.toggle("sel", x.dataset[attr] === val));
+}
+
+/* ======================== shared: models ======================== */
+let MODELS = [], DEFAULT_MODEL = "";
+async function loadModels(){
+  try {
+    const d = await api("/api/models");
+    MODELS = d.models; DEFAULT_MODEL = d.default;
+    for (const el of [$("#model"), $("#oModel")]){
+      el.innerHTML = "";
+      d.models.forEach(m => {
+        const o = document.createElement("option");
+        o.value = o.textContent = m;
+        if (m === d.default || m.startsWith(d.default)) o.selected = true;
+        el.appendChild(o);
+      });
+    }
+    if (!d.models.length) throw new Error("no models installed");
+    $("#dot").className = "dot on";
+    $("#statustext").textContent = "Ollama connected";
+  } catch (e) {
+    $("#dot").className = "dot off";
+    $("#statustext").textContent = "Ollama offline — " + e.message;
+    $("#go").disabled = true;
+  }
+}
+
+/* ============================ tabs ============================== */
+seg("#tabs", "tab", t => {
+  $$(".page").forEach(p => p.classList.toggle("on", p.id === "page-" + t));
+  if (t === "docs") loadJobs();
+});
+
+/* ========================== QUICK TAB =========================== */
+const srcEl=$("#src"), outEl=$("#out"), goEl=$("#go"), stopEl=$("#stop"),
+      modelEl=$("#model"), statsEl=$("#stats");
+let direction = "he2en", style = "natural", controller = null;
+
+function paintDirection(){
+  const he2en = direction === "he2en";
+  $("#srcLabel").textContent = he2en ? "Hebrew" : "English";
+  $("#outLabel").textContent = he2en ? "English" : "Hebrew";
+  srcEl.placeholder = he2en
+    ? "Paste Hebrew here…  (Ctrl+Enter to translate)"
+    : "Type English here…  (Ctrl+Enter to translate)";
+}
+
+seg("#styleSeg", "style", v => style = v);
+
+$("#swap").addEventListener("click", () => {
+  direction = direction === "he2en" ? "en2he" : "he2en";
+  // carry a finished translation back into the source box for round-tripping
+  const done = outEl.classList.contains("placeholder") ? "" : outEl.textContent.trim();
+  if (done) { srcEl.value = done; outEl.textContent = "Translation appears here."; outEl.className = "placeholder"; }
+  paintDirection();
+  srcEl.focus();
+});
+
+$("#clear").addEventListener("click", () => {
+  srcEl.value = "";
+  outEl.textContent = "Translation appears here.";
+  outEl.className = "placeholder";
+  statsEl.textContent = "ready"; statsEl.classList.remove("err");
+  srcEl.focus();
+});
+
+$("#copy").addEventListener("click", async () => {
+  if (outEl.classList.contains("placeholder")) return;
+  try {
+    await navigator.clipboard.writeText(outEl.textContent.trim());
+    const b = $("#copy"); b.textContent = "Copied ✓";
+    setTimeout(() => b.textContent = "Copy result", 1200);
+  } catch { /* clipboard blocked; user can select manually */ }
+});
+
+document.addEventListener("keydown", e => {
+  if (e.ctrlKey && e.key === "Enter" && $("#page-quick").classList.contains("on")) {
+    e.preventDefault(); translate();
+  }
+  if (e.ctrlKey && e.shiftKey && (e.key === "S" || e.key === "s")) { e.preventDefault(); $("#swap").click(); }
+  if (e.key === "Escape") $$(".modal.on").forEach(m => m.classList.remove("on"));
+});
+
+async function translate(){
+  const text = srcEl.value.trim();
+  if (!text || controller) return;
+
+  outEl.textContent = ""; outEl.className = "";
+  $("#reasonBox").style.display = "none";
+  $("#reason").textContent = "";
+  const cur = document.createElement("span");
+  cur.className = "cursor";
+  outEl.appendChild(cur);
+
+  goEl.disabled = true; stopEl.style.display = "";
+  statsEl.classList.remove("err");
+  statsEl.textContent = "loading model…";
+
+  controller = new AbortController();
+  const t0 = performance.now();
+  let firstAt = null, acc = "", reasonAcc = "";
+
+  // This model sometimes emits its reasoning chain inline in `content` and
+  // closes it with </think> instead of routing it to the `thinking` field.
+  // Render optimistically, then retroactively move any such prefix into the
+  // collapsible reasoning box so only the translation stays in the pane.
+  const CLOSE = "</think>";
+  function render(){
+    let body = acc, inline = "";
+    const i = acc.lastIndexOf(CLOSE);
+    if (i >= 0) {
+      inline = acc.slice(0, i).replace(/^\s*<think>/, "").trim();
+      body = acc.slice(i + CLOSE.length);
+    }
+    const reasoning = [reasonAcc.trim(), inline].filter(Boolean).join("\n");
+    if (reasoning) {
+      $("#reason").textContent = reasoning;
+      $("#reasonBox").style.display = "";
+    }
+    outEl.textContent = body.replace(/^\s+/, "");
+    outEl.appendChild(cur);
+    outEl.scrollTop = outEl.scrollHeight;
+  }
+
+  try {
+    const res = await fetch("/api/translate", {
+      method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({text, direction, style, model: modelEl.value,
+                            think: $("#think").checked}),
+      signal: controller.signal
+    });
+    if (!res.ok) {
+      let msg = "HTTP " + res.status;
+      try { msg = (await res.json()).error || msg; } catch {}
+      throw new Error(msg);
+    }
+
+    const reader = res.body.getReader();
+    const dec = new TextDecoder("utf-8");
+    let buf = "";
+    for (;;) {
+      const {value, done} = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, {stream: true});
+      let nl;
+      while ((nl = buf.indexOf("\n")) >= 0) {
+        const line = buf.slice(0, nl).trim();
+        buf = buf.slice(nl + 1);
+        if (!line) continue;
+        let j;
+        try { j = JSON.parse(line); } catch { continue; }
+        if (j.error) throw new Error(j.error);
+        const msg = j.message || {};
+        if (msg.thinking) { reasonAcc += msg.thinking; render(); }
+        if (msg.content) {
+          if (firstAt === null) firstAt = performance.now();
+          acc += msg.content; render();
+        }
+        if (j.done) {
+          const total = (performance.now() - t0) / 1000;
+          const ttft = firstAt ? (firstAt - t0) / 1000 : total;
+          const n = j.eval_count || 0;
+          const tps = (n && j.eval_duration) ? n / (j.eval_duration / 1e9) : 0;
+          statsEl.innerHTML =
+            "<b>" + tps.toFixed(1) + "</b> tok/s · first token <b>" +
+            ttft.toFixed(2) + "s</b> · <b>" + n + "</b> tokens · total <b>" +
+            total.toFixed(1) + "s</b>";
+        }
+      }
+    }
+    if (!acc.trim()) statsEl.textContent = "model returned nothing — try again";
+  } catch (e) {
+    if (e.name === "AbortError") statsEl.textContent = "stopped";
+    else { statsEl.textContent = "Error: " + e.message; statsEl.classList.add("err"); }
+  } finally {
+    cur.remove();
+    if (!outEl.textContent.trim()) {
+      outEl.textContent = "Translation appears here.";
+      outEl.className = "placeholder";
+    }
+    controller = null; goEl.disabled = false; stopEl.style.display = "none";
+  }
+}
+goEl.addEventListener("click", translate);
+stopEl.addEventListener("click", () => controller && controller.abort());
+
+/* ======================== DOCUMENTS TAB ========================= */
+const D = {
+  jobs: [], jid: null, job: null, chunks: [],
+  next: 0,            // how many chunks the pane has already rendered
+  poll: null, view: "chunks", srcDirty: false, outDirty: false,
+  srcPath: "", srcSha: "", outDir: "", root: ""
+};
+
+function fmtTime(s){
+  s = Math.round(s || 0);
+  const h = Math.floor(s/3600), m = Math.floor(s%3600/60);
+  return h ? h+"h "+m+"m" : (m ? m+"m "+(s%60)+"s" : s+"s");
+}
+
+async function loadJobs(){
+  try {
+    const d = await api("/api/jobs");
+    D.jobs = d.jobs; D.outDir = d.out_dir; D.root = d.root;
+    if (!$("#nOut").value) $("#nOut").value = d.out_dir;
+    renderJobList();
+  } catch(e){ toast(e.message, true); }
+}
+
+function renderJobList(){
+  const box = $("#jobList");
+  if (!D.jobs.length){
+    box.innerHTML = '<div class="lbl" style="padding:10px">No documents yet. '
+      + 'Press <b>+ New document</b> to feed a .txt in.</div>';
+    return;
+  }
+  box.innerHTML = "";
+  for (const j of D.jobs){
+    const el = document.createElement("div");
+    el.className = "jobcard" + (j.id === D.jid ? " sel" : "");
+    el.innerHTML =
+      '<div class="t"></div>'
+      + '<div class="m"><span class="pill ' + j.status + '"></span>'
+      + '<span class="pc"></span><span class="md"></span></div>'
+      + '<div class="bar"><i style="width:' + (j.percent||0) + '%"></i></div>';
+    el.querySelector(".t").textContent = j.title || j.id;
+    el.querySelector(".pill").textContent = j.status;
+    el.querySelector(".pc").textContent =
+      (j.done_text||0) + "/" + (j.total_text||0) + " · " + (j.percent||0).toFixed(1) + "%";
+    el.querySelector(".md").textContent = j.mode === "interlinear" ? "interlinear" : "";
+    el.addEventListener("click", () => selectJob(j.id));
+    box.appendChild(el);
+  }
+}
+
+async function selectJob(id, keepScroll){
+  D.jid = id;
+  D.next = 0;
+  if (!keepScroll){ $("#chunks").innerHTML = ""; D.chunks = []; }
+  renderJobList();
+  await refreshJob(true);
+  await loadSource();
+  startPolling();
+}
+
+async function refreshJob(full){
+  if (!D.jid) return;
+  let d;
+  try { d = await api("/api/job?id=" + encodeURIComponent(D.jid) + "&from=" + (full ? 0 : D.next)); }
+  catch(e){ toast(e.message, true); stopPolling(); return; }
+
+  const first = full || !D.job;
+  D.job = d.job;
+  if (full){ D.chunks = []; $("#chunks").innerHTML = ""; D.next = 0; }
+  for (const c of d.chunks) D.chunks[c.i] = c;
+  // Render only as far as the bookmark: this pane is "what has been translated
+  // so far", so untranslated chunks must not show up as empty placeholders.
+  for (const c of d.chunks){
+    if (c.i < D.next){ updateChunk(c); continue; }
+    if (!c.done) break;
+    appendChunk(c);
+    D.next = c.i + 1;
+  }
+  renderLive(d.live, d.live_i, d.live_thinking, d.live_chars);
+  paintJobBar();
+  if (D.view === "text" && !D.outDirty) refreshOutText();
+  if (first && D.job.status === "interrupted")
+    toast("This document was cut off mid-translation — press Translate to resume.", true);
+}
+
+function paintJobBar(){
+  const j = D.job;
+  if (!j){
+    $("#jobTitle").textContent = "No document selected";
+    $("#jobPill").textContent = "—"; $("#jobPill").className = "pill";
+    ["btnGo","btnPause","btnRestart","btnCut","btnSettings","btnFolder","btnDelete",
+     "btnSrcSave","btnOutSave","btnOutSaveAs"].forEach(b => $("#"+b).disabled = true);
+    $("#docStats").textContent = "no document loaded";
+    $("#docPaths").textContent = "";
+    return;
+  }
+  $("#jobTitle").textContent = j.title;
+  $("#jobTitle").title = j.source_file;
+  $("#jobPill").textContent = j.status;
+  $("#jobPill").className = "pill " + j.status;
+
+  const run = !!j.running;
+  const finished = j.bookmark >= j.total_chunks;
+  $("#btnGo").disabled = run || finished;
+  $("#btnGo").textContent = j.done_text > 0 && !finished
+    ? "Resume from " + j.done_text : "Translate";
+  $("#btnPause").disabled = !run;
+  ["btnRestart","btnSettings","btnFolder","btnDelete","btnOutSave","btnOutSaveAs"]
+    .forEach(b => $("#"+b).disabled = false);
+  $("#btnRestart").disabled = run;
+  $("#btnSettings").disabled = run;
+  $("#btnCut").disabled = !(j.cut_marks && j.cut_marks.length) && !j.bookmark;
+
+  const rate = j.elapsed_sec && j.done_text ? j.done_text / j.elapsed_sec : 0;
+  const left = rate ? (j.total_text - j.done_text) / rate : 0;
+  $("#docStats").innerHTML =
+    j.status_line.replace(/(\d+) of (\d+)/, "<b>$1</b> of <b>$2</b>")
+    + " · bookmark <b>" + j.bookmark + "</b>/" + j.total_chunks
+    + " · <b>" + (j.tokens_out||0) + "</b> tokens · " + fmtTime(j.elapsed_sec)
+    + (run && left ? " · ~" + fmtTime(left) + " left" : "")
+    + (j.cut_marks && j.cut_marks.length
+        ? ' · <span class="err">' + j.cut_marks.length + " cut mark(s)</span>" : "")
+    + (j.skipped ? ' · <span class="err">' + j.skipped + " skipped ⚠</span>" : "")
+    + (j.error ? ' · <span class="err">' + j.error + "</span>" : "");
+  $("#docPaths").textContent = "→ " + j.output_file;
+  $("#docPaths").title = j.output_file;
+
+  if (D.srcSha && j.source_sha && D.srcSha !== j.source_sha && !D.srcDirty)
+    $("#srcInfo").innerHTML = '<span class="err">source changed — Restart to re-chunk</span>';
+}
+
+/* ---- chunk rendering ---- */
+function chunkNode(c){
+  const el = document.createElement("div");
+  el.className = "ch" + (c.kind === "pass" ? " pass" : "");
+  el.id = "ch" + c.i;
+  el.innerHTML = '<div class="n"><span class="ni"></span><span class="badge"></span></div>'
+    + '<div class="he" dir="rtl"></div><div class="en" dir="ltr"></div>'
+    + '<div class="orig" dir="rtl"></div>';
+  fillChunk(el, c);
+  const he = el.querySelector(".he"), en = el.querySelector(".en");
+  if (c.kind === "text"){
+    for (const [node, field] of [[he, "heb"], [en, "out"]]){
+      node.contentEditable = "true";
+      node.addEventListener("blur", async () => {
+        const val = node.textContent.trim();
+        const cur = D.chunks[c.i] || c;
+        if (val === (cur[field] || "")) return;
+        cur[field] = val;
+        try {
+          await api("/api/job/edit", {id: D.jid, i: c.i, [field]: val});
+          toast("chunk " + c.i + " saved");
+        } catch(e){ toast(e.message, true); }
+      });
+    }
+  }
+  return el;
+}
+
+function fillChunk(el, c){
+  const inter = D.job && D.job.mode === "interlinear";
+  el.querySelector(".ni").textContent = "#" + c.i + (c.kind === "pass" ? " (copied)" : "");
+  el.querySelector(".badge").textContent = c.warn ? "⚠ " + c.warn : "";
+  const he = el.querySelector(".he"), en = el.querySelector(".en"), og = el.querySelector(".orig");
+  if (c.kind === "pass"){
+    he.style.display = "none"; en.style.display = "none";
+    og.textContent = c.src; og.dir = "auto"; og.style.display = c.src.trim() ? "" : "none";
+    return;
+  }
+  he.textContent = inter ? (c.heb || c.src) : c.src;
+  he.style.display = (inter || D.job.include_source) ? "" : "none";
+  he.contentEditable = inter ? "true" : "false";
+  en.textContent = c.out || (c.done ? "" : "…");
+  og.textContent = (inter && c.heb && c.heb !== c.src) ? c.src : "";
+  og.style.display = og.textContent ? "" : "none";
+}
+
+function appendChunk(c){
+  if (c.kind === "pass" && !c.src.trim()) return;   // blank source lines add nothing here
+  $("#chunks").appendChild(chunkNode(c));
+  if ($("#follow").checked) $("#chunks").scrollTop = $("#chunks").scrollHeight;
+}
+
+function updateChunk(c){
+  const el = document.getElementById("ch" + c.i);
+  if (el) fillChunk(el, c);
+}
+
+function renderLive(text, i, thinking, chars){
+  let el = document.getElementById("chlive");
+  if (i < 0 || (!text && !chars)){ if (el) el.remove(); return; }
+  if (!el){
+    el = document.createElement("div");
+    el.className = "ch live"; el.id = "chlive";
+    el.innerHTML = '<div class="n"><span class="ni"></span></div>'
+      + '<div class="en" dir="auto"></div>';
+    $("#chunks").appendChild(el);
+  }
+  const src = D.chunks[i] ? D.chunks[i].src : "";
+  el.className = "ch live" + (thinking ? " thinking" : "");
+  el.querySelector(".ni").textContent =
+    "#" + i + (thinking ? " thinking… (" + chars.toLocaleString() + " chars)" : " translating…")
+    + (src ? "  ·  " + src.slice(0, 60) : "");
+  el.querySelector(".en").textContent = thinking ? "…" + text : text;
+  if ($("#follow").checked) $("#chunks").scrollTop = $("#chunks").scrollHeight;
+}
+
+/* ---- polling ---- */
+function startPolling(){
+  stopPolling();
+  D.poll = setInterval(async () => {
+    if (!D.jid) return;
+    await refreshJob(false);
+    if (D.job && !D.job.running){
+      stopPolling();
+      loadJobs();
+    }
+  }, 900);
+}
+function stopPolling(){ if (D.poll){ clearInterval(D.poll); D.poll = null; } }
+
+/* ---- source pane ---- */
+async function loadSource(){
+  if (!D.job) return;
+  try {
+    const d = await api("/api/fs/read?path=" + encodeURIComponent(D.job.source_file));
+    $("#srcText").value = d.text;
+    D.srcPath = d.path; D.srcSha = d.sha; D.srcDirty = false;
+    $("#btnSrcSave").disabled = true;
+    $("#srcInfo").textContent = d.chars.toLocaleString() + " chars";
+  } catch(e){
+    $("#srcText").value = "(could not read " + D.job.source_file + ")";
+    $("#srcInfo").innerHTML = '<span class="err">missing</span>';
+  }
+}
+
+$("#srcText").addEventListener("input", () => {
+  D.srcDirty = true;
+  $("#btnSrcSave").disabled = false;
+  $("#srcInfo").innerHTML = '<span class="err">unsaved changes</span>';
+});
+
+$("#btnSrcSave").addEventListener("click", async () => {
+  if (!D.job) return;
+  try {
+    const d = await api("/api/fs/write", {path: D.job.source_file, text: $("#srcText").value});
+    D.srcSha = d.sha; D.srcDirty = false;
+    $("#btnSrcSave").disabled = true;
+    $("#srcInfo").textContent = d.chars.toLocaleString() + " chars · saved";
+    toast("source .txt saved");
+    if (D.job.source_sha !== d.sha)
+      $("#srcInfo").innerHTML += ' · <span class="err">Restart to re-chunk</span>';
+  } catch(e){ toast(e.message, true); }
+});
+
+$("#btnSrcReload").addEventListener("click", loadSource);
+
+/* Jump the source textarea to where translation stopped: select the text of the
+   chunk the bookmark points at, which is exactly where the blank lines went. */
+$("#btnCut").addEventListener("click", () => {
+  const j = D.job; if (!j) return;
+  // Same rule the server uses: the bookmark may sit on a blank line, so anchor
+  // on the next line that actually has text.
+  let needle = "";
+  for (let i = j.bookmark; i < D.chunks.length && !needle; i++)
+    if (D.chunks[i] && D.chunks[i].src.trim()) needle = D.chunks[i].src.trim().slice(0, 40);
+  if (!needle && j.cut_marks && j.cut_marks.length)
+    needle = j.cut_marks[j.cut_marks.length - 1].preview;
+  if (!needle){ toast("nothing to jump to"); return; }
+  const ta = $("#srcText");
+  const pos = ta.value.indexOf(needle);
+  if (pos < 0){ toast("cut point not found in the current source text", true); return; }
+  ta.focus();
+  ta.setSelectionRange(pos, pos + needle.length);
+  // scrollTop has no direct char mapping; approximate by line ratio
+  const before = ta.value.slice(0, pos).split("\n").length;
+  const total = ta.value.split("\n").length;
+  ta.scrollTop = Math.max(0, (before / total) * ta.scrollHeight - ta.clientHeight / 2);
+  toast("cut point #" + j.bookmark + " — look for the blank lines");
+});
+
+/* ---- translation pane ---- */
+seg("#viewSeg", "view", v => {
+  D.view = v;
+  $("#chunks").style.display = v === "chunks" ? "" : "none";
+  $("#outText").style.display = v === "text" ? "" : "none";
+  if (v === "text") refreshOutText();
+});
+
+async function refreshOutText(){
+  if (!D.jid) return;
+  try {
+    const d = await api("/api/job/output?id=" + encodeURIComponent(D.jid));
+    const ta = $("#outText");
+    const atEnd = ta.scrollTop + ta.clientHeight >= ta.scrollHeight - 40;
+    ta.value = d.text; D.outDirty = false;
+    if (atEnd && $("#follow").checked) ta.scrollTop = ta.scrollHeight;
+  } catch(e){ /* job may have just been deleted */ }
+}
+$("#outText").addEventListener("input", () => D.outDirty = true);
+
+$("#btnOutSave").addEventListener("click", async () => {
+  if (!D.job) return;
+  try {
+    const body = {id: D.jid, path: D.job.output_file};
+    if (D.view === "text" && D.outDirty) body.text = $("#outText").value;
+    const d = await api("/api/job/export", body);
+    D.outDirty = false;
+    toast("saved → " + d.path);
+  } catch(e){ toast(e.message, true); }
+});
+
+$("#btnOutSaveAs").addEventListener("click", async () => {
+  if (!D.job) return;
+  const p = prompt("Save the translation to which file or folder?", D.job.output_file);
+  if (!p) return;
+  try {
+    const body = {id: D.jid, path: p};
+    if (D.view === "text" && D.outDirty) body.text = $("#outText").value;
+    const d = await api("/api/job/export", body);
+    toast("saved → " + d.path);
+  } catch(e){ toast(e.message, true); }
+});
+
+/* ---- run controls ---- */
+$("#btnGo").addEventListener("click", async () => {
+  if (!D.job) return;
+  const resuming = D.job.done_text > 0;
+  $("#btnGo").disabled = true;            // don't wait for the poll to catch up
+  $("#btnPause").disabled = false;
+  try {
+    await api("/api/job/start", {id: D.jid});
+    toast(resuming ? "resuming at chunk " + D.job.bookmark : "translating…");
+    await refreshJob(false);
+    startPolling();
+  } catch(e){ toast(e.message, true); }
+});
+
+$("#btnPause").addEventListener("click", async () => {
+  $("#btnPause").disabled = true;
+  try { const d = await api("/api/job/pause", {id: D.jid}); toast(d.message); }
+  catch(e){ toast(e.message, true); $("#btnPause").disabled = false; }
+});
+
+$("#btnRestart").addEventListener("click", async () => {
+  if (!D.job) return;
+  if (!confirm("Throw away all " + D.job.done_text + " translated chunks and start this "
+               + "document again from the top?\n\nThe source .txt is re-read and re-chunked."))
+    return;
+  try {
+    await api("/api/job/reset", {id: D.jid});
+    toast("restarted");
+    await selectJob(D.jid);
+  } catch(e){ toast(e.message, true); }
+});
+
+$("#btnDelete").addEventListener("click", async () => {
+  if (!D.job) return;
+  if (!confirm("Delete this job's .json?\n\nThe source .txt and any translation already "
+               + "written to disk are left alone.")) return;
+  try {
+    await api("/api/job/delete", {id: D.jid});
+    stopPolling();
+    D.jid = null; D.job = null; D.chunks = []; D.next = 0;
+    $("#chunks").innerHTML = ""; $("#srcText").value = ""; $("#outText").value = "";
+    paintJobBar(); loadJobs();
+  } catch(e){ toast(e.message, true); }
+});
+
+$("#btnFolder").addEventListener("click", () => {
+  if (D.job) api("/api/fs/open", {path: D.job.output_dir}).catch(e => toast(e.message, true));
+});
+
+$("#refreshJobs").addEventListener("click", loadJobs);
+
+/* ---- options modal ---- */
+$("#btnSettings").addEventListener("click", () => {
+  const j = D.job; if (!j) return;
+  $("#oModel").value = j.model;
+  segSet("#oStyle", "style", j.style);
+  $("#oOut").value = j.output_dir;
+  $("#oNikkud").checked = !!j.nikkud;
+  $("#oInclude").checked = !!j.include_source;
+  $("#oMark").checked = !!j.mark_cuts;
+  $("#oThink").checked = !!j.think;
+  $("#optModal").classList.add("on");
+});
+$("#oCancel").addEventListener("click", () => $("#optModal").classList.remove("on"));
+let oStyle = "natural";
+seg("#oStyle", "style", v => oStyle = v);
+$("#oSave").addEventListener("click", async () => {
+  try {
+    await api("/api/job/settings", {
+      id: D.jid, model: $("#oModel").value, style: oStyle,
+      output_dir: $("#oOut").value.trim(),
+      nikkud: $("#oNikkud").checked, include_source: $("#oInclude").checked,
+      mark_cuts: $("#oMark").checked, think: $("#oThink").checked
+    });
+    $("#optModal").classList.remove("on");
+    toast("options applied");
+    await refreshJob(true);
+  } catch(e){ toast(e.message, true); }
+});
+$("#oOutBrowse").addEventListener("click", () =>
+  browse("folder", p => $("#oOut").value = p));
+
+/* ---- new document modal ---- */
+let nMode = "paragraph", nDir = "he2en", nStyle = "natural";
+seg("#nMode", "mode", v => {
+  nMode = v;
+  const on = v === "interlinear";
+  $("#nInterRow").style.display = on ? "" : "none";
+  $("#nInterHint").style.display = on ? "" : "none";
+  $("#nModeHint").textContent = on
+    ? "Hebrew line, English underneath"
+    : "one chunk per source line";
+});
+seg("#nDir", "dir", v => nDir = v);
+seg("#nStyle", "style", v => nStyle = v);
+
+$("#newJob").addEventListener("click", () => {
+  $("#nStatus").textContent = "";
+  if (!$("#nOut").value) $("#nOut").value = D.outDir;
+  $("#nModeHint").textContent = "one chunk per source line";
+  $("#newModal").classList.add("on");
+  $("#nSource").focus();
+});
+$("#nCancel").addEventListener("click", () => $("#newModal").classList.remove("on"));
+$("#nBrowse").addEventListener("click", () => browse("file", p => $("#nSource").value = p));
+$("#nOutBrowse").addEventListener("click", () => browse("folder", p => $("#nOut").value = p));
+
+/* The browser hides real paths, so a file picked this way is copied into
+   Texts/Uploads/ and the job runs against that copy. */
+$("#nPick").addEventListener("click", () => $("#nFile").click());
+$("#nFile").addEventListener("change", async e => {
+  const f = e.target.files[0]; if (!f) return;
+  $("#nStatus").textContent = "copying " + f.name + " in…";
+  try {
+    const text = await f.text();
+    const d = await api("/api/fs/upload", {name: f.name, text});
+    $("#nSource").value = d.path;
+    $("#nStatus").textContent = "copied to " + d.path;
+  } catch(err){ $("#nStatus").innerHTML = '<span class="err">' + err.message + "</span>"; }
+  e.target.value = "";
+});
+
+$("#nCreate").addEventListener("click", async () => {
+  const src = $("#nSource").value.trim();
+  if (!src){ $("#nStatus").innerHTML = '<span class="err">pick a .txt first</span>'; return; }
+  try {
+    const d = await api("/api/job/create", {
+      source_file: src, mode: nMode, direction: nDir, style: nStyle,
+      words_per_line: parseInt($("#nWords").value, 10) || 16,
+      nikkud: $("#nNikkud").checked,
+      include_source: $("#nInclude").checked,
+      mark_cuts: $("#nMark").checked,
+      output_dir: $("#nOut").value.trim(),
+      model: $("#model").value
+    });
+    if (d.warning){ $("#nStatus").innerHTML = '<span class="err">' + d.warning + "</span>"; return; }
+    $("#newModal").classList.remove("on");
+    await loadJobs();
+    await selectJob(d.job_id);
+    toast(d.resumed ? "opened the existing job — " + d.status_line : "document ready");
+  } catch(e){ $("#nStatus").innerHTML = '<span class="err">' + e.message + "</span>"; }
+});
+
+/* ---- server-side file browser ---- */
+let browseCb = null, browseMode = "file", browseDir = "";
+function browse(mode, cb){
+  browseMode = mode; browseCb = cb;
+  $("#browseTitle").textContent = mode === "file" ? "Choose a .txt file" : "Choose a folder";
+  $("#browsePick").style.display = mode === "folder" ? "" : "none";
+  $("#browseModal").classList.add("on");
+  listDir(browseDir || D.root || "");
+}
+$("#browseCancel").addEventListener("click", () => $("#browseModal").classList.remove("on"));
+$("#browseUp").addEventListener("click", () => listDir($("#browseList").dataset.parent || ""));
+$("#browseGoto").addEventListener("click", () => listDir($("#browsePath").value.trim()));
+$("#browsePath").addEventListener("keydown", e => {
+  if (e.key === "Enter") listDir($("#browsePath").value.trim());
+});
+$("#browsePick").addEventListener("click", () => {
+  if (browseCb) browseCb(browseDir);
+  $("#browseModal").classList.remove("on");
+});
+
+async function listDir(dir){
+  try {
+    const d = await api("/api/fs/list?dir=" + encodeURIComponent(dir || ""));
+    browseDir = d.dir;
+    $("#browsePath").value = d.dir === "@drives" ? "" : d.dir;
+    const box = $("#browseList");
+    box.dataset.parent = d.parent;
+    box.innerHTML = "";
+    for (const p of d.dirs){
+      const el = document.createElement("div");
+      el.className = "di";
+      el.textContent = "📁  " + (p.split(/[\\/]/).filter(Boolean).pop() || p);
+      el.addEventListener("click", () => listDir(p));
+      box.appendChild(el);
+    }
+    if (browseMode === "file") for (const f of d.files){
+      const el = document.createElement("div");
+      el.className = "fi";
+      el.textContent = "📄  " + f.name + "   ·  "
+        + (f.size/1024).toFixed(0) + " KB  ·  " + f.mtime;
+      el.addEventListener("click", () => {
+        if (browseCb) browseCb(f.path);
+        $("#browseModal").classList.remove("on");
+      });
+      box.appendChild(el);
+    }
+    if (!box.children.length)
+      box.innerHTML = '<div class="di">(nothing here)</div>';
+  } catch(e){ toast(e.message, true); }
+}
+
+/* ---- boot ---- */
+window.addEventListener("beforeunload", e => {
+  if (D.srcDirty || D.outDirty){ e.preventDefault(); e.returnValue = ""; }
+});
+
+paintDirection();
+loadModels();
+loadJobs();
+srcEl.focus();
+</script>
+</body>
+</html>

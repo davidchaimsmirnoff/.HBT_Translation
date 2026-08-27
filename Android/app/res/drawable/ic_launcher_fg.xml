@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Two offset pages: the source and its translation. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+  <path android:fillColor="#FFFFFF" android:fillAlpha="0.5"
+        android:pathData="M28,26h26a5,5 0 0 1 5,5v46a5,5 0 0 1 -5,5h-26a5,5 0 0 1 -5,-5v-46a5,5 0 0 1 5,-5z"/>
+  <path android:fillColor="#FFFFFF"
+        android:pathData="M54,30h26a5,5 0 0 1 5,5v46a5,5 0 0 1 -5,5h-26a5,5 0 0 1 -5,-5v-46a5,5 0 0 1 5,-5z"/>
+  <path android:fillColor="#16223A"
+        android:pathData="M58,42h18v4h-18z M58,52h18v4h-18z M58,62h11v4h-11z"/>
+</vector>

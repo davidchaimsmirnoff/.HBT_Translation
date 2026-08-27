@@ -1,0 +1,5 @@
+FROM dicta-il/DictaLM-3.0-24B-Thinking:latest
+
+# 16K instead of 65280 -> KV cache drops ~10GB to ~2.6GB
+# so the whole 14GB model fits in the A4500's 20GB. 100% GPU.
+PARAMETER num_ctx 16384

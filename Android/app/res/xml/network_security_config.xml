@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The translator speaks plain HTTP over the Tailscale tunnel, which is already
+     end-to-end encrypted; adding TLS on top would mean running a certificate
+     authority for one machine. Cleartext is permitted because this app loads
+     exactly one address - the one you type into it - and nothing else. -->
+<network-security-config>
+  <base-config cleartextTrafficPermitted="true"/>
+</network-security-config>
