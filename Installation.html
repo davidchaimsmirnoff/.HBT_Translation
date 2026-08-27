@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--
+  LocalHBT installation manual.
+
+  Written for someone setting the translator up on their own computer and phone
+  for the first time. Double-click it; it is a plain page and needs no server.
+
+  The webfonts come from Google and simply fall back to the system stack when
+  this is opened without a connection, which is the likely case on a machine
+  part-way through the setup it describes.
+-->
+<title>LocalHBT Setup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+
+<style>
+  :root{
+    --paper:#F6F8FA;
+    --panel:#FFFFFF;
+    --ink:#14181F;
+    --muted:#5A6472;
+    --rule:#DDE2E9;
+    --accent:#0F6E6E;
+    --accent-soft:#E4F0EF;
+    --warn:#9A5B08;
+    --warn-soft:#FBF0DE;
+    --warn-rule:#E4C48A;
+    --code-bg:#EDF1F5;
+
+    --measure:66ch;
+    --f-serif:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+    --f-sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --f-mono:"IBM Plex Mono",ui-monospace,Consolas,"Courier New",monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#0E1116;
+      --panel:#161A21;
+      --ink:#E5E9EF;
+      --muted:#98A2B0;
+      --rule:#242B35;
+      --accent:#4FBFB6;
+      --accent-soft:#122A2A;
+      --warn:#E3A44A;
+      --warn-soft:#2A2113;
+      --warn-rule:#5A4520;
+      --code-bg:#1B212A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E1116;
+    --panel:#161A21;
+    --ink:#E5E9EF;
+    --muted:#98A2B0;
+    --rule:#242B35;
+    --accent:#4FBFB6;
+    --accent-soft:#122A2A;
+    --warn:#E3A44A;
+    --warn-soft:#2A2113;
+    --warn-rule:#5A4520;
+    --code-bg:#1B212A;
+  }
+
+  *{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--f-sans);
+    font-size:16px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{
+    max-width:112ch;
+    margin:0 auto;
+    padding:clamp(28px,5vw,68px) clamp(18px,4vw,40px) 96px;
+  }
+
+  /* ---------- masthead ---------- */
+  .mast{
+    border-bottom:2px solid var(--ink);
+    padding-bottom:20px;
+    margin-bottom:36px;
+  }
+  .kicker{
+    font-family:var(--f-mono);
+    font-size:11.5px;
+    letter-spacing:.13em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:0 0 12px;
+  }
+  h1{
+    font-family:var(--f-serif);
+    font-weight:600;
+    font-size:clamp(30px,5.2vw,46px);
+    line-height:1.1;
+    letter-spacing:-.015em;
+    margin:0 0 12px;
+    text-wrap:balance;
+  }
+  .standfirst{
+    max-width:var(--measure);
+    font-size:17px;
+    color:var(--muted);
+    margin:0;
+  }
+
+  /* ---------- generic prose ---------- */
+  .measure{max-width:var(--measure)}
+  p{margin:0 0 14px}
+  a{color:var(--accent); text-underline-offset:2px}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
+  strong{font-weight:600}
+
+  code{
+    font-family:var(--f-mono);
+    font-size:.885em;
+    background:var(--code-bg);
+    padding:.12em .38em;
+    border-radius:3px;
+  }
+  pre{
+    font-family:var(--f-mono);
+    font-size:13.5px;
+    line-height:1.6;
+    background:var(--code-bg);
+    border:1px solid var(--rule);
+    border-radius:6px;
+    padding:13px 15px;
+    margin:0 0 14px;
+    overflow-x:auto;
+  }
+  pre code{background:none; padding:0; font-size:inherit}
+  .cmt{color:var(--muted)}
+
+  /* ---------- part headings ---------- */
+  .part{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin:52px 0 8px;
+    padding-top:22px;
+    border-top:1px solid var(--rule);
+  }
+  .part:first-of-type{border-top:0; padding-top:0}
+  .part h2{
+    font-family:var(--f-serif);
+    font-weight:600;
+    font-size:25px;
+    letter-spacing:-.01em;
+    margin:0;
+  }
+  .part .where{
+    font-family:var(--f-mono);
+    font-size:11.5px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    white-space:nowrap;
+  }
+  .part-note{max-width:var(--measure); color:var(--muted); margin:0 0 26px}
+
+  /* ---------- steps ----------
+     The order is a real dependency chain, so the numbers carry information:
+     nothing below works until everything above it does. */
+  .step{
+    display:grid;
+    grid-template-columns:42px minmax(0,1fr);
+    gap:0 18px;
+    margin-bottom:30px;
+  }
+  .step > .num{
+    font-family:var(--f-mono);
+    font-size:13px;
+    font-weight:500;
+    color:var(--accent);
+    padding-top:3px;
+    font-variant-numeric:tabular-nums;
+  }
+  .step > .body{min-width:0; max-width:var(--measure)}
+  .step h3{
+    font-family:var(--f-sans);
+    font-weight:600;
+    font-size:17px;
+    margin:0 0 8px;
+    line-height:1.35;
+  }
+  .step p:last-child,.step pre:last-child{margin-bottom:0}
+  @media (max-width:620px){
+    .step{grid-template-columns:1fr; gap:0}
+    .step > .num{padding-top:0; margin-bottom:4px}
+  }
+
+  /* ---------- callouts ---------- */
+  .note{
+    max-width:var(--measure);
+    background:var(--panel);
+    border:1px solid var(--rule);
+    border-left:3px solid var(--accent);
+    border-radius:0 6px 6px 0;
+    padding:14px 16px;
+    margin:0 0 16px;
+    font-size:15px;
+  }
+  .note.trap{
+    background:var(--warn-soft);
+    border-color:var(--warn-rule);
+    border-left-color:var(--warn);
+  }
+  .note .lbl{
+    display:block;
+    font-family:var(--f-mono);
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:6px;
+  }
+  .note.trap .lbl{color:var(--warn)}
+  .note p:last-child{margin-bottom:0}
+
+  /* ---------- the shape of it ---------- */
+  .flow{
+    display:flex;
+    align-items:stretch;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:0 0 14px;
+  }
+  .node{
+    flex:1 1 190px;
+    background:var(--panel);
+    border:1px solid var(--rule);
+    border-radius:7px;
+    padding:13px 15px;
+  }
+  .node b{
+    display:block;
+    font-size:14.5px;
+    font-weight:600;
+    margin-bottom:3px;
+  }
+  .node span{font-size:13px; color:var(--muted); display:block}
+  .node.pc{border-color:var(--accent)}
+  .arrow{
+    align-self:center;
+    font-family:var(--f-mono);
+    color:var(--accent);
+    font-size:15px;
+    flex:0 0 auto;
+  }
+  @media (max-width:700px){ .arrow{transform:rotate(90deg)} }
+
+  /* ---------- tables ---------- */
+  .tablewrap{overflow-x:auto; margin:0 0 16px}
+  table{
+    border-collapse:collapse;
+    width:100%;
+    min-width:520px;
+    font-size:14.5px;
+  }
+  caption{
+    text-align:left;
+    font-family:var(--f-mono);
+    font-size:11.5px;
+    letter-spacing:.11em;
+    text-transform:uppercase;
+    color:var(--muted);
+    padding-bottom:9px;
+  }
+  th,td{
+    text-align:left;
+    vertical-align:top;
+    padding:10px 14px 10px 0;
+    border-bottom:1px solid var(--rule);
+  }
+  th{
+    font-weight:600;
+    font-size:12px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--muted);
+    border-bottom-color:var(--ink);
+  }
+  td:first-child{white-space:nowrap; padding-right:24px}
+  tbody tr:last-child td{border-bottom:0}
+
+  .foot{
+    margin-top:56px;
+    padding-top:20px;
+    border-top:1px solid var(--rule);
+    max-width:var(--measure);
+    font-size:14px;
+    color:var(--muted);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="mast">
+    <p class="kicker">Install guide &middot; Windows PC + Android phone</p>
+    <h1>Setting up LocalHBT<br>on your own machine</h1>
+    <p class="standfirst">A Hebrew&ndash;English interlinear translator that runs entirely on your
+    own computer. The phone app is a window onto it, reached over a private Tailscale link that
+    never touches the public internet. Work through this once and it stays set up.</p>
+  </header>
+
+  <section class="measure">
+    <div class="note">
+      <span class="lbl">The one-line version</span>
+      <p>The <strong>computer</strong> does all the work. The <strong>phone</strong> is only a
+      screen. The single thing you have to configure is telling the phone your computer's
+      Tailscale address.</p>
+    </div>
+
+    <div class="flow" role="img" aria-label="The phone reaches the computer over Tailscale; the computer runs the server and Ollama.">
+      <div class="node">
+        <b>Your phone</b>
+        <span>LocalHBT app &mdash; just a viewer</span>
+      </div>
+      <div class="arrow" aria-hidden="true">&rarr;</div>
+      <div class="node">
+        <b>Tailscale</b>
+        <span>Private encrypted link between your two devices</span>
+      </div>
+      <div class="arrow" aria-hidden="true">&rarr;</div>
+      <div class="node pc">
+        <b>Your computer</b>
+        <span>Server on port 8770 + Ollama running the model</span>
+      </div>
+    </div>
+    <p style="font-size:14px;color:var(--muted)">Nothing is hosted by anyone else. If the
+    computer is asleep or the server is closed, the phone shows nothing &mdash; there is no
+    cloud copy to fall back on.</p>
+  </section>
+
+  <div class="part">
+    <h2>Before you start</h2>
+    <span class="where">Reality check</span>
+  </div>
+  <div class="measure">
+    <p>The translation model is <strong>24 billion parameters</strong>. The included
+    <code>Modelfile</code> trims its context window to 16K specifically so the weights and cache
+    fit in about 20&nbsp;GB of video memory.</p>
+
+    <div class="note trap">
+      <span class="lbl">Check this first</span>
+      <p>On a machine with a large dedicated GPU, a page translates in minutes. On a laptop with
+      integrated graphics, Ollama falls back to the CPU and the same page can take
+      <em>hours</em>. Everything else here will install perfectly well &mdash; it will just be
+      too slow to use. Confirm the hardware before spending time on the rest.</p>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <caption>What you need</caption>
+        <thead>
+          <tr><th>On the computer</th><th>Why</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Tailscale</td><td>The private link to your phone</td></tr>
+          <tr><td>Python 3.8 or newer</td><td>Runs the server. Standard library only &mdash; nothing to install with pip</td></tr>
+          <tr><td>Ollama</td><td>Runs the translation model locally</td></tr>
+          <tr><td>~15&nbsp;GB free disk</td><td>The model download</td></tr>
+          <tr><td>The project folder</td><td>Copy the whole <code>LocalHBT_Translator</code> folder across</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="part">
+    <h2>Part one: the computer</h2>
+    <span class="where">Do these in order</span>
+  </div>
+  <p class="part-note">Each step depends on the one before it. Finish this part and confirm the
+  translator works in a browser on the computer itself before you touch the phone.</p>
+
+  <div class="step">
+    <div class="num">01</div>
+    <div class="body">
+      <h3>Install Tailscale and sign in</h3>
+      <p>Download it from <code>tailscale.com</code>, install, and sign in with whichever
+      account you like &mdash; Google, Microsoft, GitHub. This computer now belongs to your
+      private network.</p>
+      <p>Use the <strong>same account</strong> on the phone later. That is what puts the two
+      devices on the same network and lets them see each other.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">02</div>
+    <div class="body">
+      <h3>Install Python and Ollama</h3>
+      <p>Python from <code>python.org</code> &mdash; tick <strong>&ldquo;Add python.exe to
+      PATH&rdquo;</strong> on the first screen of the installer. Ollama from
+      <code>ollama.com</code>; it starts with Windows and stays running in the background.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">03</div>
+    <div class="body">
+      <h3>Build the translation model</h3>
+      <p>Open a terminal inside the project folder and run:</p>
+      <pre><code>ollama create dictalm-fast -f Modelfile</code></pre>
+      <p>This pulls roughly 14&nbsp;GB the first time, so give it a while. The name
+      <code>dictalm-fast</code> matters &mdash; the server looks for exactly that. If it ever
+      goes missing, run the same line again.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">04</div>
+    <div class="body">
+      <h3>Start the translator</h3>
+      <p>Double-click <strong>Run Translator.bat</strong>. A console window opens and stays
+      open &mdash; that window <em>is</em> the server, so leave it be. A browser tab opens on
+      the interface.</p>
+      <p>Translate something small here before going further. If it does not work on the
+      computer, the phone cannot fix it.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">05</div>
+    <div class="body">
+      <h3>Write down the computer's Tailscale address</h3>
+      <p>In another terminal:</p>
+      <pre><code>tailscale ip -4</code></pre>
+      <p>It prints one line beginning with <code>100.</code> &mdash; something like
+      <code>100.104.64.110</code>. That is this computer's permanent address on your private
+      network. It does not change when you move house or switch WiFi.</p>
+      <p>The address you will type into the phone is that number with the port on the end:</p>
+      <pre><code>http://100.<span class="cmt">x.y.z</span>:8770</code></pre>
+    </div>
+  </div>
+
+  <div class="part">
+    <h2>Part two: the phone</h2>
+    <span class="where">Android</span>
+  </div>
+  <p class="part-note">The app is a shell around the same interface the computer shows. It
+  needs no rebuild and no developer tools &mdash; you are installing the file as it ships.</p>
+
+  <div class="step">
+    <div class="num">06</div>
+    <div class="body">
+      <h3>Install Tailscale on the phone</h3>
+      <p>From the Play Store. Sign in with <strong>the same account you used in step 1</strong>,
+      and switch the connection on. The phone gets its own <code>100.</code> address, which you
+      will never need to type anywhere.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">07</div>
+    <div class="body">
+      <h3>Copy across and install the app</h3>
+      <p>Take <code>Android\build\LocalHBT.apk</code> from the project folder to the phone by
+      whatever route suits &mdash; USB cable, Drive, email to yourself. Open it on the phone.</p>
+      <p>Android will object that the file did not come from the Play Store; approve
+      <strong>&ldquo;install unknown apps&rdquo;</strong> for whichever app you opened it with,
+      then install. Look for <strong>LocalHBT</strong> in the app drawer.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">08</div>
+    <div class="body">
+      <h3>Type your computer's address on first launch</h3>
+      <p>The app opens asking <em>&ldquo;Where is the translator?&rdquo;</em> with an address
+      already filled in. <strong>Replace it</strong> with the address from step 5, then tap
+      <strong>Connect</strong>.</p>
+
+      <div class="note trap">
+        <span class="lbl">Do not tap &ldquo;Use default&rdquo;</span>
+        <p>The pre-filled address belongs to the machine this app was originally built on. It
+        means nothing on your network, and the app will simply fail to load with no useful
+        explanation. Clear the box and type your own address.</p>
+      </div>
+
+      <p>It is remembered from then on. If the address ever changes, the <strong>&#9881;</strong>
+      button in the app's header brings this dialog back.</p>
+    </div>
+  </div>
+
+  <div class="part">
+    <h2>Part three: using it</h2>
+    <span class="where">Every time from now on</span>
+  </div>
+  <p class="part-note">Setting up happens once. This is the whole routine afterwards, and it is
+  the same on the computer and the phone: start the server, then open a window onto it.</p>
+
+  <div class="step">
+    <div class="num">A</div>
+    <div class="body">
+      <h3>Start the server on the computer</h3>
+      <p>Double-click <strong>Run Translator.bat</strong>. Two things happen: a black console
+      window opens, and your browser opens the translator.</p>
+
+      <div class="note">
+        <span class="lbl">The console window is the program</span>
+        <p>It looks like a leftover, but closing it stops the translator. Minimise it and leave
+        it alone. Nothing works &mdash; on the computer or the phone &mdash; while it is
+        closed.</p>
+      </div>
+
+      <p>Nothing else needs starting. Ollama is already running in the background, and Tailscale
+      reconnects itself when the machine wakes.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">B</div>
+    <div class="body">
+      <h3>Use it on the computer</h3>
+      <p>The browser tab that opened is the translator. If you close it by accident, open a new
+      one at:</p>
+      <pre><code>http://127.0.0.1:8770</code></pre>
+      <p>Use that address on the computer running the server &mdash; not its Tailscale address.
+      It works whether or not Tailscale is connected, because it never leaves the machine.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">C</div>
+    <div class="body">
+      <h3>Use it on the phone</h3>
+      <p>Check Tailscale is connected, then open <strong>LocalHBT</strong>. It remembers the
+      address from setup and opens on your documents, so there is nothing to type again.</p>
+      <p>The phone and the computer can both be open at once. They are two windows onto the
+      same server, not two copies &mdash; a translation started on one is visible on the
+      other.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">D</div>
+    <div class="body">
+      <h3>Leave it running, or stop it</h3>
+      <p>Long translations run for hours, so the usual thing is to leave the console window open
+      and let it work. The computer must stay awake for that &mdash; translation happens in
+      Ollama on the PC, and a sleeping machine stops mid-sentence.</p>
+      <p>To stop: close the console window. A translation in progress is not lost. Progress is
+      saved after every chunk, and pressing <strong>Translate</strong> next time picks up from
+      where it stopped.</p>
+    </div>
+  </div>
+
+  <div class="part">
+    <h2>The part people get wrong</h2>
+    <span class="where">Worth reading once</span>
+  </div>
+  <div class="measure">
+    <div class="note trap">
+      <span class="lbl">It is the computer's address, never the phone's</span>
+      <p>The phone has its own Tailscale address, and it is irrelevant here. The phone is the
+      one doing the asking; the computer is the one being found. Nothing you type into the app
+      is ever the phone's own number.</p>
+    </div>
+
+    <p><strong>Ordinary WiFi will not work, on purpose.</strong> The server answers only itself
+    and the Tailscale address range. Putting both devices on the same home or caf&eacute; WiFi
+    and using the computer's normal <code>192.168.x.x</code> address gets you nothing. Tailscale
+    is not an optional convenience here &mdash; it is the only way in, which is also why the
+    port is safe to leave open.</p>
+
+    <p><strong>Windows Firewall needs nothing done to it.</strong> Tailscale's adapter counts as
+    a Private network, and Python is already allowed inbound there. If you find yourself
+    disabling the firewall, something else is wrong.</p>
+
+    <p><strong>The computer must be awake.</strong> Translation happens in Ollama on the PC. A
+    sleeping computer means a blank app, so it is worth setting the machine never to sleep if
+    you plan to read on the phone while it works.</p>
+  </div>
+
+  <div class="part">
+    <h2>When it does not work</h2>
+    <span class="where">Troubleshooting</span>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <caption>Symptom &rarr; cause</caption>
+      <thead>
+        <tr><th>What you see</th><th>What it usually means</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>App cannot reach the computer</td>
+          <td>The console window was closed, the PC is asleep, or Tailscale is disconnected on one of the two devices. Check all three in that order.</td>
+        </tr>
+        <tr>
+          <td>App loads, but says the address is wrong</td>
+          <td>You kept the pre-filled address. Tap <strong>&#9881;</strong> and enter your own from step 5.</td>
+        </tr>
+        <tr>
+          <td>&ldquo;Cannot reach Ollama&rdquo;</td>
+          <td>Ollama is not running. Start it, then reload the page.</td>
+        </tr>
+        <tr>
+          <td>Model not found</td>
+          <td>Re-run <code>ollama create dictalm-fast -f Modelfile</code> in the project folder.</td>
+        </tr>
+        <tr>
+          <td>&ldquo;LocalHBT is ALREADY RUNNING&rdquo;</td>
+          <td>A server is already up. Close every LocalHBT console window and start one again &mdash; two copies sharing the port cause confusing, half-broken behaviour.</td>
+        </tr>
+        <tr>
+          <td>Translation is unbearably slow</td>
+          <td>It is running on the CPU rather than the GPU. See the reality check at the top; this is a hardware limit, not a setting.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="part">
+    <h2>Changing things later</h2>
+    <span class="where">Optional</span>
+  </div>
+  <div class="measure">
+    <p>The interface lives in <code>index.html</code> on the computer, not inside the app. Edit
+    it and the phone picks it up on the next reload &mdash; the APK never needs rebuilding for
+    an interface change. Editing <code>server.py</code> is the exception: that one needs the
+    console window closed and reopened.</p>
+
+    <div class="tablewrap">
+      <table>
+        <caption>Settings, all optional</caption>
+        <thead><tr><th>Environment variable</th><th>Default</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>HBT_PORT</code></td><td><code>8770</code></td><td>Port the interface is served on</td></tr>
+          <tr><td><code>HBT_MODEL</code></td><td><code>dictalm-fast</code></td><td>Which model to translate with</td></tr>
+          <tr><td><code>OLLAMA_HOST</code></td><td><code>127.0.0.1:11434</code></td><td>Where Ollama is listening</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:14px;color:var(--muted)">Change the port and you must change it in the
+    phone app's address too &mdash; they are the same number.</p>
+  </div>
+
+  <p class="foot">Everything here runs on hardware you own. No account, no subscription, and no
+  text leaves your machine &mdash; which is the entire reason it is built this way.</p>
+
+</div>
+</body>
+</html>

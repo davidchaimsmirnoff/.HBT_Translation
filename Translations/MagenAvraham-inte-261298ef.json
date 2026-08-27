@@ -1,16 +1,16 @@
 {
  "id": "MagenAvraham-inte-261298ef",
- "title": "BH",
+ "title": "MagenAvraham_OrachChaim",
  "status": "running",
- "status_line": "IN PROGRESS - 701 of 3604 translatable chunks (19.5%)",
- "percent": 19.45,
- "bookmark": 705,
- "done_text": 701,
+ "status_line": "IN PROGRESS - 730 of 3604 translatable chunks (20.3%)",
+ "percent": 20.26,
+ "bookmark": 734,
+ "done_text": 730,
  "total_text": 3604,
  "total_chunks": 3612,
  "chars_total": 203019,
  "source_file": "C:\\Users\\Shadow\\Desktop\\LocalHBT_Translator\\Texts\\ShulchanAruch\\Comentaries\\MagenAvraham\\MagenAvraham.txt",
- "source_sha": "dfb1e5d2",
+ "source_sha": "a71141e1",
  "source_chars": 208319,
  "output_dir": "C:\\Users\\Shadow\\Desktop\\LocalHBT_Translator\\Translated",
  "output_file": "C:\\Users\\Shadow\\Desktop\\LocalHBT_Translator\\Translated\\MagenAvraham.interlinear.txt",
@@ -25,18 +25,23 @@
  "temperature": 0.2,
  "think": false,
  "created": "2026-08-27 00:37:53",
- "updated": "2026-08-27 12:07:15",
+ "updated": "2026-08-27 12:32:51",
  "started": "2026-08-27 00:38:20",
  "finished": "",
- "elapsed_sec": 28124.5,
- "tokens_out": 356324,
- "skipped": 74,
+ "elapsed_sec": 29574.6,
+ "tokens_out": 370527,
+ "skipped": 80,
  "error": "",
  "cut_marks": [
   {
    "at": "2026-08-27 09:53:11",
    "chunk": 529,
    "preview": "כדי עניבת"
+  },
+  {
+   "at": "2026-08-27 12:12:23",
+   "chunk": 708,
+   "preview": "תפירה תוך ג' ולר\"ע כמאן דפסיק חשיב לכן נ"
   }
  ],
  "chunks": [
@@ -7095,49 +7100,49 @@
    "kind": "text",
    "src": ". אבל כשהתפיר' למעלה מג' ולמטה מקשר גודל אין לחוש שיקחנו לציצית כמ\"ש סי' י\"א וסביב",
    "start": 45245,
-   "heb": "",
+   "heb": ". אבל כשהתפיר' למעלה מג' ולמטה מקשר גודל אין לחוש שיקחנו לציצית כמ\"ש סי' י\"א וסביב",
    "out": "",
-   "done": false,
-   "warn": ""
+   "done": true,
+   "warn": "skipped - looped for 6001 characters without answering"
   },
   {
    "i": 706,
    "kind": "text",
    "src": "הנקב אסור לתפור בחוט לבן (ת\"ה) עמ\"ש ס\"ד: ונ\"ל הטעם שנוהגין לתפור חתיכות הבגד בכנפות הטלית",
    "start": 45328,
-   "heb": "",
+   "heb": "הנקב אסור לתפור בחוט לבן (ת\"ה) עמ\"ש ס\"ד: ונ\"ל הטעם שנוהגין לתפור חתיכות הבגד בכנפות הטלית",
    "out": "",
-   "done": false,
-   "warn": ""
+   "done": true,
+   "warn": "skipped - looped for 6008 characters without answering"
   },
   {
    "i": 707,
    "kind": "text",
    "src": "אף על גב דיש אוסרין כמ\"ש ס\"ס י\"א נוהגין כן משום דרוב בגדים אפי' חדשים יש",
    "start": 45418,
-   "heb": "",
+   "heb": "אף על גב דיש אוסרין כמ\"ש ס\"ס י\"א נוהגין כן משום דרוב בגדים אפי' חדשים יש",
    "out": "",
-   "done": false,
-   "warn": ""
+   "done": true,
+   "warn": "skipped - looped for 6003 characters without answering"
   },
   {
    "i": 708,
    "kind": "text",
    "src": "תפירה תוך ג' ולר\"ע כמאן דפסיק חשיב לכן נותנין חתיכ' של שלש על שלש שאין בה",
    "start": 45491,
-   "heb": "",
+   "heb": "תפירה תוך ג' ולר\"ע כמאן דפסיק חשיב לכן נותנין חתיכ' של שלש על שלש שאין בה",
    "out": "",
-   "done": false,
-   "warn": ""
+   "done": true,
+   "warn": "skipped - looped for 6001 characters without answering"
   },
   {
    "i": 709,
    "kind": "text",
    "src": "שום תפיר':",
    "start": 45565,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "שׁוּם תְּפִירָה",
+   "out": "any sewing",
+   "done": true,
    "warn": ""
   },
   {
@@ -7145,9 +7150,9 @@
    "kind": "text",
    "src": "למטה מג'",
    "start": 45578,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "לְמַטָּה מִג'",
+   "out": "Below from J.",
+   "done": true,
    "warn": ""
   },
   {
@@ -7155,19 +7160,19 @@
    "kind": "text",
    "src": "ט״ז",
    "start": 45587,
-   "heb": "",
+   "heb": "ט״ז",
    "out": "",
-   "done": false,
-   "warn": ""
+   "done": true,
+   "warn": "skipped - looped for 6008 characters without answering"
   },
   {
    "i": 712,
    "kind": "text",
    "src": "בתשובת רמ\"א /מהר\"ם מינץ/ סימן ק\"י מפלפל היאך יוצאין בד' כנפות הקטנים מזה השיעור ותורף דבריו",
    "start": 45591,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "בִּתְשׁוּבַת רַמָ\"א /מַהֲרַ\"ם מִינְץ/ סִימָן ק\"י מְפַלְפֵּל הֵיאַךְ יוֹצְאִין בְּד' כְּנָפוֹת הַקְּטַנִּים מִזֶּה הַשִּׁעוּר וְתֹרֶף דְּבָרָיו",
+   "out": "In the responsa of Rema /Maharam Mintz/ Siman QY he discusses how one fulfills the mitzvah with small four-cornered garments of less than the required size, and the gist of his words.",
+   "done": true,
    "warn": ""
   },
   {
@@ -7175,9 +7180,9 @@
    "kind": "text",
    "src": "דמוטב לילך בהם מלילך כל היום בלא ציצית וכתב ד\"מ סימן ט' ללמד העם שיברכו בבקר",
    "start": 45683,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "דְּמוּטָב לֵילֵךְ בָּהֶם מִלֵּילֵךְ כׇּל הַיּוֹם בְּלֹא צִיצִית וְכָתַב ד\"מ סִימָן ט' לְלַמֵּד הָעָם שֶׁיְּבָרְכוּ בַּבֹּקֶר",
+   "out": "It is better to go in them than to go all day without tzitzit, and D\"M wrote sign T' to teach the people that they should bless in the morning.",
+   "done": true,
    "warn": ""
   },
   {
@@ -7185,19 +7190,19 @@
    "kind": "text",
    "src": "על טלית גדול ויפטרו את הקטן וילכו בו כל היום ומ\"מ אם אפשר לאדם שיעשה גדול",
    "start": 45760,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "עַל טַלִּית גָּדוֹל וְיִפְטְרוּ אֶת הַקָּטָן וְיֵלְכוּ בּוֹ כָּל הַיּוֹם וּמִכָּל מָקוֹם אִם אֶפְשָׁר לָאָדָם שֶׁיַּעֲשֶׂה גָּדוֹל",
+   "out": "On a large tallit and they will release the small one and they will walk in it all day, and nevertheless if it is possible for a person to make it large.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 715,
    "kind": "text",
    "src": "שהוא כשיעור מה טוב ומה נעים עכ\"ל, וכתב מט\"מ בשם מהרי\"ל דיש לעשות הכתפים רחבי' דלא",
    "start": 45834,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "שֶׁהוּא כְּשִׁעוּר מָה טוֹב וּמָה נָעִים עַכָּ\"ל, וְכָתַב מִטַּ\"מ בְּשֵׁם מַהֲרִי\"ל דְּיֵשׁ לַעֲשׂוֹת הַכְּתֵפַיִם רַחֲבִיָּה דְּלֹא",
+   "out": "that it is like the measure of what is good and what is pleasant, end of quote, and wrote MTM in the name of MahariL that there is to make the shoulders wide that not.",
+   "done": true,
    "warn": ""
   },
   {
@@ -7205,9 +7210,9 @@
    "kind": "text",
    "src": "ליתי אוירא דהאי גיסא ודהאי גיסא ויבטל ליה: . ובטור כתוב בן ט' שנים ונ\"ל דס\"ל",
    "start": 45916,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "לִיתִי אוֹוִירָא דְּהַאי גִּיסָא וְדְּהַאי גִּיסָא וְיִבְטַל לֵיהּ: . וּבַטּוּר כָּתוּב בֶּן ט' שָׁנִים וְנִלְעַד דְּסָ\"ל",
+   "out": "Let air come from this side and that side and it will cancel it: . And in the Tur it is written that a nine-year-old boy, and I think that he means...",
+   "done": true,
    "warn": ""
   },
   {
@@ -7215,9 +7220,9 @@
    "kind": "text",
    "src": "דזהו שיעור חינוך כמ\"ש התו' ריש ערכין דלא כמ\"ש הב\"ח דהטור חולק על הסמ\"ק:",
    "start": 45993,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "דְּזֶהוּ שִׁעוּר חִנּוּךְ כְּמַ\"שׁ הַתּוֹ' רֵישׁ עֶרְכִּין דְּלֹא כְּמַ\"שׁ הַבַּ\"ח דְּהַטּוּר חוֹלֵק עַל הַסַּמָּ\"ק:",
+   "out": "That this is the measure of education as the Tosafot say at the beginning of Erchin, not as the Bach says, that the Tur disagrees with the Semak.",
+   "done": true,
    "warn": ""
   },
   {
@@ -7225,9 +7230,9 @@
    "kind": "text",
    "src": "קטן",
    "start": 46067,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "קָטָן",
+   "out": "small",
+   "done": true,
    "warn": ""
   },
   {
@@ -7235,19 +7240,19 @@
    "kind": "text",
    "src": ". משמע מלשונו דאם הגדול מתבייש לצאת בו עראי לשוק פטור דא\"ל שבא להורות שאין חיוב",
    "start": 46071,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": ". מְשַׁמֵּעַ מִלְּשׁוֹנוֹ דְּאִם הַגָּדוֹל מִתְבַּיֵּשׁ לָצֵאת בּוֹ עֲרָאִי לַשּׁוּק פָּטוּר דְּאָמַר לֵהּ שֶׁבָּא לְהוֹרוֹת שֶׁאֵין חִיּוּב",
+   "out": "It seems from his language that if the large one is ashamed to go out in it casually to the market, he is exempt, because he said that he came to teach that there is no obligation.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 720,
    "kind": "text",
    "src": "לקטן רק לגדול שלובשו לפעמים עראי כמ\"ש בב\"י ע\"ש זה אינו צריך לפרש דהא הב\"י נקט",
    "start": 46151,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "לְקָטָן רַק לְגָדוֹל שֶׁלּוֹבְשׁוֹ לִפְעָמִים עֲרָאִי כַּמָּשׁ בַּבּ\"י ע\"ש זֶה אֵינוֹ צָרִיךְ לְפָרֵשׁ דְּהָא הַבּ\"י נָקַט",
+   "out": "For a small [person] only for a large [person] who wears it sometimes casually as mentioned in the B\"Y (Beth Yosef) on this, this does not need to be explained because the B\"Y has already stated it.",
+   "done": true,
    "warn": ""
   },
   {
@@ -7255,9 +7260,9 @@
    "kind": "text",
    "src": "כאן לשון הרמב\"ם שיעור טלית וכו' להורות דמשערין בקטן ובאמת החיוב על הגדול וא\"כ מה חידש",
    "start": 46229,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "כָּאן לְשׁוֹן הָרַמְבָּ\"ם שִׁעוּר טַלִּית וְכוּ' לְהוֹרוֹת דְּמַשְׁעֲרִין בַּקָּטָן וּבֶאֱמֶת הַחִיּוּב עַל הַגָּדוֹל וְא\"כ מָה חִדֵּשׁ",
+   "out": "Here is the language of the Rambam regarding the size of a tallit, etc., to teach that we measure according to a small person, and in truth the obligation is on the large person, and so what did he innovate?",
+   "done": true,
    "warn": ""
   },
   {
@@ -7265,9 +7270,9 @@
    "kind": "text",
    "src": "רמ\"א בהג\"ה אלא בא לומר דבהכי נמי תליא מלתא שהגדול לובשו וכו' וכ\"מ בטור אלא שבד\"מ",
    "start": 46315,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "רמ\"א בהג\"ה אֶלָּא בָּא לוֹמַר דְּבַהֲכִי נָמֵי תַּלְיָא מִלְתָּא שֶׁהַגָּדוֹל לוֹבְשׁוֹ וְכוּ' וְכַ\"מ בַּטּוּר אֶלָּא שֶׁבַּדֶּ\"מ",
+   "out": "Rama in his gloss, but rather comes to say that also in this matter the matter depends on the big one wearing it etc., and so in the Tur, but in the D\"M.",
+   "done": true,
    "warn": ""
   },
   {
@@ -7275,9 +7280,9 @@
    "kind": "text",
    "src": "לא העתיק אלא דברי הב\"י וצ\"ע, והב\"ח כתב דאם יוצא בה בקבע אף על פי שאין",
    "start": 46396,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "לֹא הֶעְתִּיק אֶלָּא דִּבְרֵי הַבַּ\"י וְצָ\"ע, וְהַבַּ\"ח כָּתַב דְּאִם יוֹצֵא בָּהּ בְּקֶבַע אַף עַל פִּי שֶׁאֵין",
+   "out": "He did not copy but the words of the B\"Y and it is unclear, and the B\"C wrote that if one goes out in it permanently even though there is no ...",
+   "done": true,
    "warn": ""
   },
   {
@@ -7285,9 +7290,9 @@
    "kind": "text",
    "src": "הקטן מתכסה בה ראשו ורובו חייב ואם הגדול מתבייש לצאת בה  לשוק אפי' באקראי אפי' לובש",
    "start": 46466,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "הַקָּטָן מִתְכַּסֶּה בָּהּ רֹאשׁוֹ וְרֻבּוֹ חַיָּב וְאִם הַגָּדוֹל מִתְבַּיֵּשׁ לָצֵאת בָּהּ לַשּׁוּק אֲפִלּוּ בְּאַקְרַאי אֲפִלּוּ לוֹבֵשׁ",
+   "out": "A small child who covers himself with it (the garment) with his head and most of his body is obligated. And if the large (adult) is ashamed to go out in it to the market even by chance, even if he is wearing it.",
+   "done": true,
    "warn": ""
   },
   {
@@ -7295,19 +7300,19 @@
    "kind": "text",
    "src": "אותה בבית פטורה אפילו הקטן מתכסה בה ראשו ורובו עכ\"ל וכ\"מ בגמ' דאי כפי' הר\"י חביב",
    "start": 46549,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "אֹתָהּ בַּבַּיִת פְּטוּרָה אֲפִלּוּ הַקָּטָן מִתְכַּסֶּה בָּהּ רֹאשׁוֹ וְרֻבּוֹ עַכַּ\"ל וְכֵן מָצִינוּ בַּגְּמָרָא דְּאִי כְּפִי' הָרַ\"י חָבִיב",
+   "out": "She is exempt in the house, even if the small one covers his head and most of his body with it. So it is in the Gemara, if according to the interpretation of Rabbi Yitzchak Chaviv.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 726,
    "kind": "text",
    "src": "והרב\"י הל\"ל והגדול לובשה למה הזכיר יציאתו לשוק ואף הרמב\"ם שלא הזכיר מגדול כלום י\"ל דס\"ל דמסתמ'",
    "start": 46630,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "וְהָרַב\"י הַל\"ל וְהַגָּדוֹל לֹבְשָׁה לָמָּה הִזְכִּיר יְצִיאָתוֹ לַשּׁוּק וְאַף הָרַמְבָּ\"ם שֶׁלֹּא הִזְכִּיר מִגָּדוֹל כְּלוּם י\"ל דְּסָ\"ל דְּמִסְתַּמָּ'",
+   "out": "And Rabbi Y. (the aforementioned) and the great (one) wearing it, why did he mention his going out to the market? And even Rambam, who did not mention anything about greatness at all, it may be said that he holds that it is understood.",
+   "done": true,
    "warn": ""
   },
   {
@@ -7315,9 +7320,9 @@
    "kind": "text",
    "src": "כשקטן מתכסה ראשו ורובו אין הגדול מתבייש לצאת בו עראי לשוק וכ\"מ בראב\"ד ע\"ש לכן יש",
    "start": 46725,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "כְּשֶׁקָּטָן מִתְכַּסֶּה רֹאשׁוֹ וְרֻבּוֹ אֵין הַגָּדוֹל מִתְבַּיֵּשׁ לָצֵאת בּוֹ עֲרַאי לַשּׁוּק וְכַ\"מ בָּרַאב\"ד ע\"ש לָכֵן יֵשׁ",
+   "out": "When a small child covers his head and most of his body, the adult does not feel ashamed to go out in it casually to the market, and so it is in the Raavad. Therefore, there is ...",
+   "done": true,
    "warn": ""
   },
   {
@@ -7325,9 +7330,9 @@
    "kind": "text",
    "src": "להחמיר שלא לברך עליו אם מתבייש לצאת בו עראי לשוק וכ\"מ בל\"ח ולבוש ואם הוא יוצא",
    "start": 46806,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "לְהַחְמִיר שֶׁלֹּא לְבָרֵךְ עָלָיו אִם מִתְבַּיֵּשׁ לָצֵאת בּוֹ עֲרָאִי לַשּׁוּק וְכַ\"מ בְּלַ\"ח וּלְבוּשׁ וְאִם הוּא יוֹצֵא",
+   "out": "To be stringent not to bless on it if he is ashamed to go out in it casually to the market, and so on in L\"H and Levush, and if he goes out.",
+   "done": true,
    "warn": ""
   },
   {
@@ -7335,9 +7340,9 @@
    "kind": "text",
    "src": "בטלית שאחרים אין יוצאין בו בטלה דעתו:",
    "start": 46884,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "בְּטַלִּית שֶׁאֲחֵרִים אֵין יוֹצְאִין בּוֹ בָּטְלָה דַּעְתּוֹ",
+   "out": "In a tallit that others do not go out in, his mind is nullified.",
+   "done": true,
    "warn": ""
   },
   {
@@ -7345,9 +7350,9 @@
    "kind": "text",
    "src": "כשהגדול לובשו",
    "start": 46924,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "כְּשֶׁהַגָּדוֹל לוֹבְשׁוֹ",
+   "out": "When the great one wears it.",
+   "done": true,
    "warn": ""
   },
   {
@@ -7355,19 +7360,19 @@
    "kind": "text",
    "src": "י״ז",
    "start": 46938,
-   "heb": "",
+   "heb": "י״ז",
    "out": "",
-   "done": false,
-   "warn": ""
+   "done": true,
+   "warn": "skipped - looped for 6004 characters without answering"
   },
   {
    "i": 732,
    "kind": "text",
    "src": ". דאף מי שאינו מצווה ועושה יש לו שכר ושייך לומר וצונו כיון שהאנשים נצטוו וגם",
    "start": 46942,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": ". דְּאַף מִי שֶׁאֵינוֹ מְצֻוֶּה וְעוֹשֶׂה יֵשׁ לוֹ שָׂכָר וְשַׁיָּךְ לוֹמַר וְצִוָּנוּ כֵּיוָן שֶׁהָאֲנָשִׁים נִצְטַוּוּ וְגַם",
+   "out": "Even one who is not commanded and does [something] has a reward, and it is appropriate to say 'and He commanded us' because the people were commanded, and also.",
+   "done": true,
    "warn": ""
   },
   {
@@ -7375,9 +7380,9 @@
    "kind": "text",
    "src": "הם יש להם שכר:",
    "start": 47019,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "הֵם יֵשׁ לָהֶם שָׂכָר:",
+   "out": "They have a reward.",
+   "done": true,
    "warn": ""
   },
   {

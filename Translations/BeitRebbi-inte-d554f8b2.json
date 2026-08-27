@@ -1,6 +1,6 @@
 {
  "id": "BeitRebbi-inte-d554f8b2",
- "title": "BH",
+ "title": "SeferBeitRabbi_Introduction",
  "status": "done",
  "status_line": "COMPLETE - 105 of 105 translatable chunks (100.0%)",
  "percent": 100.0,
@@ -25,7 +25,7 @@
  "temperature": 0.2,
  "think": false,
  "created": "2026-08-26 22:54:44",
- "updated": "2026-08-27 00:36:49",
+ "updated": "2026-08-27 12:16:55",
  "started": "2026-08-26 22:54:56",
  "finished": "2026-08-26 23:33:08",
  "elapsed_sec": 2292.5,
