@@ -2,10 +2,10 @@
  "id": "Be_er_Mayim_Chaim-inte-0fc66d33",
  "title": "Be'er Mayim Chaim on Chafetz Chaim",
  "status": "running",
- "status_line": "IN PROGRESS - 19 of 5066 translatable chunks (0.4%)",
- "percent": 0.38,
- "bookmark": 34,
- "done_text": 19,
+ "status_line": "IN PROGRESS - 46 of 5066 translatable chunks (0.9%)",
+ "percent": 0.91,
+ "bookmark": 65,
+ "done_text": 46,
  "total_text": 5066,
  "total_chunks": 5957,
  "chars_total": 381665,
@@ -25,11 +25,11 @@
  "temperature": 0.2,
  "think": false,
  "created": "2026-08-27 11:16:29",
- "updated": "2026-08-27 11:37:39",
+ "updated": "2026-08-27 11:59:25",
  "started": "2026-08-27 11:17:00",
  "finished": "",
- "elapsed_sec": 1238.9,
- "tokens_out": 11375,
+ "elapsed_sec": 2544.2,
+ "tokens_out": 28183,
  "skipped": 1,
  "error": "",
  "cut_marks": [],
@@ -379,9 +379,9 @@
    "kind": "text",
    "src": "בתוך הטעמת דבריו דבר שאיננו אמת כ\"כ ועיין בשבועות (ל\"א ע\"א) ברש\"י ד\"ה שמע שוא וא\"כ",
    "start": 2069,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "בְּתוֹךְ הַטַּעֲמַת דְּבָרָיו דָּבָר שֶׁאֵינֶנּוּ אֱמֶת כׇּ\"כ וְעַיֵּן בִּשְׁבוּעוֹת (ל\"א ע\"א) בְּרַשִׁ\"י ד\"ה שֶׁמַע שָׁוְא וְא\"כ",
+   "out": "Within the emphasis of his words, a thing that is not so true, and see in Shvuot (31a) in Rashi's D\"H 'shomea shav' and thus.",
+   "done": true,
    "warn": ""
   },
   {
@@ -389,19 +389,19 @@
    "kind": "text",
    "src": "פשוט הוא דה\"ה לענין לשה\"ר וק\"ו בזה שבזה בוודאי לא יבוא בעל דין שכנגדו להכחישו ולהראותו",
    "start": 2152,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "פָּשׁוּט הוּא דְּהַ\"ה לְעִנְיַן לִשְׁהָ\"ר וְקַל וָחֹמֶר בָּזֶה שֶׁבָּזֶה בְּוַדַּאי לֹא יָבוֹא בַּעַל דִּין שֶׁכְּנֶגֶדוֹ לְהַכְחִישׁוֹ וּלְהַרְאוֹתוֹ",
+   "out": "It is simple that the same applies to the matter of Lishah\"ר and all the more so in this case, that in this case certainly the opposing party will not come to refute him and to show him.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 36,
    "kind": "text",
    "src": "שמה שסיפר עליו איננו אמת כ\"כ ע\"כ בודאי לא יבוש לערב בתוך הסיפור דבר שאיננו אמת",
    "start": 2239,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "שֶׁמָּה שֶׁסִּפֵּר עָלָיו אֵינֶנּוּ אֱמֶת כָּ\"כּ ע\"כ בְּוַדַּאי לֹא יִבּוֹשׁ לְעָרֵב בְּתוֹךְ הַסִּפּוּר דָּבָר שֶׁאֵינֶנּוּ אֱמֶת",
+   "out": "What he told about him is not so much the truth, so certainly he will not be ashamed to mix into the story something that is not true.",
+   "done": true,
    "warn": ""
   },
   {
@@ -409,9 +409,9 @@
    "kind": "text",
    "src": "כדי להטעים את הדבר לפני השומע וכן כתב בספר יד הקטנה בפרק ט' מהלכות דיעות שלו",
    "start": 2318,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "כְּדֵי לְהַטְעִים אֶת הַדָּבָר לִפְנֵי הַשּׁוֹמֵעַ וְכֵן כָּתַב בְּסֵפֶר יַד הַקְּטַנָּה בְּפֶרֶק ט' מֵהִלְכוֹת דֵּעוֹת שֶׁלּוֹ",
+   "out": "In order to make the matter clear to the listener, and so it is written in the book 'Yad HaKtana' in chapter 9 of his laws of opinions.",
+   "done": true,
    "warn": ""
   },
   {
@@ -419,19 +419,19 @@
    "kind": "text",
    "src": "דלאו זה כולל בכל גווני עי\"ש. ולאו זה כולל נמי להמקבל ג\"כ כנ\"ל ובין על לשה\"ר",
    "start": 2395,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "דְּלָאו זֶה כּוֹלֵל בְּכׇל גַּוְנֵי עי\"ש. וְלָאו זֶה כּוֹלֵל נָמִי לְהַמְּקַבֵּל גַּם כֵּן כַּנַּ\"ל וּבֵין עַל לְשֶׁהָ\"ר",
+   "out": "This law is not included in all aspects, as mentioned. This law also includes the recipient, as mentioned above, and between (the) Lashon Harah.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 39,
    "kind": "text",
    "src": "ובין על רכילות כמו שמבואר בהדיא בשערי תשובה לרבינו יונה במאמר רי\"ג ובמאמר רכ\"ה ע\"ש וידוע",
    "start": 2471,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "וּבֵין עַל רְכִילוּת כְּמוֹ שֶׁמְּבֹאָר בְּהֶדְיָא בִּשְׁעַרֵי תְּשׁוּבָה לְרַבֵּנוּ יוֹנָה בְּמַאֲמָר רי\"ג וּבְמַאֲמָר רכ\"ה ע\"ש וְיָדוּעַ",
+   "out": "And also about slander, as is explicitly explained in the Gates of Repentance by Rabbi Yonah in Chapter 139 and Chapter 145, see there, and it is known.",
+   "done": true,
    "warn": ""
   },
   {
@@ -439,9 +439,9 @@
    "kind": "text",
    "src": "דאיסור לשה\"ר הוא בפניו ושלא בפניו כדלקמן הרי דלאו זה כולל בכל השמונה אופנים.",
    "start": 2560,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "דְּאִיסּוּר לְשֶׁהָ\"ר הוּא בְּפָנָיו וְשֶׁלֹּא בְּפָנָיו כְּדִלְקַמָּן הֲרֵי דְּלָאו זֶה כּוֹלֵל בְּכׇל הַשְּׁמוֹנָה אׇפָנִים.",
+   "out": "That the prohibition of lashon hara is in his presence and not in his presence as mentioned below, behold that this prohibition includes all eight ways.",
+   "done": true,
    "warn": ""
   },
   {
@@ -451,7 +451,7 @@
    "start": 2637,
    "heb": "",
    "out": "",
-   "done": false,
+   "done": true,
    "warn": ""
   },
   {
@@ -461,7 +461,7 @@
    "start": 2638,
    "heb": "",
    "out": "",
-   "done": false,
+   "done": true,
    "warn": ""
   },
   {
@@ -471,7 +471,7 @@
    "start": 2773,
    "heb": "",
    "out": "",
-   "done": false,
+   "done": true,
    "warn": ""
   },
   {
@@ -479,19 +479,19 @@
    "kind": "text",
    "src": "1. ועובר נמי וכו'. מקור הדברים הוא בספרא [ריש פ' בחוקותי] הביאו הרמב\"ן בפ' תצא וז\"ל",
    "start": 2774,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "1. וְעוֹבֵר נָמִי וְכוּ'. מְקוֹר הַדְּבָרִים הוּא בַּסִּפְרָא [רֵישׁ פַּרְשַׁת בְּחֻקּוֹתַי] הֵבִיאוּ הָרַמְבָּ\"ן בְּפָרָשַׁת תֵּצֵא וְזֶה לְשׁוֹנוֹ",
+   "out": "1. And also, etc. The source of the words is in the Sifra [beginning of the portion of Bechukotai] which the Ramban brought in the portion of Tezah and this is his language.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 45,
    "kind": "text",
    "src": "זכור את אשר עשה ה' אלהיך למרים וגו', יכול בלבבך כשהוא אומר השמר בנגע הצרעת לשמור",
    "start": 2858,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "זָכוֹר אֶת אֲשֶׁר עָשָׂה ה' אֱלֹהֶיךָ לְמִרְיָם וְגוֹ' יָכוֹל בְּלִבְּבָךְ כְּשֶׁהוּא אוֹמֵר הִשָּׁמֶר בְּנֶגַע הַצָּרַעַת לִשְׁמֹר",
+   "out": "Remember what the Lord your God did to Miriam etc., can you in your heart when He says 'Be careful of the plague of leprosy to keep'?",
+   "done": true,
    "warn": ""
   },
   {
@@ -499,9 +499,9 @@
    "kind": "text",
    "src": "מאוד ולעשות הרי שמירת הלב אמור הא מה אני מקיים זכור שתהא שונה בפיך.",
    "start": 2939,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "מְאוֹד וְלַעֲשׂוֹת הֲרֵי שְׁמִירַת הַלֵּב אֱמוֹר הָא מָה אֲנִי מְקַיֵּם זָכוֹר שֶׁתִּהְיֶה שׁוֹנָה בְּפִיךָ.",
+   "out": "Very and to do, behold the guarding of the heart, say, what am I fulfilling? Remember that it will be different in your mouth.",
+   "done": true,
    "warn": ""
   },
   {
@@ -511,7 +511,7 @@
    "start": 3007,
    "heb": "",
    "out": "",
-   "done": false,
+   "done": true,
    "warn": ""
   },
   {
@@ -519,9 +519,9 @@
    "kind": "text",
    "src": "2. וכתב הרמב\"ן על זה וזה לשונו: ופירושה, כי אצלם \"השמר בנגע הצרעת\" מנגע הצרעת, לשמור",
    "start": 3008,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "2. וְכָתַב הָרַמְבָּ\"ן עַל זֶה וְזֶה לְשׁוֹנוֹ: וּפֵרוּשָׁהּ, כִּי אֶצְלָם \"הִשָּׁמֵר בְּנֶגַע הַצָּרַעַת\" מִנֶּגַע הַצָּרַעַת, לִשְׁמֹר",
+   "out": "2. And Ramban wrote about this and this his language: And its explanation, that for them 'be careful about the leprosy' from the leprosy, to guard.",
+   "done": true,
    "warn": ""
   },
   {
@@ -529,9 +529,9 @@
    "kind": "text",
    "src": "מאוד שלא תבואך, ולעשות בה ככל אשר יורו אתכם הכהנים, וזכור את אשר עשה ה' אלהיך",
    "start": 3093,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "מְאוֹד שֶׁלֹּא תָּבוֹאֲךָ, וּלְעָשׂוֹת בָּהּ כְּכֹל אֲשֶׁר יוֹרוּ אֶתְכֶם הַכֹּהֲנִים, וְזָכוֹר אֶת אֲשֶׁר עָשָׂה ה' אֱלֹהֶיךָ",
+   "out": "Very that you will not come, and to do in it as all that the priests will instruct you, and remember what the Lord your God did.",
+   "done": true,
    "warn": ""
   },
   {
@@ -539,9 +539,9 @@
    "kind": "text",
    "src": "למרים שתהא מזכיר זאת בפיך עכ\"ל. ואף שאפשר לומר דאף לדברי רמב\"ן איננו לאו גמור רק",
    "start": 3171,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "לְמִרְיָם שֶׁתְּהֵא מַזְכִּיר זֶה בְּפִיךָ עכ\"ל. וְאַף שֶׁאֶפְשָׁר לוֹמַר דַּאַף לִדְבָרֵי רַמְבָּ\"ן אֵינֶנּוּ לָאו גָּמוּר רַק",
+   "out": "To Miriam, that she should mention this in your mouth, end of quote. And even though it is possible to say that even according to the words of Ramban it is not a complete prohibition, but only...",
+   "done": true,
    "warn": ""
   },
   {
@@ -549,9 +549,9 @@
    "kind": "text",
    "src": "מריבויא בעלמא דלשמור מאוד דריש הספרא ועיקר הלאו דהשמר וכל שמירה הוא ל\"ת אתי לקציצת בהרת",
    "start": 3252,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "מֵרִיבוּיָא בְּעָלְמָא דְּלִשְׁמֹר מְאוֹד דָּרֵישׁ הַסִּפְרָא וְעִקַּר הַלָּאו דְּהַשְׁמֵר וְכׇל שְׁמִירָה הוּא לַ\"ת אָתֵי לִקְצִיצַת בַּהֶרֶת",
+   "out": "From the abundance in the world to guard very much, the Sifra derives, and the essence of the prohibition of 'hashmer' (guard) and every guard is a 'lo ta'se' (negative commandment) comes to the excision of a mark.",
+   "done": true,
    "warn": ""
   },
   {
@@ -559,9 +559,9 @@
    "kind": "text",
    "src": "שהוא לאו גמור לכל מוני המצות, עכ\"פ דינא דאורייתא הוא מריבויא דקרא שציונו הש\"י לשמור מאוד",
    "start": 3340,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "שֶׁהוּא לָאו גָּמוּר לְכׇל מוֹנֵי הַמִּצְוֹת, עַכְּפּוֹ דִּינָא דְאוֹרַיְתָא הוּא מֵרִיבּוּיָא דִּקְרָא שֶׁצִּיְּנוּנוּ הַשֵׁ\"י לִשְׁמֹר מְאוֹד",
+   "out": "that it is a complete prohibition for all those who count the commandments, at least it is a Torah law from the abundance of the verse that the Holy One commanded us to guard very much.",
+   "done": true,
    "warn": ""
   },
   {
@@ -569,9 +569,9 @@
    "kind": "text",
    "src": "שלא להסיח מלבנו מלהזהר מלשה\"ר כדי שלא יביא אותנו האיסור לצרעת. ומה שמנינו אותו בגררא דלאוין",
    "start": 3429,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "שֶׁלֹּא לְהַסִּיחַ מִלִּבֵּנוּ מִלְּהַזְהִיר מִלְּשֶׁהָ\"ר כְּדֵי שֶׁלֹּא יָבִיא אוֹתָנוּ הָאִסּוּר לְצָרַעַת. וּמָה שֶׁמָּנִינוּ אוֹתוֹ בְּגִרְרָא דְּלָאוִין",
+   "out": "Not to divert from our purpose of warning from the 'SHEHAR' so that the prohibition will not bring us to leprosy. And what we counted him in the 'gerra' of the 'lawin'.",
+   "done": true,
    "warn": ""
   },
   {
@@ -579,9 +579,9 @@
    "kind": "text",
    "src": "אף דקי\"ל השמר דכתיב אצל עשה עשה, והכא כתיב אצל זכור שהוא עשה כדלקמן בעשין אות א'",
    "start": 3521,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "אַף דְּקַיְלָן הַשָּׁמֵר דִּכְתִיב אֵצֶל עֲשֵׂה עֲשֵׂה, וְהָכָא כְּתִיב אֵצֶל זָכוֹר שֶׁהוּא עֲשֵׂה כְּדִלְקַמָּן בַּעֲשִׂין אוֹת א'.",
+   "out": "Even though it is known that \"shamar\" (guard) is written next to \"aseh\" (do), and here it is written next to \"zachor\" (remember) which is a commandment as explained later in the list of commandments, letter A.",
+   "done": true,
    "warn": ""
   },
   {
@@ -589,9 +589,9 @@
    "kind": "text",
    "src": "וכן משמע בספר חרדים, משום דלענ\"ד נראה דהכא שאני כיון דעיקר קרא זה אתי ללאו גמור",
    "start": 3602,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "וְכֵן מַשְׁמָע בְּסֵפֶר חֲרֵדִים, מִשּׁוּם דִּלְעַנ\"ד נִרְאֶה דְּהָכָא שָׁאנִי כֵּיוָן דְּעִקַּר קְרָא זֶה אָתִי לְלָאו גָּמוּר",
+   "out": "And so it is understood in the book of Charedim, because it seems to me that here it is different, since the main verse of this comes to a complete prohibition.",
+   "done": true,
    "warn": ""
   },
   {
@@ -599,9 +599,9 @@
    "kind": "text",
    "src": "והוא לאו דקציצת בהרת אפשר דגם זה נכנס בכלל לאו, ובפרט לפי מה שכתב המהרש\"א בשבועות",
    "start": 3682,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "וְהוּא לָאו דִּקְצִיצַת בַּהֶרֶת אֶפְשָׁר דְּגַם זֶה נִכְנָס בִּכְלַל לָאו, וּבִפְרָט לְפִי מָה שֶׁכָּתַב הַמַּהַרְשָׁ\"א בִּשְׁבוּעוֹת",
+   "out": "And it is a prohibition of cutting off the boil, perhaps that this also enters into the general prohibition, and especially according to what the Maharsha wrote in Shavuot.",
+   "done": true,
    "warn": ""
   },
   {
@@ -609,49 +609,49 @@
    "kind": "text",
    "src": "(דף כ') בחידושי אגדות דכל היכי דיש בענין הזה לאו ג\"כ אז חוזר הענין לכללו דכל",
    "start": 3764,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "(דַּף כ') בְּחִדּוּשֵׁי אַגָּדוֹת דְּכֹל הֵיכִי דְּיֵשׁ בָּעִנְיָן הַזֶּה לֹאו גַּם כֵּן אָז חוֹזֵר הָעִנְיָן לְכׇלְלוֹ דְּכֹל",
+   "out": "In the novellae of the legends, whenever there is something in this matter, also not, then the matter returns to its general principle.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 58,
    "kind": "text",
    "src": "היכי דכתיב שמירה הוא ל\"ת, א\"כ בענין לשה\"ר דיש ג\"כ לאו דלא תלך רכיל כמו שכתב",
    "start": 3841,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "הֵיכִי דִּכְתִיב שְׁמִירָה הוּא לַ\"תּ, א\"כ בְּעִנְיַן לָשׁוֹן הָרַע דְּיֵשׁ גַּם כֵּן לָאו דְּלֹא תֵּלֵךְ רָכִיל כְּמוֹ שֶׁכָּתַב",
+   "out": "Since it is written that guarding is a negative commandment, so in the matter of lashon hara there is also a prohibition of 'do not go about as a gossip' as it is written.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 59,
    "kind": "text",
    "src": "הרמב\"ם אתי ג\"כ האי שמירה ללאו. ומה שסתמנו הדברים וכללנו לאו זה אף ברכילות, משום דבאמת",
    "start": 3917,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "הָרַמְבָּ\"ם אִתִּי גַּם כֵּן הָאֵי שְׁמִירָה לְלָאו. וּמָה שֶׁסָּתַמְנוּ הַדְּבָרִים וְכָלַלְנוּ לָאו זֶה אַף בִּרְכִילוּת, מִשּׁוּם דְּבֶאֱמֶת",
+   "out": "The Rambam also comes with this guard for a prohibition. And what we have sealed the matters and included this prohibition even in gossip, because in truth.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 60,
    "kind": "text",
    "src": "רכילות מביא ג\"כ לידי צרעת כדמוכח בערכין (ט\"ז ע\"א) בגמרא דמשני הא דאהנו מעשיו נגעים באים",
    "start": 4003,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "רְכִילוּת מֵבִיא גַּם כֵּן לִידֵי צָרַעַת כַּד מוּכָח בְּעֶרְכִּין (ט\"ז ע\"א) בַּגְּמָרָא דְּמַשְׁנֶה הָא דְּאָהֲנוּ מַעֲשָׂיו נְגָעִים בָּאִים",
+   "out": "Gossip also brings about leprosy, as is proven in Erchin (16a) in the Gemara, which explains that when one's deeds are beneficial, leprosy comes.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 61,
    "kind": "text",
    "src": "עליו פירש\"י שנתקוטטו על ידו, ועוד ראיה מדואג שנענש בצרעת כדאיתא בסנהדרין (ק\"ו ע\"ב) ודואג רוכל",
    "start": 4091,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "עָלָיו פֵּרֵשׁ\"י שֶׁנִּתְקַטְּטוּ עַל יָדוֹ, וְעוֹד רְאָיָה מִדּוּאָג שֶׁנֶּעֱנַשׁ בְּצָרַעַת כִּדְאִיתָא בְּסַנְהֶדְרִין (ק\"ו ע\"ב) וְדוּאָג רוֹכֵל",
+   "out": "On it, Rashi explained that they quarreled over it, and further evidence from Doeg who was punished with leprosy as mentioned in Sanhedrin (106b), and Doeg was a peddler.",
+   "done": true,
    "warn": ""
   },
   {
@@ -659,30 +659,30 @@
    "kind": "text",
    "src": "היה כדאיתא בכמה מקומות. וכללנו נמי אף שלא בפניו ממעשה דמרים דהיתה ג\"כ שלא בפני משה",
    "start": 4185,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "הָיָה כְּדַאִיתָא בְּכַמָּה מְקוֹמוֹת. וְכָלַלְנוּ נָמִי אַף שֶׁלֹּא בִּפְנָיו מִמַּעֲשֵׂה דְּמִרְיָם דְּהָיְתָה גַּם כֵּן שֶׁלֹּא בִּפְנֵי מֹשֶׁה.",
+   "out": "It was as it is stated in several places. And we also included even not in his presence from the incident of Miriam, who was also not in the presence of Moses.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 63,
    "kind": "text",
    "src": "כדאיתא בספרי פ' תצא ואעפ\"כ נענשה בצרעת ובוודאי על אמת ג\"כ העונש הזה כדאיתא ברז\"ל ג'",
    "start": 4268,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "כְּדַאִיתָא בְּסִפְרֵי פַּרְשַׁת תֵּצֵא וְאַעֲפֶּ\"כּ נֶעֶנְשָׁה בְּצָרַעַת וּבְוַדַּאי עַל אֱמֶת גַּם כֵּן הָעֹנֶשׁ הַזֶּה כְּדַאִיתָא בְּרַזַּ\"ל ג'.",
+   "out": "As it is stated in the Sifrei, Parshat Tezah, and yet she was punished with leprosy, and certainly on truth also this punishment, as it is stated in the Rabbis' tradition.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 64,
    "kind": "text",
    "src": "אמרו אמת דואג ובני רמון הבארותי וכו' ואעפ\"כ נענש דואג וכנ\"ל ואין חילוק בין איסור רכילות",
    "start": 4352,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "אָמְרוּ אֱמֶת דּוֹאֵג וּבְנֵי רָמוֹן הַבְּאֵרוֹתִי וְכוּ' וְאַעֲפִּי כֵן נֶעֱנַשׁ דּוֹאֵג וּכַנַּ\"ל וְאֵין חִלּוּק בֵּין אִסּוּר רְכִילוּת",
+   "out": "They said the truth: Doeg and the sons of Ramon the Ba'rothi, etc., and nevertheless Doeg was punished, as mentioned above, and there is no difference between the prohibition of slander.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 65,

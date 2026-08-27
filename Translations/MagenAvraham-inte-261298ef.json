@@ -2,10 +2,10 @@
  "id": "MagenAvraham-inte-261298ef",
  "title": "BH",
  "status": "running",
- "status_line": "IN PROGRESS - 663 of 3604 translatable chunks (18.4%)",
- "percent": 18.4,
- "bookmark": 667,
- "done_text": 663,
+ "status_line": "IN PROGRESS - 690 of 3604 translatable chunks (19.1%)",
+ "percent": 19.15,
+ "bookmark": 694,
+ "done_text": 690,
  "total_text": 3604,
  "total_chunks": 3612,
  "chars_total": 203019,
@@ -25,12 +25,12 @@
  "temperature": 0.2,
  "think": false,
  "created": "2026-08-27 00:37:53",
- "updated": "2026-08-27 11:38:12",
+ "updated": "2026-08-27 11:59:27",
  "started": "2026-08-27 00:38:20",
  "finished": "",
- "elapsed_sec": 26381.4,
- "tokens_out": 340167,
- "skipped": 71,
+ "elapsed_sec": 27656.5,
+ "tokens_out": 351017,
+ "skipped": 74,
  "error": "",
  "cut_marks": [
   {
@@ -6715,19 +6715,19 @@
    "kind": "text",
    "src": "נפסק מהראשון אף על פי שכשרי' רשאי להתירן ולעשות בהן שלמין  וכ\"מ בתשו' הרא\"ש כלל ב':",
    "start": 43425,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "נִפְסַק מֵהָרִאשׁוֹן אַף עַל פִּי שֶׁכַּשֵּׁרִי' רַשַּׁאי לְהַתִּירָן וְלַעֲשׂוֹת בָּהֶן שְׁלָמִין  וְכֵן מָצִינוּ בִּתְשׁוּבַת הָרֹאשׁ כְּלָל ב'",
+   "out": "It was decided by the first [authority] even though the kasheri' is permitted to permit them and to make sacrifices with them, and so it is found in the responsa of the Rosh, Chapter B.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 668,
    "kind": "text",
    "src": "לא",
    "start": 43511,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "לֹא",
+   "out": "no (or not)",
+   "done": true,
    "warn": ""
   },
   {
@@ -6735,9 +6735,9 @@
    "kind": "text",
    "src": ". מתוך דברי הב\"י משמע דעיקר הטעם משום תעשה ולמ\"ה דמיד כשנחתך הכנף נפסלו הציצית ואף",
    "start": 43514,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": ". מִתּוֹךְ דִּבְרֵי הַבַּ\"י מַשְׁמָע דְּעִקַּר הַטַּעַם מִשּׁוּם תַּעֲשֶׂה וְלָמָּה דְּמִיָּד כְּשֶׁנֶּחְתַּךְ הַכָּנָף נִפְסְלוּ הַצִּיצִית וְאַף",
+   "out": "From the words of the B\"Y it is implied that the main reason is because of \"you shall do\" and why, that as soon as the wing is cut off the tzitzit are invalidated, and even...",
+   "done": true,
    "warn": ""
   },
   {
@@ -6745,9 +6745,9 @@
    "kind": "text",
    "src": "על פי שחזר ותפרו הוי תולמ\"ה אלא דקשה למה קי\"ל אם נקרע הטלית חוץ לג' יתפור",
    "start": 43597,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "עַל פִּי שֶׁחָזַר וְתָפַר הוּא תּוֹלְמָ\"ה אֶלָּא דְּקָשֶׁה לָמָּה קַיְּלָ\"ן אִם נִקְרַע הַטַּלִּית חוּץ לְג' יִתְפּוֹר",
+   "out": "According to the fact that he returned and sewed it, it is a 'tulmah', but it is difficult why we hold that if the tallit is torn outside of three (fingers) it will be sewn.",
+   "done": true,
    "warn": ""
   },
   {
@@ -6755,9 +6755,9 @@
    "kind": "text",
    "src": "כמ\"ש בסמוך ס\"ד לזה אמר כנף זה לא היה מבגד זה בשעת עשי' א\"כ הוי תחלת",
    "start": 43671,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "כְּמַ\"שׁ בַּסָּמוּךְ ס\"ד לָזֶה אָמַר כָּנָף זֶה לֹא הָיָה מִבֶּגֶד זֶה בִּשְׁעַת עֲשִׂיָּה א\"כ הָוֵי תְּחִלַּת",
+   "out": "As mentioned in the adjacent source, it is assumed that this is what was said: This wing was not from this garment at the time of creation; therefore, it is the beginning of...",
+   "done": true,
    "warn": ""
   },
   {
@@ -6765,19 +6765,19 @@
    "kind": "text",
    "src": "עשייתו בפסול משא\"כ כשתפרו בטלי' עצמו דשרי דהוי תחל' עשייתו בבגד זה בכשרו' וכ\"מ בסמ\"ג ובנ\"י",
    "start": 43739,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "עֲשִׂיָּתוֹ בְּפָסוּל מִשֶּׁאֵינָה כֵּן כְּשֶׁתְּפָרוֹ בְּטַלִּית עַצְמוֹ דְּשָׁרִי דְּהָוֵי תְּחִלַּת עֲשִׂיָּתוֹ בְּבֶגֶד זֶה בְּכַשֵּׁרוּת וְכַמָּה בַּסְּמָ\"ג וּבַנ\"י",
+   "out": "Its being made in a defective manner, but not so when you sew it in the garment itself, which is permitted, because it is the beginning of its being made in this garment in a valid manner. And see in the Sefer Mitzvot Gadol and in the Nissuch Yisrael.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 673,
    "kind": "text",
    "src": "וכ\"מ בס\"ג:",
    "start": 43830,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "וְכַ\"מ בְּסֵ\"ג:",
+   "out": "and like in the book of G.",
+   "done": true,
    "warn": ""
   },
   {
@@ -6785,9 +6785,9 @@
    "kind": "text",
    "src": "לא היה",
    "start": 43843,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "לֹא הָיָה",
+   "out": "was not",
+   "done": true,
    "warn": ""
   },
   {
@@ -6795,49 +6795,49 @@
    "kind": "text",
    "src": ". והב\"ח כ' דפסול כשתופר' באחר' דכשמתחיל לתפור נתבטל הכנף ואין לכל חלק אלא ג' כנפות",
    "start": 43850,
-   "heb": "",
+   "heb": ". והב\"ח כ' דפסול כשתופר' באחר' דכשמתחיל לתפור נתבטל הכנף ואין לכל חלק אלא ג' כנפות",
    "out": "",
-   "done": false,
-   "warn": ""
+   "done": true,
+   "warn": "skipped - looped for 6002 characters without answering"
   },
   {
    "i": 676,
    "kind": "text",
    "src": "וכשחוזר ותופר כולה ה\"ל תולמ\"ה עכ\"ל ול\"נ דכשר דהא בהדיא אמרי' בגמ' נקרע חוץ לג' יתפור",
    "start": 43933,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "וְכֶשֶׁחוֹזֵר וְתוֹפֵר כֻּלָּהּ הֲלֹא תּוֹלָמָ\"ה עַכַּ\"ל וְלֹא נִרְאֶה דְּכָשֵׁר דְּהָא בְּהֶדְיָא אָמְרִינַן בַּגֵּמַר נִקְרַע חוּץ לְג' יְתַפֵּר",
+   "out": "And when he returns and sews the whole thing, it is a 'tulmah' (a type of worm?) according to the opinion of the author, and it is not clear that it is valid, because in the Gemara we explicitly say: if it is torn outside of three (units), it will be sewn.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 677,
    "kind": "text",
    "src": "כמ\"ש בס\"ד ומ\"ל נקרע חתיכה ממנ' ותופר או חלוק לשנים וכ\"כ הב\"י בשם הרשב\"א והטעם דכשמתחיל",
    "start": 44018,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "כְּמַ\"שׁ בְּס\"ד וּמִלֵּל נִקְרַע חֲתִיכָה מִמֶּנָּה וְתוֹפֵר אוֹ חָלוּק לִשְׁנַיִם וְכֵן כָּתַב הַבַּ\"י בְּשֵׁם הָרַשְׁבָּ\"א וְהַטַּעַם דְּכֶשֶׁמַּתְחִיל",
+   "out": "As written in the name of God and the matter, a piece was torn from it and sewn or divided into two, and so the B\"Y wrote in the name of the Rashb\"a, and the reason is that when it begins.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 678,
    "kind": "text",
    "src": "לתפור נעשו שניהם בגד א' ועוד הא אמרינן סימן י' ס\"ג אף ע\"פ שתפר כנפות טליתו",
    "start": 44105,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "לְתָפֵר נַעֲשׂוּ שְׁנֵיהֶם בֶּגֶד אֶחָד וְעוֹד הָא אָמְרִינָן סִימָן יוּד סַ\"ג אַף עַל פִּי שֶׁתָּפַר כַּנְפוֹת טַלִּיתוֹ",
+   "out": "To sew, both of them were made one garment, and further, we say in sign 10, section 3, that even if one sews the corners of his tallit...",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 679,
    "kind": "text",
    "src": "לא נפטרה משמע דהתפיר' אינה מבטלת הכנף ועבנ\"י לכן נ\"ל דמותר לתופרה:",
    "start": 44180,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "לֹא נִפְטְרָה מַשְׁמָע דְּהַתְּפִירָ' אֵינָהּ מְבַטֶּלֶת הַכָּנָף וְעַבַּנ\"י לָכֵן נ\"ל דְּמֻתָּר לְתׇפְרָה:",
+   "out": "It seems that she was not released, meaning that the stitching does not cancel the wing, and according to the Aben\"i, therefore it seems to me that it is permissible to stitch it.",
+   "done": true,
    "warn": ""
   },
   {
@@ -6845,9 +6845,9 @@
    "kind": "text",
    "src": "אין בו",
    "start": 44249,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "אֵין בּוֹ",
+   "out": "There is none in it.",
+   "done": true,
    "warn": ""
   },
   {
@@ -6855,9 +6855,9 @@
    "kind": "text",
    "src": ". שלא נטוה לשמה עסי' י\"ד ס\"ב:",
    "start": 44256,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": ". שֶׁלֹּא נָטְוּה לְשֶׁמָּה עַסְי' י\"ד ס\"ב:",
+   "out": "that it was not woven for its own sake, page 14 section b.",
+   "done": true,
    "warn": ""
   },
   {
@@ -6865,9 +6865,9 @@
    "kind": "text",
    "src": "התפירה",
    "start": 44288,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "הַתְּפִירָה",
+   "out": "the sewing",
+   "done": true,
    "warn": ""
   },
   {
@@ -6875,19 +6875,19 @@
    "kind": "text",
    "src": ". והכל יודעים ששאר מינים אין פוטרי' בצמר משמע דבמקום שדרכן לתפור בצמר אפי' בשאר מינים",
    "start": 44295,
-   "heb": "",
+   "heb": ". והכל יודעים ששאר מינים אין פוטרי' בצמר משמע דבמקום שדרכן לתפור בצמר אפי' בשאר מינים",
    "out": "",
-   "done": false,
-   "warn": ""
+   "done": true,
+   "warn": "skipped - looped for 6004 characters without answering"
   },
   {
    "i": 684,
    "kind": "text",
    "src": "אסור לתפור גזיר' אטו צמר וקשה דבס\"ו כתב דוקא כשתופר בחוט משי לבן משמע דבשאר מינים",
    "start": 44381,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "אָסוּר לְתַפֵּר גְּזִירָ' אֵטוֹ צֶמֶר וְקָשֶׁה דְּבַס\"וֹ כָּתַב דַּוְקָא כְּשֶׁתּוֹפֵר בְּחוּט מֶשִׁי לָבָן מַשְׁמָע דְּבִשְׁאַר מִינִים",
+   "out": "It is forbidden to sew a piece of wool with linen, and it is difficult because in Sifrei (Sifra?) it is written that only when sewing with white silk thread it is forbidden, implying that other types of threads are not forbidden.",
+   "done": true,
    "warn": ""
   },
   {
@@ -6895,19 +6895,19 @@
    "kind": "text",
    "src": "מותר לתפור ולא גזרי' אטו משי, וי\"ל דבטלית של משי לא מחמרי' כולי האי כיון די\"א",
    "start": 44463,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "מֻתָּר לְתָפֵר וְלֹא גּוֹזְרִים אַטּוּ מֶשִׁי, וְיֵשׁ לוֹמַר דְּבְטַלִּית שֶׁל מֶשִׁי לֹא מְחַמְּרִים כּוּלֵּי הַאי כֵּיוָן דְּיֵשׁ אוֹמְרִים.",
+   "out": "It is permitted to sew, and we do not prohibit because of silk; and it may be said that with a silk tallit we do not make it so strict because of the opinion that...",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 686,
    "kind": "text",
    "src": "דאין חייב אלא מדרבנן מיהו ה\"נ י\"ל בדוחק דאפי' במקום שדרכן לתפור בצמר מותר לתפו' בשאר מיני':",
    "start": 44541,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "דְּאֵין חַיָּב אֶלָּא מִדְּרַבָּנָן מִיהוּ הַ\"נַּ יִלָּ\"ע בְּדֹחַק דַּאֲפִלּוּ בְּמָקוֹם שֶׁדַּרְכָּן לְתָפֵר בְּצֶמֶר מֻתָּר לְתָפֵר בִּשְׁאַר מִינֵי:",
+   "out": "That one is only liable from the Rabbis, but nevertheless it can be said in a strained manner that even in a place where their custom is to sew with wool, it is permitted to sew with other types of material.",
+   "done": true,
    "warn": ""
   },
   {
@@ -6915,9 +6915,9 @@
    "kind": "text",
    "src": "לתפור",
    "start": 44635,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "לְתַפֵּר",
+   "out": "to sew",
+   "done": true,
    "warn": ""
   },
   {
@@ -6925,19 +6925,19 @@
    "kind": "text",
    "src": ". כ\"כ הרא\"ש דאפי' ציצית שעשה אח\"כ פסולים דכמאן דפסיק חשיב ועסי' י' ס\"ג וס\"ו:",
    "start": 44641,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": ". כָּךְ כָּתַב הָרָא\"שׁ דַּאֲפִלּוּ צִיצִית שֶׁעָשָׂה אַחַר כָּךְ פְּסוּלִים דְּכִמְאַן דְּפָסִיק חֲשִׁיב וְעַיֵּן סִימָן י' סָעִיף ג' וְסָעִיף ו'.",
+   "out": "Thus wrote the Rosh that even a tzitzit that he made afterwards is invalid, because it is considered as if it is cut, and see chapter 10, section 3 and 6.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 689,
    "kind": "text",
    "src": "לא פטר'",
    "start": 44720,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "לֹא פָּטַרְ'",
+   "out": "He did not release.",
+   "done": true,
    "warn": ""
   },
   {
@@ -6945,9 +6945,9 @@
    "kind": "text",
    "src": ". משום תולמ\"ה:",
    "start": 44728,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": ". מִשּׁוּם תּוֹלְמָ\"ה:",
+   "out": "Because of TOLM\"H:",
+   "done": true,
    "warn": ""
   },
   {
@@ -6955,9 +6955,9 @@
    "kind": "text",
    "src": "שתפרו",
    "start": 44745,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "שֶׁתָּפְרוּ",
+   "out": "that they sewed",
+   "done": true,
    "warn": ""
   },
   {
@@ -6965,19 +6965,19 @@
    "kind": "text",
    "src": ". ולא נשאר שיעור קשר גודל עסי' י\"א ס\"י:",
    "start": 44751,
-   "heb": "",
+   "heb": ". ולא נשאר שיעור קשר גודל עסי' י\"א ס\"י:",
    "out": "",
-   "done": false,
-   "warn": ""
+   "done": true,
+   "warn": "skipped - looped for 6003 characters without answering"
   },
   {
    "i": 693,
    "kind": "text",
    "src": "מנקב",
    "start": 44793,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "מְנַקֵּב",
+   "out": "piercing (or a piercer)",
+   "done": true,
    "warn": ""
   },
   {

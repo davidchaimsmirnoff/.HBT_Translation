@@ -152,6 +152,14 @@
   .ch.live.thinking .en{color:var(--muted); font-style:italic; font-size:13px}
   .ch .badge{color:var(--warn); font-weight:700; font-size:10px}
   .ch.mark{background:linear-gradient(to right,var(--soft),transparent); border-radius:6px}
+  /* Arriving from a bookmark, the chunk you asked for has to be obvious among
+     identical neighbours. The glow fades on its own so it never becomes state
+     you have to clear. */
+  .ch.hit{border-radius:6px; animation:chhit 2.6s ease-out 1}
+  @keyframes chhit{
+    0%,45%{background:var(--soft); box-shadow:inset 3px 0 0 var(--accent)}
+    100%{background:transparent; box-shadow:inset 3px 0 0 transparent}
+  }
 
   footer{
     border-top:1px solid var(--line); background:var(--panel); padding:7px 18px;
@@ -468,6 +476,28 @@
   }
   .bmrow .dt{font-size:11px; color:var(--muted); margin-top:4px}
 
+  /* ---- "open in Translations?" ----
+     A row already does two things: tap jumps to it in the reader, drag-left
+     uncovers Delete. Holding is the third, and it leaves the reader entirely,
+     so unlike the other two it asks first. The box appears at the finger
+     rather than centred, so it reads as belonging to the row you held. */
+  #bmAskScrim{position:fixed; inset:0; z-index:110; background:rgba(0,0,0,.3); display:none}
+  body.bmask-open #bmAskScrim{display:block}
+  #bmAsk{
+    position:fixed; z-index:111; display:none;
+    width:min(286px, calc(100vw - 28px));
+    background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    box-shadow:0 14px 36px rgba(0,0,0,.34); padding:12px 13px 11px;
+  }
+  body.bmask-open #bmAsk{display:block}
+  #bmAsk .q{font-size:13.5px; font-weight:650; margin-bottom:4px}
+  #bmAsk .sn{
+    font-size:12px; color:var(--muted); line-height:1.45; margin-bottom:11px;
+    overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+  }
+  #bmAsk .row{display:flex; gap:8px}
+  #bmAsk .row button{flex:1; min-height:42px; font-size:13.5px}
+
   /* ---- conflict chooser ---- */
   #conflictModal .sheet{width:min(680px,96vw)}
   #conflictModal .cmp{display:grid; gap:10px}
@@ -647,6 +677,16 @@
     </div>
     <div id="bmList"></div>
   </aside>
+
+  <div id="bmAskScrim"></div>
+  <div id="bmAsk" role="dialog" aria-label="Open this bookmark in Translations">
+    <div class="q">Open in Translations?</div>
+    <div class="sn" id="bmAskText" dir="auto"></div>
+    <div class="row">
+      <button class="ghost" id="bmAskNo">No</button>
+      <button class="primary" id="bmAskYes">Yes</button>
+    </div>
+  </div>
 </div>
 
 <!-- ================= PHONE BOTTOM BAR (mobile only) ================ -->
@@ -2100,6 +2140,7 @@ function popNav(){
 window.addEventListener("popstate", () => {
   // Unwind one layer per Back press, innermost first.
   if (_navDepth > 0) _navDepth--;
+  if (document.body.classList.contains("bmask-open")) { closeAsk(true); return; }
   if (document.body.classList.contains("menu-open")) { setMenu(false, true); return; }
   if (document.body.classList.contains("reading")) { closeReading(true); return; }
 });
@@ -2450,14 +2491,30 @@ function renderBmList(){
    scrolls normally. */
 function wireSwipe(box){
   let row = null, x0 = 0, y0 = 0, dx = 0, decided = null;
+  let holdT = null, held = false;
 
   const closeAll = except => box.querySelectorAll(".bmrow.open")
     .forEach(r => { if (r !== except) r.classList.remove("open"); });
 
+  const markOfRow = r =>
+    getMarks(R.id).find(m => m.line === parseInt(r.dataset.line, 10));
+
   box.addEventListener("pointerdown", e => {
     const r = e.target.closest(".bmrow");
     if (!r || e.target.closest(".del")) return;
-    row = r; x0 = e.clientX; y0 = e.clientY; dx = 0; decided = null;
+    row = r; x0 = e.clientX; y0 = e.clientY; dx = 0; decided = null; held = false;
+    // The hold has to outlast the other two gestures before it can claim the
+    // press, so any real movement below cancels it and a finger lifted early
+    // never reaches it.
+    const px = e.clientX, py = e.clientY, mark = markOfRow(r);
+    clearTimeout(holdT);
+    if (!mark) return;
+    holdT = setTimeout(() => {
+      if (!row || decided === "x") return;
+      held = true;
+      try { if (navigator.vibrate) navigator.vibrate(15); } catch(err){}
+      openAsk(mark, px, py);
+    }, 500);
   });
 
   box.addEventListener("pointermove", e => {
@@ -2465,6 +2522,7 @@ function wireSwipe(box){
     const mx = e.clientX - x0, my = e.clientY - y0;
     if (decided === null){
       if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
+      clearTimeout(holdT);              // it moved: a scroll or a swipe, not a hold
       decided = Math.abs(mx) > Math.abs(my) ? "x" : "y";
       if (decided === "x"){
         row.classList.add("dragging");
@@ -2479,6 +2537,7 @@ function wireSwipe(box){
   });
 
   const end = () => {
+    clearTimeout(holdT);
     if (!row) return;
     const r = row;
     r.classList.remove("dragging");
@@ -2487,8 +2546,9 @@ function wireSwipe(box){
     row = null; decided = null;
   };
   box.addEventListener("pointerup", e => {
-    const wasRow = row, wasDecided = decided;
+    const wasRow = row, wasDecided = decided, wasHeld = held;
     end();
+    if (wasHeld) return;               // the hold already asked; this is its release
     // A press that never turned into a drag is a tap: go to that bookmark.
     if (wasRow && wasDecided !== "x" && !wasRow.classList.contains("open")
         && !e.target.closest(".del")){
@@ -2499,6 +2559,151 @@ function wireSwipe(box){
   });
   box.addEventListener("pointercancel", end);
   box.addEventListener("pointerleave", end);
+}
+
+
+/* ---- hold a bookmark: open it in the Translations tab --------------------
+
+   The reader is deliberately read-only, so the way to change something you
+   noticed while reading is to get to the same passage in the editor. A
+   bookmark records the line's text rather than a chunk number, which is what
+   makes that possible: the text is the one thing both panes share.  */
+
+let ASK = null;                         // the bookmark the popup is asking about
+
+function openAsk(mark, x, y){
+  ASK = mark;
+  $("#bmAskText").textContent = mark.text || "(blank line)";
+  document.body.classList.add("bmask-open");
+
+  // Measure only once visible, then keep the whole box on screen: near the top
+  // of the list there is no room above the finger, so it flips below.
+  const box = $("#bmAsk"), pad = 10;
+  const w = box.offsetWidth, h = box.offsetHeight;
+  const left = Math.min(Math.max(pad, x - w / 2), window.innerWidth - w - pad);
+  let top = y - h - 16;
+  if (top < pad) top = Math.min(y + 20, window.innerHeight - h - pad);
+  box.style.left = Math.max(pad, left) + "px";
+  box.style.top  = Math.max(pad, top) + "px";
+
+  pushNav("bmask");
+}
+
+function closeAsk(fromHistory){
+  if (!document.body.classList.contains("bmask-open")) return;
+  document.body.classList.remove("bmask-open");
+  ASK = null;
+  if (!fromHistory) popNav();
+}
+
+$("#bmAskNo").addEventListener("click", () => closeAsk());
+$("#bmAskScrim").addEventListener("click", () => closeAsk());
+$("#bmAskYes").addEventListener("click", () => {
+  const mark = ASK;
+  closeAsk();
+  if (mark) openInTranslations(mark);
+});
+
+function normText(s){
+  return String(s == null ? "" : s).replace(/\s+/g, " ").trim();
+}
+
+/* Which chunk holds this line. Bookmarks store up to 160 characters of the
+   line and the cut can land mid-word, so the needle is shorter than what was
+   stored, and the comparison runs both ways: a chunk is often longer than the
+   snippet, but a short one - a heading, a single verse - is shorter than it. */
+function findChunkByText(text){
+  const needle = normText(text).slice(0, 60);
+  if (needle.length < 4) return null;
+  for (const c of D.chunks){
+    if (!c) continue;
+    for (const field of ["out", "heb", "src"]){
+      const hay = normText(c[field]);
+      if (!hay) continue;
+      if (hay.includes(needle) || (hay.length > 12 && needle.includes(hay))) return c.i;
+    }
+  }
+  return null;
+}
+
+/* Switch the translation pane the way its segmented control does. */
+function setOutView(v){
+  segSet("#viewSeg", "view", v);
+  D.view = v;
+  $("#chunks").style.display  = v === "chunks" ? "" : "none";
+  $("#outText").style.display = v === "text" ? "" : "none";
+}
+
+function revealChunk(i){
+  const el = document.getElementById("ch" + i);
+  if (!el) return false;
+  // The pane became visible a moment ago; let layout settle before measuring.
+  setTimeout(() => {
+    const en = el.querySelector(".en");
+    // Focus first but keep the scroll ours, so the caret is already in the
+    // translation - the same state tapping the chunk would have left.
+    if (en && en.isContentEditable){
+      try { en.focus({preventScroll: true}); } catch(err){ en.focus(); }
+    }
+    el.scrollIntoView({block: "center", behavior: "smooth"});
+    el.classList.add("hit");
+    setTimeout(() => el.classList.remove("hit"), 2600);
+  }, 80);
+  return true;
+}
+
+/* Offline, and for anything the chunk list does not hold, the full text is
+   still here and still editable. Same idea as the cut-point jump. */
+function revealInOutText(text){
+  const ta = $("#outText");
+  const needle = (text || "").trim().slice(0, 80);
+  const pos = needle ? ta.value.indexOf(needle) : -1;
+  if (pos < 0) return false;
+  setTimeout(() => {
+    ta.focus();
+    ta.setSelectionRange(pos, pos + needle.length);
+    const before = ta.value.slice(0, pos).split("\n").length;
+    const total = ta.value.split("\n").length;
+    ta.scrollTop = Math.max(0, (before / total) * ta.scrollHeight - ta.clientHeight / 2);
+  }, 80);
+  return true;
+}
+
+async function openInTranslations(mark){
+  const id = R.id, title = R.title;
+  if (!id){ toast("no book open", true); return; }
+  const snippet = (mark.text || "").trim();
+
+  setSheet(false);
+  closeReading();
+
+  // Reading opens from the menu, so it can be entered from either tab - but
+  // the bottom nav, and the Translation pane it switches, belong to Documents.
+  showTab("docs");
+
+  // The reader can be on a different book than the editor is.
+  if (D.jid !== id){
+    toast("opening " + (title || id) + "\u2026");
+    await selectJob(id);
+  }
+  setMobView("trans");
+
+  // A running job scrolls the chunk list to the end as chunks arrive, which
+  // would undo the jump a second after making it.
+  if ($("#follow").checked && D.job && D.job.running){
+    $("#follow").checked = false;
+    toast("follow paused so the jump holds");
+  }
+
+  const i = NET.online ? findChunkByText(snippet) : null;
+  if (i != null && revealChunk(i)){
+    setOutView("chunks");
+    return;
+  }
+  setOutView("text");
+  await refreshOutText();
+  if (!revealInOutText(snippet))
+    toast("that line is not in the translation yet", true);
 }
 
 /* ---- boot the phone layer ---- */

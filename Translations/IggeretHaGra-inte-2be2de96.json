@@ -1,11 +1,11 @@
 {
  "id": "IggeretHaGra-inte-2be2de96",
  "title": "BH",
- "status": "running",
- "status_line": "IN PROGRESS - 106 of 118 translatable chunks (89.8%)",
- "percent": 89.83,
- "bookmark": 109,
- "done_text": 106,
+ "status": "done",
+ "status_line": "COMPLETE - 118 of 118 translatable chunks (100.0%)",
+ "percent": 100.0,
+ "bookmark": 121,
+ "done_text": 118,
  "total_text": 118,
  "total_chunks": 121,
  "chars_total": 9638,
@@ -25,11 +25,11 @@
  "temperature": 0.2,
  "think": false,
  "created": "2026-08-27 10:08:53",
- "updated": "2026-08-27 11:38:00",
+ "updated": "2026-08-27 11:50:06",
  "started": "2026-08-27 10:09:01",
- "finished": "",
- "elapsed_sec": 5338.2,
- "tokens_out": 64659,
+ "finished": "2026-08-27 11:50:06",
+ "elapsed_sec": 6064.6,
+ "tokens_out": 72175,
  "skipped": 12,
  "error": "",
  "cut_marks": [],
@@ -1129,9 +1129,9 @@
    "kind": "text",
    "src": "אהובתי אמי, ידעתי שאינך צריכה למוסר שלי, כי ידעתי כי צנועה את, אף-על-פי-כן יקראו לפניך האיגרת",
    "start": 8823,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "אֲהוּבָתִי אִמִּי, יָדַעְתִּי שֶׁאֵינֵךְ צְרִיכָה לְמוּסָר שֶׁלִּי, כִּי יָדַעְתִּי כִּי צְנוּעָה אַתְּ, אַף-עַל-פִּי-כֵן יִקְרְאוּ לְפָנֶיךָ הָאִגֶּרֶת",
+   "out": "My beloved mother, I knew that you didn't need my moral instruction, because I knew that you are modest, yet nevertheless they will read the letter before you.",
+   "done": true,
    "warn": ""
   },
   {
@@ -1139,9 +1139,9 @@
    "kind": "text",
    "src": "הזאת, כי הם דברי אלהים חיים. ומבקש אני מאד ממך בבקשה שטוחה, שלא תצטערי בשבילי, כאשר",
    "start": 8917,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "הַזֹּאת, כִּי הֵם דִּבְרֵי אֱלֹהִים חַיִּים. וּמְבַקֵּשׁ אֲנִי מְאֹד מִמְּךָ בְּבַקָּשָׁה שְׁטוּחָה, שֶׁלֹּא תִּצְטַעֲרִי בִּשְׁבִילִי, כַּאֲשֶׁר",
+   "out": "This is because they are the words of the living God. And I beg you very much with a humble request, that you will not be sad on my account, as ...",
+   "done": true,
    "warn": ""
   },
   {
@@ -1149,9 +1149,9 @@
    "kind": "text",
    "src": "הבטחת לי. ואם ירצה ה', אם אזכה להיות בירושלים עיר הקדש אצל שער השמים, אבקש בעדך",
    "start": 9001,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "הִבְטַחְתָּ לִי. וְאִם יִרְצֶה ה', אִם אֶזְכֶּה לִהְיוֹת בִּירוּשָׁלַיִם עִיר הַקֹּדֶשׁ אֵצֶל שַׁעַר הַשָּׁמַיִם, אֲבַקֵּשׁ בְּעַדְךָ",
+   "out": "You promised me. And if God wills, if I am fortunate enough to be in Jerusalem, the holy city, near the gate of heaven, I will plead on your behalf.",
+   "done": true,
    "warn": ""
   },
   {
@@ -1159,9 +1159,9 @@
    "kind": "text",
    "src": "כאשר הבטחתי. ואם נזכה נתראה יחדו כולנו, אם ירצה בעל הרחמים. וגם באתי לבקש לאשתי שתכבד",
    "start": 9081,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "כַּאֲשֶׁר הִבְטַחְתִּי. וְאִם נִזְכֶּה נִתְרָאֶה יַחַד כֻּלָּנוּ, אִם יִרְצֶה בַּעַל הָרַחֲמִים. וְגַם בָּאתִי לְבַקֵּשׁ לְאִשְׁתִּי שֶׁתְּכַבֵּד.",
+   "out": "When I promised. And if we are worthy, we will see each other together all of us, if the Master of Mercy wills. And also I came to ask my wife that she will honor.",
+   "done": true,
    "warn": ""
   },
   {
@@ -1169,9 +1169,9 @@
    "kind": "text",
    "src": "את אמי, כמו שכתוב בתורה, ובפרט לאלמנה, שעון פלילי מאד לצערה, אפילו בתנועה קלה. וגם לאמי",
    "start": 9167,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "אֶת אִמִּי, כְּמוֹ שֶׁכָּתוּב בַּתּוֹרָה, וּבִפְרָט לָאַלְמָנָה, שָׁעוֹן פְּלִילִי מְאֹד לְצַעֲרָהּ, אֲפִלּוּ בִּתְנוּעָה קַלָּה. וְגַם לְאִמִּי",
+   "out": "My mother, as written in the Torah, and especially to the widow, a very criminal clock for her grief, even in a slight movement. And also to my mother.",
+   "done": true,
    "warn": ""
   },
   {
@@ -1179,9 +1179,9 @@
    "kind": "text",
    "src": "בקשתי, שיהא שלום בין שתיכן, ואשה את רעותה תשמח בדברים טובים, כי זה מצוה גדולה לכל",
    "start": 9255,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "בָּקַשְׁתִּי, שֶׁיִּהְיֶה שָׁלוֹם בֵּין שְׁתֵּיכֶן, וְאִשָּׁה אֶת רְעוּתָהּ תְּשַׂמַּח בִּדְבָרִים טוֹבִים, כִּי זֶה מִצְוָה גְּדוֹלָה לְכֹל",
+   "out": "I asked that there be peace between the two of you, and that a woman should rejoice with her friend in good words, for this is a great commandment for all.",
+   "done": true,
    "warn": ""
   },
   {
@@ -1189,9 +1189,9 @@
    "kind": "text",
    "src": "אדם, ו\"שואלין לאדם בשעת הדין כו', המלכת את חברך בנחת-רוח\", הרי צריך שימליכהו בנחת, ובזה רוב",
    "start": 9337,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "אָדָם, וְ\"שׁוֹאֲלִין לָאָדָם בִּשְׁעַת הַדִּין כּוּ', הִמְלַכְתָּ אֶת חֲבֵרְךָ בְּנַחַת-רוּחַ\", הֲרֵי צָרִיךְ שֶׁיְּמַלְּכֵהוּ בְּנַחַת, וּבָזֶה רֹב",
+   "out": "Man, and 'they ask a man at the time of judgment, etc., did you make your friend king with ease', it is necessary that he make him king with ease, and in this way most.",
+   "done": true,
    "warn": ""
   },
   {
@@ -1199,9 +1199,9 @@
    "kind": "text",
    "src": "התורה לשמח לאדם. ואף אם תעשה אחת מכם שלא כהוגן, תמחלו זו לזו ותחיו למען ה'",
    "start": 9429,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "הַתּוֹרָה לְשַׂמֵּחַ לְאָדָם. וְאַף אִם תַּעֲשֶׂה אַחַת מִכֶּם שֶׁלֹּא כַּהוֹגֶן, תִּמְחֲלוּ זוֹ לָזוֹ וְתִחְיוּ לְמַעַן ה'.",
+   "out": "The Torah is to bring joy to a person. And even if one of you does something improperly, forgive each other and live for the sake of the Lord.",
+   "done": true,
    "warn": ""
   },
   {
@@ -1209,9 +1209,9 @@
    "kind": "text",
    "src": "בשלום. וכן לאמי בקשתי שתדריך את בני ובנותי בדברים רכים שיקבלום ותשגיח עליהם. ולבני ולבנותי אני",
    "start": 9504,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "בְּשָׁלוֹם. וְכֵן לְאִמִּי בָּקַשְׁתִּי שֶׁתַּדְרִיךְ אֶת בָּנַי וּבְנוֹתַי בִּדְבָרִים רַכִּים שֶׁיְּקַבְּלוּם וְתִשְׁגַּח עֲלֵיהֶם. וּלְבָנַי וּלְבָנוֹתַי אָנִי",
+   "out": "In peace. And likewise, to my mother I asked that she guide my sons and daughters in gentle words that they will accept and watch over them. And to my sons and daughters I am...",
+   "done": true,
    "warn": ""
   },
   {
@@ -1219,9 +1219,9 @@
    "kind": "text",
    "src": "מצוה שיכבדו אותה. וגם ביניהם לא ישמע ריב וכעס כלל, אלא הכל בשלום.",
    "start": 9599,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "מִצְוָה שֶׁיְּכַבְּדוּ אוֹתָהּ. וְגַם בֵּינֵיהֶם לֹא יִשְׁמַע רִיב וְכַעַס כְּלָל, אֶלָּא הַכֹּל בְּשָׁלוֹם.",
+   "out": "It is a commandment that they honor her. And also among them there will not be heard any quarrel or anger at all, but everything will be in peace.",
+   "done": true,
    "warn": ""
   },
   {
@@ -1229,9 +1229,9 @@
    "kind": "text",
    "src": "ובעל השלום יתן לכם ולבני ולבנותי וחתני ואחי וכל ישראל חיים ושלום.",
    "start": 9666,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "וּבַעַל הַשָּׁלוֹם יִתֵּן לָכֶם וּלְבָנַי וּלְבָנוֹתַי וְחֲתָנִי וְאָחִי וְכׇל יִשְׂרָאֵל חַיִּים וְשָׁלוֹם.",
+   "out": "And the Master of Peace will give you and my sons and daughters and my son-in-law and my brother and all of Israel life and peace.",
+   "done": true,
    "warn": ""
   },
   {
@@ -1239,9 +1239,9 @@
    "kind": "text",
    "src": "מנאי אהובכם אליהו במוהר\"ר שלמה זלמן זצלה\"ה",
    "start": 9733,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "מִנַּי אֲהוּבְכֶם אֵלִיָּהוּ בְּמוֹהָרָ\"ר שְׁלֹמֹה זַלְמָן זַצְלָ\"ה.",
+   "out": "From me, your beloved Eliyahu, in the memory of the rabbi, Rabbi Shlomo Zalman, may his memory be blessed.",
+   "done": true,
    "warn": ""
   }
  ]
