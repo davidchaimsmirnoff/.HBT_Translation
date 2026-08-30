@@ -1,10 +1,13 @@
-![UI Demo](Demo_Images/UI_Image.png)
+
 
 
 # LocalHBT Translator
 
 A local Hebrew ⇄ English translator with a proper GUI, running entirely offline
 against Ollama on your own GPU. No API keys, no cloud, no data leaving the machine.
+
+![UI Demo](Demo_Images/UI_Image.png)
+
 
 ## Run it
 
