@@ -1,6 +1,6 @@
 {
  "id": "Rambam_Introduction_to_the_Mishnah_Vilna_Edition_full-inte-85d4d9e1",
- "title": "Rambam Introduction to the Mishnah  /  הקדמת הרמב\"ם למשנה",
+ "title": "Rambam Introduction to the Mishnah / הקדמת הרמב\"ם למשנה",
  "status": "done",
  "status_line": "COMPLETE - 1255 of 1255 translatable chunks (100.0%)",
  "percent": 100.0,
@@ -25,7 +25,7 @@
  "temperature": 0.2,
  "think": false,
  "created": "2026-08-25 14:36:37",
- "updated": "2026-08-27 10:47:44",
+ "updated": "2026-08-30 03:34:36",
  "started": "2026-08-25 14:51:02",
  "finished": "2026-08-25 23:02:23",
  "elapsed_sec": 27733.2,
@@ -95,7 +95,7 @@
    "src": "מלאכתם מלאכת ה'. וערב ובקר שתולים בבית ה'. עולים במעלות גבוהים. אנשי חיל יראי אלהים. עומדים",
    "start": 271,
    "heb": "מְלַאֲכָתָם מְלֶאכֶת ה'. וְעֶרֶב וּבֹקֶר שְׁתוּלִים בְּבֵית ה'. עוֹלִים בְּמַעֲלוֹת גְּבוֹהִים. אַנְשֵׁי חַיִל יְרֵאֵי אֱלֹהִים. עוֹמְדִים",
-   "out": "Their work is the work of God. In the evening and in the morning they are rooted in the house of God. They ascend in high steps. They are men of strength who fear God. They stand.",
+   "out": "Their work is the work of God. In the evening and in the morning they are rooted in the house of God. They ascend in high steps. They are men of strength who fear God. They stand",
    "done": true,
    "warn": ""
   },
@@ -105,7 +105,7 @@
    "src": "בארחות יושר ומעמידין. ומעלין בקדש ואין מורידין. ותהי עלי שם יד רבותי אציליה ושועיה. נקובי ראשית",
    "start": 363,
    "heb": "בְּאַרְחוֹת יֹשֶׁר וּמַעֲמִידִין. וּמַעֲלִין בַּקֹּדֶשׁ וְאֵין מוֹרִידִין. וְתָהִי עָלַי שֵׁם יַד רַבּוֹתַי אֲצִילִיָּה וְשׁוּעִיָּה. נְקוּבִי רֵאשִׁית",
-   "out": "In the paths of righteousness and they establish. And they raise in the holy place and they do not lower. And there was upon me the name of the hand of my masters, Atsilia and Shueia. I am pierced by the beginning.",
+   "out": "in the paths of righteousness and [are] established. And they rise in the holiness and they do not lower. And there was upon me the name of the hand of my masters, Atsilia and Shueia. [and I was - maybe]  pierced by the beginning.",
    "done": true,
    "warn": ""
   },
@@ -114,8 +114,8 @@
    "kind": "text",
    "src": "בחכמה וידועיה. לפרש להם בלשון הקדש פירוש המשניות שחיבר רב הגדול נר ישראל. וברבוץ התורה משנה ליקותיאל.",
    "start": 459,
-   "heb": "בְּחׇכְמָה וִידוּעֶיהָ. לְפָרֵשׁ לָהֶם בִּלְשׁוֹן הַקֹּדֶשׁ פֵּרוּשׁ הַמִּשְׁנָיוֹת שֶׁחִבֵּר רַב הַגָּדוֹל נֵר יִשְׂרָאֵל. וּבְרִבּוּץ הַתּוֹרָה מִשְׁנָה לִיקוּטִיאֵל.",
-   "out": "In wisdom and her knowledge. To explain to them in the holy language the interpretation of the Mishnahs that the great Rabbi, the Light of Israel, composed. And in the abundance of Torah, the Mishnah of Likkutiel.",
+   "heb": "בְּחׇכְמָה וִידוּעֶיהָ לְפָרֵשׁ לָהֶם בִּלְשׁוֹן הַקֹּדֶשׁ פֵּרוּשׁ הַמִּשְׁנָיוֹת שֶׁחִבֵּר רַב הַגָּדוֹל נֵר יִשְׂרָאֵל. וּבְרִבּוּץ הַתּוֹרָה מִשְׁנָה לִיקוּטִיאֵל.",
+   "out": "In wisdom and her knowledge To explain to them in the holy language the interpretation of the Mishnahs that the great Rabbi, the Light of Israel, composed. And [to explain it - Maybe ] [ with ] the abundance of Torah, the Mishnah of Likkutiel.",
    "done": true,
    "warn": ""
   },
@@ -125,7 +125,7 @@
    "src": "הוא עץ הדעת אשר תאוה הוא לעינים. כגן ה' כארץ מצרים. אשר העלה מזוהר התלמוד מנורות.",
    "start": 561,
    "heb": "הוּא עֵץ הַדַּעַת אֲשֶׁר תַּאֲוָה הוּא לָעֵינַיִם. כְּגַן ה' כְּאֶרֶץ מִצְרַיִם. אֲשֶׁר הֶעֱלָה מִזּוֹהַר הַתַּלְמוּד מְנוֹרוֹת.",
-   "out": "He is the tree of knowledge that is a desire to the eyes, like the garden of the Lord, like the land of Egypt, from which lanterns were raised from the Zohar of the Talmud.",
+   "out": "[This Mishna of Lekutiel or pirush from the Rambam  - maybe ] He [ it] is the tree of knowledge that is a desire to the eyes, like the garden of the Lord, like the land of Egypt, from which [this Work ] brought forth lanterns from the Zohar of the Talmud.",
    "done": true,
    "warn": ""
   },
@@ -135,7 +135,7 @@
    "src": "והיו למאורות. לפקוח עינים עורות. המחזיקים ידי גלות ספרד ופתח קבריהם. ונפח רוח חכמה בהם. ותבא",
    "start": 643,
    "heb": "וְהָיוּ לְמָאוֹרוֹת. לִפְקֹחַ עֵינַיִם עוֹרוֹת. הַמַּחְזִיקִים יָדַי גָּלוּת סְפָרַד וּפָתַח קְבָרֵיהֶם. וְנָפַח רוּחַ חָכְמָה בָּהֶם. וְתָבֹא",
-   "out": "And they became lights, to open blind eyes, for those who hold the hands of the exile of Spain, and opened their graves, and breathed the spirit of wisdom into them, and came.",
+   "out": "And they became lights, to open the eyes of the blind, for those who hold the hands of the exile of Spain, and [it, this pirush] opened their graves, and breathed the spirit of wisdom into them, and [inside them] came.",
    "done": true,
    "warn": ""
   },
@@ -145,7 +145,7 @@
    "src": "בהם הרוח ויחיו ויעמדו על רגליהם: רבנא משה נ\"ר בן הרב רבי מיימון ז\"ל. לרב משה.",
    "start": 736,
    "heb": "בָּהֶם הָרוּחַ וַיִּחְיוּ וַיַּעַמְדוּ עַל רַגְלֵיהֶם: רַבָּנָא מֹשֶׁה נ\"ר בֶּן הָרַב רַבִּי מַיְמוֹן ז\"ל. לְרַב מֹשֶׁה.",
-   "out": "In them the spirit and they lived and they stood on their feet: To our teacher Moses, may he rest in peace, son of the rabbi Rabbi Maimon, may his memory be blessed. To Rabbi Moses.",
+   "out": "the spirit and they lived and they stood on their feet: To our teacher Moses, may he rest in peace, son of the rabbi Rabbi Maimon, Nachat Ruach [The Comforting Spirit of his father] may his memory be blessed. To Rabbi Moses.",
    "done": true,
    "warn": ""
   },
@@ -155,7 +155,7 @@
    "src": "יהודה כל מחבר ולפי מעיניו ידום ויחשה. נביא חכמות שמו נקרא ולא קם נביא חכמות בישראל כמשה:",
    "start": 814,
    "heb": "יְהוּדָה כֹּל מְחַבֵּר וּלְפִי מֵעֵינָיו יָדוּם וְיַחְשֶׁה. נָבִיא חֲכָמוֹת שְׁמוֹ נִקְרָא וְלֹא קָם נָבִיא חֲכָמוֹת בְּיִשְׂרָאֵל כְּמֹשֶׁה:",
-   "out": "Judah, every author, and according to his eyes, he will be silent and listen. A prophet of wisdom his name is called, and no prophet of wisdom arose in Israel like Moses.",
+   "out": "[ I could be wrong although it seems like the translator when undertaking the event of translating the great Rambams work says to himself in front of all evil people who might be against this translation and says ] Judah, every author, and according to his eyes, he will be silent and quiet. A prophet of wisdom his name is called, and no prophet of wisdom arose in Israel like Moses.",
    "done": true,
    "warn": ""
   },
@@ -175,7 +175,7 @@
    "src": "2. וכאשר דבריהם הבינותי. חשתי ולא התמהמהתי. ומצותם הקימותי. והעתקתי פירוש זה הרב. ללשון הקדש מלשון ערב.",
    "start": 904,
    "heb": "2. וְכַאֲשֶׁר דִּבְרֵיהֶם הֵבַנְתִּי. חָשַׁתִּי וְלֹא הִתְמַהְמַהְתִּי. וּמִצְוָתָם הֵקֵמְתִּי. וְהֶעְתַּקְתִּי פֵּרוּשׁ זֶה הָרַב. לִלְשׁוֹן הַקֹּדֶשׁ מִלְּשׁוֹן עֲרָב.",
-   "out": "2. And when I understood their words, I hastened and did not delay. And I fulfilled their command. And I copied this commentary of the rabbi, from the holy language into Arabic.",
+   "out": "2. And when I understood their words, I hastened and did not delay. And I fulfilled their command [of  Atsilia and Shueia] . And I copied this commentary of the rabbi, from the holy language into Arabic.",
    "done": true,
    "warn": ""
   },
@@ -184,8 +184,8 @@
    "kind": "text",
    "src": "והפכתי מאוריו למזרח מן המערב. והשיבותי אל שפתנו הפניניה הפנימה החודרת. שפת ידיעת מליצתו החיצונה הקיצונה במחברת.",
    "start": 1008,
-   "heb": "וְהֶפְכֵתִי מֵאוֹרָיו לַמִּזְרָח מִן הַמַּעֲרָב. וְהֵשִׁיבוֹתִי אֶל שְׂפָתֵנוּ הַפְּנִינִיָּה הַפְּנִימָה הַחֹדֶרֶת. שְׂפַת יְדִיעַת מְלִיצָתוֹ הַחִיצוֹנָה הַקִּיצוֹנָה בַּמַּחְבֶּרֶת.",
-   "out": "And I turned his light from east to west. And I returned to our inner, penetrating language. The language of knowledge of his outer, extreme rhetoric in the notebook.",
+   "heb": "וְהֶפְכֵתִי מאוֹרָיו לַמִּזְרָח מִן הַמַּעֲרָב. וְהֵשִׁיבוֹתִי אֶל שְׂפָתֵנוּ הַפְּנִינִיָּה הַפְּנִימָה הַחֹדֶרֶת. שְׂפַת יְדִיעַת מְלִיצָתוֹ הַחִיצוֹנָה הַקִּיצוֹנָה בַּמַּחְבֶּרֶת.",
+   "out": "And I turned its light from west to east. And I returned to our inner language that is a peral that is penetrating with innerness. The language of knowledge of his outer and most persise  secret [ and I put it all] in [a] notebook.",
    "done": true,
    "warn": ""
   },
@@ -195,7 +195,7 @@
    "src": "והעתקתיו מלשון קדר הקודרת. אל לשון הזהב והאדרת. כי קנאתי לאלה הפרושים אשר ילדה התורה. ולהם",
    "start": 1120,
    "heb": "וְהֶעְתֵּקְתִּיו מִלְּשׁוֹן קֶדֶר הַקּוֹדֶרֶת. אֶל לְשׁוֹן הַזָּהָב וְהָאֲדֶרֶת. כִּי קִנֵּאתִי לְאֵלֶּה הַפְּרוּשִׁים אֲשֶׁר יָלְדָה הַתּוֹרָה. וְלָהֶם",
-   "out": "And I copied it from the language of the dark cloud. To the language of gold and the robe. Because I was jealous of these Pharisees who were born of the Torah. And to them.",
+   "out": "And I copied it from the language of the dark cloud. To the language of gold and glory. Because I was jealous of these Pharisees who were born of the Torah. And to them.",
    "done": true,
    "warn": ""
   },
@@ -215,7 +215,7 @@
    "src": "יחד נחבר וימשוך. ואיזה דרך ישכון אור וחשך. אבל כונת החכם היתה לתת לפתאים ערמה ולא",
    "start": 1294,
    "heb": "יַחַד נְחַבֵּר וְיִמְשֹׁךְ. וְאֵיזֶה דֶּרֶךְ יִשְׁכֹּן אוֹר וְחֹשֶׁךְ. אֲבָל כַּוָּנַת הַחֲכָם הָיְתָה לָתֵת לַפְּתָאִים עָרְמָה וְלֹא",
-   "out": "Together we will combine and it will attract. And what path will dwell in light and darkness? But the wise man's intention was to give the foolish a cunning plan and not ...",
+   "out": "Together we will combine and connect. And what path can [make] light and darkness dwell? But the wise man's intention was to give the foolish a cunning plan and he only",
    "done": true,
    "warn": ""
   },
@@ -224,8 +224,8 @@
    "kind": "text",
    "src": "חברו כי אם לאשר לא ידעו לשון הקדש כי אם הגרית. ולשונם חצי מדברת אשדודית. ואינם",
    "start": 1376,
-   "heb": "חֲבֵרוֹ כִּי אִם לַאֲשֶׁר לֹא יָדְעוּ לְשׁוֹן הַקֹּדֶשׁ כִּי אִם הַגֵּרִית. וּלְשׁוֹנָם חֲצִי מְדַבֶּרֶת אַשְׁדּוֹדִית. וְאֵינָם",
-   "out": "His friend, if not for the one who did not know the holy language except for the stranger. And their language is half speaking Ashdodite. And they are not.",
+   "heb": "חֲברוֹ כִּי אִם לַאֲשֶׁר לֹא יָדְעוּ לְשׁוֹן הַקֹּדֶשׁ כִּי אִם הַגֵּרִית. וּלְשׁוֹנָם חֲצִי מְדַבֶּרֶת אַשְׁדּוֹדִית. וְאֵינָם",
+   "out": "Composed it for those who did not know the holy language only Hagrit[Arabic].[Like how it is Said] And their language is half speaking Ashdodite. And they are not.",
    "done": true,
    "warn": ""
   },
@@ -235,7 +235,7 @@
    "src": "מכירים לדבר לשון יהודית. ועל כן התאמצתי. ועוז התאזרתי. והסירותי מאמר קדוש מלשונות זרים. ויצא למלוך",
    "start": 1455,
    "heb": "מְכִירִים לְדַבֵּר לָשׁוֹן יְהוּדִית. וְעַל כֵּן הִתְאַמַּצְתִּי. וְעֹז הִתְאַזַּרְתִּי. וְהִסִּירוֹתִי מַאֲמָר קָדוֹשׁ מִלְּשׁוֹנוֹת זָרִים. וְיָצָא לִמְלֹךְ",
-   "out": "They know how to speak the Jewish language. And for this reason I exerted myself. And I was strengthened. And I removed a holy statement from foreign languages. And he went out to reign.",
+   "out": "They [did not] know how to speak the Jewish language. And for this reason I exerted myself. And I was strengthened. And I removed a holy manuscript from foreign languages. And he [the Document/manuscript] went out to reign.",
    "done": true,
    "warn": ""
   },
@@ -244,10 +244,10 @@
    "kind": "text",
    "src": "מבית האסורים. ורחץ במים טהורים. ופשט את בגדיו ולבש בגדים אחרים. ומליו באמרי צחות העתקתי. ובצוף",
    "start": 1554,
-   "heb": "מבית האסורים. ורחץ במים טהורים. ופשט את בגדיו ולבש בגדים אחרים. ומליו באמרי צחות העתקתי. ובצוף",
+   "heb": "מִבֵּית הָאֲסוּרִים. וְרָחַץ בְּמַיִם טְהוֹרִים. וּפָשַׁט אֶת בְּגָדָיו וְלָבַשׁ בְּגָדִים אֲחֵרִים. וּמִלָּיו בְּאִמְרֵי צְחוּת הֶעֱתַקְתִּי. וּבְצוּףFrom the prison house. And he washed himself inside pure waters. And he removed his garments and put on other garments. And his words, with Clear  expressions, I have translated/transcribed. And with the nectar of",
    "out": "",
    "done": true,
-   "warn": "skipped - looped for 6005 characters without answering"
+   "warn": ""
   },
   {
    "i": 21,
@@ -255,7 +255,7 @@
    "src": "לשון קדש טעמו המתקתי. וזה משפט ההעתקה אשר אני נוטה אליה והדרך אשר אנכי הולך עליה.",
    "start": 1649,
    "heb": "לְשׁוֹן קֹדֶשׁ טַעֲמוֹ הַמַּתַּקְתִּי. וְזֶה מִשְׁפַּט הַהַעְתָּקָה אֲשֶׁר אֲנִי נוֹטֶה אֵלֶיהָ וְהַדֶּרֶךְ אֲשֶׁר אָנֹכִי הוֹלֵךְ עָלֶיהָ.",
-   "out": "I have sweetened the taste of the holy tongue. And this is the law of the transcription that I am inclined to, and the path that I walk upon.",
+   "out": "The holy tongue I have made its Taste sweeter. And this is the law of the transcription that I am inclined to, and the path that I walk upon.",
    "done": true,
    "warn": ""
   },
@@ -265,7 +265,7 @@
    "src": "אני מעתיק ברוב המקומות מלה כנגד מלה. אבל ארוץ להשיג הענין תחלה. ולא אחדול לרדוף אחריו",
    "start": 1731,
    "heb": "אֲנִי מַעְתִּיק בְּרֹב הַמְּקוֹמוֹת מִלָּה כְּנֶגֶד מִלָּה. אֲבָל אָרוּץ לְהַשִּׂיג הָעִנְיָן תְּחִלָּה. וְלֹא אֶחְדַּל לִרְדֹּף אַחֲרָיו.",
-   "out": "I copy in most places word for word. But I will run to achieve the matter first. And I will not cease to pursue it.",
+   "out": "I copy in most places word for word. But I will run to understand the consept first. And I will not cease to pursue it",
    "done": true,
    "warn": ""
   },
@@ -275,7 +275,7 @@
    "src": "ולעוללהו במסלה. עד המקום אשר היה שם אהלו בתחלה. וכשאמצא בלשון ערב מלה בודדת. ועלי מורדת.",
    "start": 1817,
    "heb": "וְלַעֲוֹלְלָהוּ בַּמַּסְלָה. עַד הַמָּקוֹם אֲשֶׁר הָיָה שָׁם אׇהֳלוֹ בַּתְּחִלָּה. וְכִשֶׁאֶמְצָא בִּלְשׁוֹן עֲרָב מִלָּה בּוֹדֶדֶת. וְעָלַי מוֹרֶדֶת.",
-   "out": "and to lead him astray in the path, until the place where his tent was at first; and when I find in the Arabic language a single word, and it is rebellious against me.",
+   "out": "and to Guide it along the path, until the place where its tent was at first; and when I find in the Arabic language a single word, and it is rebellious against me.",
    "done": true,
    "warn": ""
   },
@@ -284,10 +284,10 @@
    "kind": "text",
    "src": "ודרך מרי לוקחת. כשפחה בורחת. חלוצי זממי ירדפוה עד השברים. וכל רודפיה השיגוה בין המצרים. וכשיזדמן",
    "start": 1906,
-   "heb": "ודרך מרי לוקחת. כשפחה בורחת. חלוצי זממי ירדפוה עד השברים. וכל רודפיה השיגוה בין המצרים. וכשיזדמן",
+   "heb": "וְדֶרֶךְ מָרִי לוֹקַחַת כְּשִׁפְחָה בּוֹרַחַת חֲלוּצֵי זַמְּמִי יִרְדְּפוּהָ עַד הַשְּׁבָרִים וְכָל רוֹדְפֶיהָ\nAnd the way of rebellion, takes  like a fleeing maidservant; the armed ones will pursue her until the breaks, and all her pursuers\nהִשִּׂיגוּהָ בֵּין הַמְּצָרִים וּכְשֶׁיִּזְדַּמֵּן\novertook her between the straits; and when it happens / when the opportunity arises.",
    "out": "",
    "done": true,
-   "warn": "skipped - looped for 6001 characters without answering"
+   "warn": ""
   },
   {
    "i": 25,
@@ -295,7 +295,7 @@
    "src": "לי בלשון קדש מלה קשה בזולתה אמירנה. ומגבירה אסירנה. ומלכותה אתן לרעותה הטובה ממנה. וכל מלה",
    "start": 2003,
    "heb": "לִי בְּלָשׁוֹן קֹדֶשׁ מִלָּה קָשָׁה בְּזוּלָתָהּ אָמִירְנָה. וּמִגְבִּירָה אָסִירְנָה. וּמַלְכוּתָהּ אֶתֵּן לְרַעְיָתָה הַטּוֹבָה מִמֶּנָּה. וְכׇל מִלָּה",
-   "out": "To me in the holy language a difficult word in another one I will say. And from the ruler I will remove it. And her kingdom I will give to her companion who is better than her. And every word.",
+   "out": "To me in the holy language a difficult word in another one I will say. And from its ruler I will remove it. And her kingdom I will give to her companion who is better than her. And every word.",
    "done": true,
    "warn": ""
   },
@@ -315,7 +315,7 @@
    "src": "אבחור דרכם ואשב ראש. ומלשון קדש מליו המתוקים אלקט ואחטוף. ומראש יונקותיו רך אקטוף. כדי שיהיו",
    "start": 2172,
    "heb": "אֶבְחֹר דַּרְכָּם וְאֵשֵׁב רֹאשׁ. וּמִלְּשׁוֹן קֹדֶשׁ מִלָּיו הַמְּתוּקִים אֶלְקֹט וְאֶחְטֹף. וּמֵרֹאשׁ יוֹנְקוֹתָיו רַךְ אֶקְטֹף. כְּדֵי שֶׁיִּהְיוּ",
-   "out": "I will choose their path and sit at the head. And from the language of holiness, I will select and seize its sweet words. And from the top of its sucklings, I will gently seize. In order that they will be...",
+   "out": "I will choose their path and sit at the head. And from the language of holiness, I will collect and Snatch its sweet words. And from the top of its sucklings, I will gently pluck. In order that they will be...",
    "done": true,
    "warn": ""
   },
@@ -345,7 +345,7 @@
    "src": "וסוד החכמה אשר הוא מפרש מליה: ובשלשה אלה חבל המליצה ירתק. וחוט המשולש לא במהרה ינתק.",
    "start": 2429,
    "heb": "וְסוֹד הַחׇכְמָה אֲשֶׁר הוּא מְפָרֵשׁ מִלֵּיהָ: וּבִשְׁלוֹשָׁה אֵלֶּה חֶבֶל הַמְּלִיצָה יִרְתַּק. וְחוּט הַמְּשֻׁלָּשׁ לֹא בְּמַהֲרָה יִנָּתֵק.",
-   "out": "And the secret of wisdom which he interprets from it: And in these three the rope of rhetoric will be tied. And the triple thread will not break quickly.",
+   "out": "And the secret of wisdom which he interprets from it: And in these three the rope of rhetoric will be tied. And the triple threaded rope does not rip quickly.",
    "done": true,
    "warn": ""
   },
@@ -365,7 +365,7 @@
    "src": "כל מאודי לשמור הענין. ולתקון הבנין. וזה יהיה קרבן שגגתי ובשניהן אצא ידי חובתי. והאל המגלה",
    "start": 2592,
    "heb": "כׇּל מְאוֹדִי לִשְׁמֹר הָעִנְיָן. וּלְתַקֵּן הַבִּנְיָן. וְזֶה יִהְיֶה קׇרְבַּן שִׁגְגָתִי וּבִשְׁנֵיהֶן אֵצֵא יְדֵי חוֹבָתִי. וְהָאֵל הַמְּגַלֶּה",
-   "out": "All my strength to guard the matter. And to repair the building. And this will be the sacrifice of my sin, and in both of them I will fulfill my obligation. And the God who reveals.",
+   "out": "With all my strength to guard the matter. And to repair the building. And this will be the sacrifice of my sin, and in both of them I will fulfill my obligation. And the God who reveals.",
    "done": true,
    "warn": ""
   },
@@ -375,7 +375,7 @@
    "src": "עלומים ומרנין לשון אלמים. ינצור לשוני בהגיוני. ויהיה עם פי בהטיפי. ויהיו לרצון אמרי פי. כמו",
    "start": 2682,
    "heb": "עֲלוּמִים וּמַרְנִין לָשׁוֹן אִלְמִים. יִנְצֹר לְשׁוֹנִי בְּהַגִּיּוֹנִי. וְיִהְיֶה עִם פִּי בְּהַטִּיפִי. וְיִהְיוּ לְרָצוֹן אִמְרֵי פִּי. כְּמוֹ",
-   "out": "Mysterious and murmuring the tongue of the mute. He will guard my tongue in my meditations. And it will be with my mouth in my preaching. And my words will be pleasing. Like...",
+   "out": "Mysterious and causes the tongue of the mute sing. He will guard my tongue in my contemplations. And it will be with my mouth in my Dripping/speech [ so to say]. And that my words will be pleasing. Like...",
    "done": true,
    "warn": ""
   },
@@ -394,10 +394,10 @@
    "kind": "text",
    "src": "פניך וקראתי בשם ה' לפניך וחנותי את אשר אחון ורחמתי את אשר ארחם:",
    "start": 2861,
-   "heb": "פניך וקראתי בשם ה' לפניך וחנותי את אשר אחון ורחמתי את אשר ארחם:",
+   "heb": "פָּנֶיךָ וְקָרָאתִי בְשֵׁם ה׳ לְפָנֶיךָ וְחַנֹּתִי אֶת אֲשֶׁר אָחֹן וְרִחַמְתִּי אֶת אֲשֶׁר אֲרַחֵםYour pressenceAnd I will proclaim the name of the Hashem before you; and I will show favor to whom I will show favor, and I will have compassion on whom I will have compassion.”",
    "out": "",
    "done": true,
-   "warn": "skipped - looped for 6003 characters without answering"
+   "warn": ""
   },
   {
    "i": 36,
@@ -415,7 +415,7 @@
    "src": "3. התקבצו חכמים ועמדו על עמדכם. כי זבד טוב אזבדכם. לכו בנים שמעו לי יראת ה'",
    "start": 2926,
    "heb": "3. הִתְקַבְּצוּ חֲכָמִים וְעָמְדוּ עַל עֲמַדְכֶם. כִּי זֶבֶד טוֹב אֶזְבַּדְכֶם. לְכוּ בָּנִים שִׁמְעוּ לִי יִרְאַת ה'.",
-   "out": "3. The sages gathered and stood on your stand. For a good gift I will give you. Come, children, listen to me, the fear of the Lord.",
+   "out": "3. Gather Together Sages and stand firm in your position. For a good gift I will give you. Come, children, listen to me, the fear of the Lord.",
    "done": true,
    "warn": ""
   },
@@ -425,7 +425,7 @@
    "src": "אלמדכם. שמעו שמוע אלי ואכלו טוב. ותהיה נפשכם כגן רטוב. מי האיש החפץ חיים אוהב ימים",
    "start": 3002,
    "heb": "אֶלְמַדְכֶם. שִׁמְעוּ שִׁמּוּעַ אֵלַי וְאִכְלוּ טוֹב. וְתִהְיֶה נַפְשְׁכֶם כְּגַן רָטוּב. מִי הָאִישׁ הַחֹפֵץ חַיִּים אוֹהֵב יָמִים.",
-   "out": "I will teach you. Hear my words and eat good. And your soul will be like a watered garden. Who is the man who desires life and loves days.",
+   "out": "I will teach you. Hear a hearing/report for me.” and eat good. And your soul will be like a watered garden. Who is the man who desires life and loves days.",
    "done": true,
    "warn": ""
   },
@@ -435,7 +435,7 @@
    "src": "לראות טוב. אשר לא העלה עליו [א] מלך גדול ולא שחת תחתיו ולא השיאוהו משאיו ולא",
    "start": 3085,
    "heb": "לִרְאוֹת טוֹב. אֲשֶׁר לֹא הֶעֱלָה עָלָיו [א] מֶלֶךְ גָּדוֹל וְלֹא שָׁחַת תַּחְתָּיו וְלֹא הִשִּׂיאוּהוּ מַשָּׂאָיו וְלֹא",
-   "out": "To see good. That which did not raise upon him a great king, and did not destroy under him, and did not make him carry his burdens, and did not...",
+   "out": "To see good. [Who loves days] That which did not raise upon him a great king, and [that he] did not destroy under him, and [that he] did not make him carry his burdens, and was not...",
    "done": true,
    "warn": ""
   },
@@ -444,10 +444,10 @@
    "kind": "text",
    "src": "היה ממפותיו. וישם על לבו אשר לא יתגאל בפת בג המלך וביין משתיו. יסור הנה אל",
    "start": 3162,
-   "heb": "היה ממפותיו. וישם על לבו אשר לא יתגאל בפת בג המלך וביין משתיו. יסור הנה אל",
+   "heb": "הָיָה מִמַּפּוֹתָיו וַיָּשֶׂם עַל לִבּוֹ אֲשֶׁר לֹא יִתְגָּאַל בְּפַת בַּג הַמֶּלֶךְ וּבְיֵין מִשְׁתָּיו. יָסוּר הֵנָּה אֵל among his Flags/plans [maybe], and he resolved that he would not defile himself with the king’s food and with the wine of his feasts. He shall turn here to El.",
    "out": "",
    "done": true,
-   "warn": "skipped - looped for 6001 characters without answering"
+   "warn": ""
   },
   {
    "i": 41,
