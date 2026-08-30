@@ -2,10 +2,10 @@
  "id": "MagenAvraham-inte-261298ef",
  "title": "MagenAvraham_OrachChaim",
  "status": "running",
- "status_line": "IN PROGRESS - 3061 of 3604 translatable chunks (84.9%)",
- "percent": 84.93,
- "bookmark": 3065,
- "done_text": 3061,
+ "status_line": "IN PROGRESS - 3069 of 3604 translatable chunks (85.2%)",
+ "percent": 85.16,
+ "bookmark": 3073,
+ "done_text": 3069,
  "total_text": 3604,
  "total_chunks": 3612,
  "chars_total": 203019,
@@ -25,12 +25,12 @@
  "temperature": 0.2,
  "think": false,
  "created": "2026-08-27 00:37:53",
- "updated": "2026-08-30 14:18:33",
+ "updated": "2026-08-30 14:25:37",
  "started": "2026-08-27 00:38:20",
  "finished": "",
- "elapsed_sec": 136067.3,
- "tokens_out": 1400391,
- "skipped": 363,
+ "elapsed_sec": 136413.1,
+ "tokens_out": 1402512,
+ "skipped": 366,
  "error": "",
  "cut_marks": [
   {
@@ -30730,19 +30730,19 @@
    "kind": "text",
    "src": "י\"ג ע\"ש:",
    "start": 179474,
-   "heb": "",
+   "heb": "י\"ג ע\"ש:",
    "out": "",
-   "done": false,
-   "warn": ""
+   "done": true,
+   "warn": "skipped - looped for 6005 characters without answering"
   },
   {
    "i": 3066,
    "kind": "text",
    "src": "לקרות ק\"ש אסור",
    "start": 179485,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "לִקְרֹת ק\"ש אָסוּר",
+   "out": "It is forbidden to read K'riat Shema.",
+   "done": true,
    "warn": ""
   },
   {
@@ -30750,29 +30750,29 @@
    "kind": "text",
    "src": "פ״א",
    "start": 179500,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "פַּעַם אַחַת",
+   "out": "once",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 3068,
    "kind": "text",
    "src": ". מלשון זה משמע אפי' הוא אינו יכול לאכול כגון שחלוש בטבע מ\"מ כיון שאחרים שגדולים",
    "start": 179504,
-   "heb": "",
+   "heb": ". מלשון זה משמע אפי' הוא אינו יכול לאכול כגון שחלוש בטבע מ\"מ כיון שאחרים שגדולים",
    "out": "",
-   "done": false,
-   "warn": ""
+   "done": true,
+   "warn": "skipped - looped for 6001 characters without answering"
   },
   {
    "i": 3069,
    "kind": "text",
    "src": "בשנים כמותו יכולים לאכול צריך להרחיק, וצ\"ע דלא מצינו זה בשום פוסק ועוד דהא קאמר בגמ'",
    "start": 179585,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "בְּשָׁנִים כְּמוֹתוֹ יְכוֹלִים לֶאֱכֹל צָרִיךְ לְהַרְחִיק, וְצָ\"ע דְּלֹא מָצִינוּ זֶה בְּשׁוּם פּוֹסֵק וְעוֹד דְּהָא קָאָמַר בַּגְּמָ'",
+   "out": "In years like him they can eat, need to distance, and it is difficult to understand because we do not find this in any posek, and further that the Gemara says...",
+   "done": true,
    "warn": ""
   },
   {
@@ -30780,9 +30780,9 @@
    "kind": "text",
    "src": "ובגדול אף על פי שאינו יכול לאכול כזית בכדי אכיל'  פרס מרחיקין מצואתו משמע דבקטן אם",
    "start": 179670,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "וּבַגָּדוֹל אַף עַל פִּי שֶׁאֵינוֹ יָכוֹל לֶאֱכֹל כְּזַיִת בִּכְדֵי אֲכִילַת פַּרְסָה מַרְחִיקִין מִצּוֹאָתוֹ מַשְׁמָע דְּבַקָּטָן אִם",
+   "out": "And in a large person, even though he cannot eat a kezayit (a small amount) in the time of eating a parsa (a large amount), they distance his excrement. It seems that in a small person if...",
+   "done": true,
    "warn": ""
   },
   {
@@ -30790,9 +30790,9 @@
    "kind": "text",
    "src": "אין יכול לאכול שרי, לכן נ\"ל דה\"ק אם אחר כיוצא בו יכול לאכול מסתמא גם הוא",
    "start": 179753,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "אֵין יָכוֹל לֶאֱכֹל שָׁרִי, לָכֵן נ\"ל דְּהַ\"ק אִם אַחֵר כְּיוֹצֵא בּוֹ יָכוֹל לֶאֱכֹל מִסְּתָמָא גַּם הוּא",
+   "out": "He cannot eat Shari, therefore it seems to me that the meaning is: if another like him can eat, then he also can.",
+   "done": true,
    "warn": ""
   },
   {
@@ -30800,10 +30800,10 @@
    "kind": "text",
    "src": "יכול לאכול ואם אינו יכול לאכול כגון דחליש אפי' הוא בן ג' או ד' שנים א\"צ",
    "start": 179826,
-   "heb": "",
+   "heb": "יכול לאכול ואם אינו יכול לאכול כגון דחליש אפי' הוא בן ג' או ד' שנים א\"צ",
    "out": "",
-   "done": false,
-   "warn": ""
+   "done": true,
+   "warn": "skipped - looped for 6001 characters without answering"
   },
   {
    "i": 3073,

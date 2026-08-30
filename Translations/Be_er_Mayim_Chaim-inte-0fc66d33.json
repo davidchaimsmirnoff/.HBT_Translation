@@ -2,10 +2,10 @@
  "id": "Be_er_Mayim_Chaim-inte-0fc66d33",
  "title": "Be'er Mayim Chaim on Chafetz Chaim",
  "status": "running",
- "status_line": "IN PROGRESS - 2713 of 5066 translatable chunks (53.6%)",
- "percent": 53.55,
- "bookmark": 3125,
- "done_text": 2713,
+ "status_line": "IN PROGRESS - 2722 of 5066 translatable chunks (53.7%)",
+ "percent": 53.73,
+ "bookmark": 3134,
+ "done_text": 2722,
  "total_text": 5066,
  "total_chunks": 5957,
  "chars_total": 381665,
@@ -25,11 +25,11 @@
  "temperature": 0.2,
  "think": false,
  "created": "2026-08-27 11:16:29",
- "updated": "2026-08-30 14:18:15",
+ "updated": "2026-08-30 14:25:54",
  "started": "2026-08-27 11:17:00",
  "finished": "",
- "elapsed_sec": 116699.3,
- "tokens_out": 1419137,
+ "elapsed_sec": 117158.4,
+ "tokens_out": 1424988,
  "skipped": 154,
  "error": "",
  "cut_marks": [
@@ -31330,9 +31330,9 @@
    "kind": "text",
    "src": "אומרה בפניו, אבל לא להמקבל דאינו יודע שהוא אמת, וכי מפני שפלוני העיז פניו לדבר הגנות",
    "start": 219405,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "אוֹמְרָה בְּפָנָיו, אֲבָל לֹא לַמְּקַבֵּל דְּאֵינוֹ יוֹדֵעַ שֶׁהוּא אֱמֶת, וְכִי מִפְּנֵי שֶׁפְּלוֹנִי הֵעִיז פָּנָיו לְדַבֵּר הֲגָנוֹת.",
+   "out": "I would say it in his face, but not to the receiver who does not know that it is true, and because someone dared to speak slander about him.",
+   "done": true,
    "warn": ""
   },
   {
@@ -31340,9 +31340,9 @@
    "kind": "text",
    "src": "שלו בפניו נחליט בלבנו שהדבר אמת.",
    "start": 219490,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "שֶׁלּוֹ בְּפָנָיו נַחְלִיט בְּלִבֵּנוּ שֶׁהַדָּבָר אֱמֶת.",
+   "out": "In his presence, we will decide in our hearts that the matter is true.",
+   "done": true,
    "warn": ""
   },
   {
@@ -31350,9 +31350,9 @@
    "kind": "text",
    "src": "וכדי שלא יטעך היצר שמחפש בזה אחר צדדי היתר ובונה אותם על קו תוהו ואבני בוהו",
    "start": 219523,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "וְכִדֵּי שֶׁלֹּא יְטַעֶךָּ הַיֵּצֶר שֶׁמְּחַפֵּשׂ בָּזֶה אַחַר צִדְדֵי הֶתֵּר וּבוֹנֶה אוֹתָם עַל קַו תֹּהוּ וְאַבְנֵי בֹּהוּ",
+   "out": "And so that the evil inclination will not deceive you, which searches in this for the sides of permissibility and builds them on the line of emptiness and the stones of emptiness.",
+   "done": true,
    "warn": ""
   },
   {
@@ -31360,9 +31360,9 @@
    "kind": "text",
    "src": "לומר היאך לא נאמין להמספר בלשון הרע או ברכילות, וכי אם היה שקר היאך היה מעיז",
    "start": 219599,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "לֹמַר הֵיאַךְ לֹא נַאֲמִין לְהַמְּסַפֵּר בִּלְשׁוֹן הָרַע אוֹ בִּרְכִילוּת, וְכִי אִם הָיָה שֶׁקֶר הֵיאַךְ הָיָה מְעַזֶּה",
+   "out": "To say how we do not believe the storyteller in slander or gossip, and if it was a lie, how could he dare?",
+   "done": true,
    "warn": ""
   },
   {
@@ -31370,19 +31370,19 @@
    "kind": "text",
    "src": "פניו לספר עליו בפניו דבר גנאי שלא היה ולא נברא, כי שמעתי מכמה אנשים היתר בעו״ה",
    "start": 219676,
-   "heb": "",
-   "out": "",
-   "done": false,
-   "warn": ""
+   "heb": "פָּנָיו לְסַפֵּר עָלָיו בְּפָנָיו דָּבָר גְּנַאי שֶׁלֹּא הָיָה וְלֹא נִבְרָא, כִּי שָׁמַעְתִּי מִכַּמָּה אֲנָשִׁים הֶתֵּר בְּעוֹלָם הַזֶּה",
+   "out": "His face to tell about him in his face a disgraceful thing that was not and was not created, because I heard from several people a permit in this world.",
+   "done": true,
+   "warn": "vocalized line has a different word count"
   },
   {
    "i": 3130,
    "kind": "text",
    "src": "על ידי זה, על זה אשיבך כי לא כן דעת תורתנו הקדושה וכי מפני שיש לנו",
    "start": 219755,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "עַל יְדֵי זֶה, עַל זֶה אָשִׁיבְךָ כִּי לֹא כֵּן דַּעַת תּוֹרָתֵנוּ הַקְּדוֹשָׁה וְכִי מִפְּנֵי שֶׁיֵּשׁ לָנוּ",
+   "out": "By this, on this I will answer you because it is not so the opinion of our holy Torah, and because of the fact that we have.",
+   "done": true,
    "warn": ""
   },
   {
@@ -31390,9 +31390,9 @@
    "kind": "text",
    "src": "סברא על זה ליפותו ולהחזיקו בחזקת נאמן בדיבורו נוציא על ידי זה להשני מחזקתו, והלא אפילו",
    "start": 219822,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "סְבָרָא עַל זֶה לְיַפּוֹתוֹ וּלְהַחְזִיקוֹ בְּחֶזְקַת נֶאֱמָן בְּדִיבּוּרוֹ נוֹצִיא עַל יְדֵי זֶה לַשֵּׁנִי מֵחֶזְקָתוֹ, וְהַלֹּא אֲפִלּוּ",
+   "out": "A reasoning on this to beautify it and to hold it in the presumption of being trustworthy in its speech we will bring out by this to the second from his presumption, and is it not even...",
+   "done": true,
    "warn": ""
   },
   {
@@ -31400,9 +31400,9 @@
    "kind": "text",
    "src": "אצל דבר שהועד לפני בית דין שיש לו כח גדול, לא נזכרה סברא זו כלל שיוחלט",
    "start": 219909,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "אֵצֶל דָּבָר שֶׁהוּעַד לִפְנֵי בֵּית דִּין שֶׁיֵּשׁ לוֹ כּוֹחַ גָּדוֹל, לֹא נִזְכְּרָה סְבָרָא זוֹ כְּלָל שֶׁיֻּחְלַט",
+   "out": "In the case of a matter that was presented before a court that has great power, this reasoning was not mentioned at all that it would be decided.",
+   "done": true,
    "warn": ""
   },
   {
@@ -31410,9 +31410,9 @@
    "kind": "text",
    "src": "הדבר בבית דין כדברי העד מפני שהעיד עליו בפניו, ובממון אין צריך רק שבועה, ואם העיד",
    "start": 219980,
-   "heb": "",
-   "out": "",
-   "done": false,
+   "heb": "הַדָּבָר בְּבֵית דִּין כִּדְבָרֵי הָעֵד מִפְּנֵי שֶׁהֵעִיד עָלָיו בְּפָנָיו, וּבְמָמוֹן אֵין צָרִיךְ רַק שְׁבוּעָה, וְאִם הֵעִיד",
+   "out": "The matter in the court is like the testimony of the witness because he testified about it in his presence, and in monetary matters one only needs an oath, and if he testified.",
+   "done": true,
    "warn": ""
   },
   {
